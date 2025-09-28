@@ -207,9 +207,7 @@
             border: 1px solid rgba(120, 119, 255, 0.2);
             transition: all 0.3s ease;
         }
-        #contact{
-            margin-bottom: 12rem;
-        }
+        
         .skill-category:hover {
             border-color: rgba(120, 119, 255, 0.5);
             transform: translateY(-5px);
@@ -246,6 +244,7 @@
             display: flex;
             justify-content: center;
             gap: 2rem;
+            flex-wrap: nowrap;
             margin-top: 3rem;
         }
 
@@ -348,7 +347,7 @@
 
             .section {
                 padding: 0rem 1rem;
-                margin-bottom: 3rem; /* Add space for bottom nav */
+                margin-bottom: 1rem; /* Add space for bottom nav */
             }
 
             .section:last-child {
@@ -368,17 +367,6 @@
             .stats-grid {
                 grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
                 gap: 1rem;
-            }
-
-            .social-links {
-                gap: 1rem;
-                flex-wrap: wrap;
-            }
-
-            .social-link {
-                width: 50px;
-                height: 50px;
-                font-size: 1.2rem;
             }
 
             .profile-image {
@@ -411,6 +399,21 @@
             .subtitle img {
                 max-width: 100%;
                 height: auto;
+            }
+            .social-link{
+                width: 35px;
+                height: 35px;
+            }
+            .social-links{
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            #contact{
+                margin-bottom: 6rem;   
+            }
+            #home{
+                height: 40vh;
+                margin-bottom: 3rem;
             }
         }
 
