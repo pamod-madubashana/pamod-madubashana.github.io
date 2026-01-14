@@ -16,6 +16,8 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v4
+      with:
+        submodules: true
 
     - name: Setup Node
       uses: actions/setup-node@v4
@@ -24,9 +26,12 @@ jobs:
 
     - name: Install and build frontend
       run: |
+        cd frontend
         npm ci
         npm run build
-      working-directory: frontend
+      env:
+        NODE_ENV: production
+        VITE_API_BASE_URL: ${{ secrets.API_BASE_URL }}
       env:
         NODE_ENV: production
         VITE_API_BASE_URL: ${{ secrets.API_BASE_URL }}
