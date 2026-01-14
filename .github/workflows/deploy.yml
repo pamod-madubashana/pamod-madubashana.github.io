@@ -27,7 +27,7 @@ jobs:
       working-directory: frontend
 
     - name: Build frontend
-      run: npm run build
+      run: npx vite build
       working-directory: frontend
       env:
         NODE_ENV: production
