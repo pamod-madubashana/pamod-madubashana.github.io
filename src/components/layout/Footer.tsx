@@ -80,7 +80,7 @@ export const Footer = () => {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground flex items-center gap-1">
-            © {currentYear} Made with <Heart className="w-4 h-4 text-destructive" /> All rights reserved.
+            © {currentYear} Pamod Madubashana. All rights reserved.
           </p>
           <div className="flex gap-4">
             <Link
