@@ -26,7 +26,7 @@ export const Footer = () => {
           <div className="space-y-4">
             <Link to="/" className="inline-block">
               <span className="text-2xl font-bold text-gradient">
-                &lt;DEV/&gt;
+                P A M O D
               </span>
             </Link>
             <p className="text-sm text-muted-foreground max-w-xs">
