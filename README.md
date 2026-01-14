@@ -6,36 +6,47 @@ A futuristic personal portfolio website built with React, TypeScript, and Vite.
 
 **Production URL**: https://pamod.is-a.dev
 
-## How can I edit this code?
+## 🏗️ Development Setup
 
-There are several ways of editing your application.
+### Prerequisites
 
-**Use Lovable**
+- Node.js 18+ (recommended: use [nvm](https://github.com/nvm-sh/nvm))
+- npm or yarn package manager
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### Local Development
 
-Changes made via Lovable will be committed automatically to this repo.
+```bash
+# Clone the repository
+git clone https://github.com/your-username/pamod-madubashana.github.io.git
+cd pamod-madubashana.github.io
 
-**Use your preferred IDE**
+# Install dependencies
+npm install
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+
+### Environment Variables
+
+Create a `.env` file based on `.env.example`:
+
+```bash
+VITE_API_BASE_URL=http://localhost:5000
+VITE_GITHUB_USERNAME=your-github-username
 ```
 
 **Edit a file directly in GitHub**
@@ -52,15 +63,37 @@ npm run dev
 - Click on "New codespace" to launch a new Codespace environment.
 - Edit files directly within the Codespace and commit and push your changes once you're done.
 
-## What technologies are used for this project?
+## 🛠️ Technologies Used
 
 This project is built with:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- **Frontend**: React 18 + TypeScript + Vite
+- **Styling**: Tailwind CSS + shadcn/ui components
+- **Animations**: Framer Motion
+- **Routing**: React Router DOM
+- **Forms**: React Hook Form + Zod validation
+- **State Management**: React Context API
+- **Data Fetching**: TanStack Query
+- **UI Components**: Radix UI primitives
+
+## 📁 Project Structure
+
+```
+src/
+├── api/           # API service functions
+├── components/    # Reusable UI components
+│   ├── layout/    # Layout components (Navbar, Footer)
+│   ├── sections/  # Page sections (Hero, About, etc.)
+│   └── ui/        # shadcn/ui components
+├── contexts/      # React context providers
+├── hooks/         # Custom React hooks
+├── lib/           # Utility functions
+├── pages/         # Page components
+│   ├── Admin/     # Admin dashboard
+│   ├── Auth/      # Authentication pages
+│   └── ...        # Main pages
+└── App.tsx        # Main application component
+```
 
 ## 🚀 Deployment
 
