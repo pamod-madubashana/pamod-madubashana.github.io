@@ -29,10 +29,11 @@ const skills = [
 ];
 
 const techStack = [
+  { name: "Python", level: 95 },
+  { name: "JavaScript", level: 80 },
   { name: "React", level: 95 },
-  { name: "TypeScript", level: 90 },
-  { name: "Node.js", level: 85 },
-  { name: "PostgreSQL", level: 80 },
+  { name: "TypeScript", level: 70 },
+  { name: "MongoDB", level: 80 },
   { name: "AWS", level: 75 },
 ];
 
