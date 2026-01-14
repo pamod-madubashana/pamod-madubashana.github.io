@@ -65,7 +65,7 @@ export const ProjectsSection = () => {
             Featured Work
           </span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Recent <span className="text-gradient">Projects</span>
+            <span className="text-foreground/70">Recent</span> <span className="text-gradient">Projects</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             A selection of my recent work. Each project represents a unique challenge and learning experience.
@@ -99,8 +99,8 @@ export const ProjectsSection = () => {
                   </Button>
                   <Button size="sm" variant="outline" className="gap-1" asChild>
                     <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                      <Github className="w-4 h-4" />
-                      Code
+                      <Github className="w-4 h-4 text-foreground/70" />
+                      <span className="text-foreground/70">Code</span>
                     </a>
                   </Button>
                 </div>
@@ -115,7 +115,7 @@ export const ProjectsSection = () => {
                   </span>
                 </div>
 
-                <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
+                <h3 className="text-xl font-semibold mb-2 text-foreground/70 group-hover:text-primary transition-colors">
                   {project.name}
                 </h3>
 
@@ -128,7 +128,7 @@ export const ProjectsSection = () => {
                   {project.topics.slice(0, 3).map((topic) => (
                     <span
                       key={topic}
-                      className="px-2 py-1 text-xs font-mono bg-muted/50 rounded-md"
+                      className="px-2 py-1 text-xs font-mono bg-muted/50  text-foreground/50 rounded-md"
                     >
                       {topic}
                     </span>
@@ -161,10 +161,10 @@ export const ProjectsSection = () => {
         >
           <Button asChild variant="outline" size="lg" className="group">
             <Link to="/projects">
-              <Code className="w-5 h-5 mr-2" />
-              View All Projects
+              <Code className="w-5 h-5 mr-2 text-foreground/70" />
+              <span className="text-foreground/70">View All Projects</span>
               <motion.span
-                className="ml-2"
+                className="ml-2 text-foreground/70"
                 animate={{ x: [0, 5, 0] }}
                 transition={{ duration: 1, repeat: Infinity }}
               >

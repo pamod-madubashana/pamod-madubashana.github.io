@@ -52,7 +52,7 @@ export const AboutSection = () => {
             About Me
           </span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Crafting Digital <span className="text-gradient">Experiences</span>
+            <span className="text-foreground/70">Crafting Digital</span> <span className="text-gradient">Experiences</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             With over 5 years of experience in full-stack development, I specialize in building scalable web applications that users love.
@@ -89,7 +89,7 @@ export const AboutSection = () => {
           transition={{ duration: 0.6 }}
           className="max-w-2xl mx-auto"
         >
-          <h3 className="text-xl font-semibold mb-8 text-center">
+          <h3 className="text-xl font-semibold mb-8 text-center text-foreground/70">
             Technical Proficiency
           </h3>
           <div className="space-y-6">
@@ -102,7 +102,7 @@ export const AboutSection = () => {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <div className="flex justify-between mb-2">
-                  <span className="font-mono text-sm">{tech.name}</span>
+                  <span className="font-mono text-sm text-foreground/50">{tech.name}</span>
                   <span className="text-sm text-muted-foreground">{tech.level}%</span>
                 </div>
                 <div className="h-2 bg-muted rounded-full overflow-hidden">
