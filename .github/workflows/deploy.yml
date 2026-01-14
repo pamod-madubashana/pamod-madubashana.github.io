@@ -28,8 +28,7 @@ jobs:
         npm ci
 
     - name: Build frontend
-      run: npx vite build
-      working-directory: frontend
+      run: npm run build --prefix frontend
       env:
         NODE_ENV: production
         VITE_API_BASE_URL: ${{ secrets.API_BASE_URL }}
