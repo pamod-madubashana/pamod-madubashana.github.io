@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { API_BASE_URL } from '@/lib/apiConfig';
+import { API_BASE_URL } from '@/api/articleApi';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { Search, Plus, Edit, Trash2, Eye, Save, X } from 'lucide-react';
+import { articleApi, Article, CreateArticleData, UpdateArticleData } from '@/api/articleApi';
 
 interface Article {
   _id: string;
@@ -46,15 +47,8 @@ const ArticleManager = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/articles`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        const data = await response.json();
-        if (response.ok) {
-          setArticles(data.articles || []);
-        }
+        const data = await articleApi.getAllArticles(token);
+        setArticles(data.articles || []);
       } catch (error) {
         console.error('Error fetching articles:', error);
       } finally {
@@ -83,30 +77,21 @@ const ArticleManager = () => {
 
   const handleCreateArticle = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/articles`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          ...newArticle,
-          tags: newArticle.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
-        })
+      const articleData: CreateArticleData = {
+        ...newArticle,
+        tags: newArticle.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
+      };
+      
+      const response = await articleApi.createArticle(token, articleData);
+      setArticles([response.article, ...articles]);
+      setNewArticle({
+        title: '',
+        content: '',
+        excerpt: '',
+        status: 'draft',
+        tags: ''
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        setArticles([data.article, ...articles]);
-        setNewArticle({
-          title: '',
-          content: '',
-          excerpt: '',
-          status: 'draft',
-          tags: ''
-        });
-        setIsDialogOpen(false);
-      }
+      setIsDialogOpen(false);
     } catch (error) {
       console.error('Error creating article:', error);
     }
@@ -116,26 +101,17 @@ const ArticleManager = () => {
     if (!editingArticle) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/articles/${editingArticle._id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          title: editingArticle.title,
-          content: editingArticle.content,
-          excerpt: editingArticle.excerpt,
-          status: editingArticle.status,
-          tags: editingArticle.tags
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setArticles(articles.map(a => a._id === editingArticle._id ? data.article : a));
-        setEditingArticle(null);
-      }
+      const articleData: UpdateArticleData = {
+        title: editingArticle.title,
+        content: editingArticle.content,
+        excerpt: editingArticle.excerpt,
+        status: editingArticle.status,
+        tags: editingArticle.tags
+      };
+      
+      const response = await articleApi.updateArticle(token, editingArticle._id, articleData);
+      setArticles(articles.map(a => a._id === editingArticle._id ? response.article : a));
+      setEditingArticle(null);
     } catch (error) {
       console.error('Error updating article:', error);
     }
@@ -144,16 +120,8 @@ const ArticleManager = () => {
   const handleDeleteArticle = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this article?')) {
       try {
-        const response = await fetch(`${API_BASE_URL}/articles/${id}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (response.ok) {
-          setArticles(articles.filter(article => article._id !== id));
-        }
+        await articleApi.deleteArticle(token, id);
+        setArticles(articles.filter(article => article._id !== id));
       } catch (error) {
         console.error('Error deleting article:', error);
       }
