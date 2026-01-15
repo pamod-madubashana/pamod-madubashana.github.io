@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+
 interface Settings {
   aboutContent: string;
   featuredRepos: string[];
@@ -52,7 +54,7 @@ export const SettingsProvider = ({ children }: SettingsProviderProps) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('/api/settings');
+      const response = await fetch(`${API_BASE_URL}/settings`);
       
       if (!response.ok) {
         const errorText = await response.text();
