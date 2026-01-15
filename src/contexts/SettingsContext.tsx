@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL || ''}/api`;
+import { API_BASE_URL } from '@/lib/apiConfig';
 
 interface Settings {
   aboutContent: string;
