@@ -63,7 +63,7 @@ const SettingsPage = () => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await fetch('/api/settings', {
+        const response = await fetch(`${API_BASE_URL}/settings`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -124,7 +124,7 @@ const SettingsPage = () => {
     setSaving(true);
     
     try {
-      const response = await fetch('/api/settings', {
+      const response = await fetch(`${API_BASE_URL}/settings`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

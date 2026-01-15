@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 import { motion, AnimatePresence } from "framer-motion";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -47,7 +49,7 @@ const Projects = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch('/api/projects');
+        const response = await fetch(`${API_BASE_URL}/projects`);
         const data = await response.json();
         
         if (response.ok) {
