@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => ({
   base: '/', // Custom domain deployment - base path is root
   server: {
     host: "::",
-    port: 8080,
+    port: 3000,
     hmr: {
       overlay: false,
     },
