@@ -25,7 +25,7 @@ export const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <Link to="/" className="inline-block">
-              <span className="text-2xl font-bold text-gradient">
+              <span className="text-2xl font-bold text-foreground/70">
                 P A M O D
               </span>
             </Link>
