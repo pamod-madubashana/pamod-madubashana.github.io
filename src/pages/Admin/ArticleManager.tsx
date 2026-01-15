@@ -10,22 +10,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Search, Plus, Edit, Trash2, Eye, Save, X } from 'lucide-react';
 import { articleApi, Article, CreateArticleData, UpdateArticleData } from '@/api/articleApi';
 
-interface Article {
-  _id: string;
-  title: string;
-  slug: string;
-  content: string;
-  excerpt: string;
-  status: 'draft' | 'published';
-  tags: string[];
-  featuredImage?: string;
-  author: {
-    username: string;
-  };
-  createdAt: string;
-  updatedAt: string;
-}
-
 const ArticleManager = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
