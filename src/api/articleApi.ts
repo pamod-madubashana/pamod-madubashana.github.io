@@ -32,7 +32,7 @@ export interface UpdateArticleData {
   featuredImage?: string;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL || ''}/api`;
 
 export const articleApi = {
   getPublishedArticles: async (): Promise<{ articles: Article[] }> => {
@@ -58,7 +58,7 @@ export const articleApi = {
   },
 
   getArticleById: async (id: string): Promise<Article> => {
-    const response = await fetch(`${API_BASE_URL}/articles/${id}`);
+    const response = await fetch(`${API_BASE_URL}/${id}`);
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`Failed to fetch article: ${response.status} - ${errorText}`);
