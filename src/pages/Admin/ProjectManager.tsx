@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -48,7 +50,7 @@ const ProjectManager = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch('/api/projects/all', {
+        const response = await fetch(`${API_BASE_URL}/projects/all`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -85,7 +87,7 @@ const ProjectManager = () => {
 
   const handleCreateProject = async () => {
     try {
-      const response = await fetch('/api/projects', {
+      const response = await fetch(`${API_BASE_URL}/projects`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -123,7 +125,7 @@ const ProjectManager = () => {
     if (!editingProject) return;
 
     try {
-      const response = await fetch(`/api/projects/${editingProject._id}`, {
+      const response = await fetch(`${API_BASE_URL}/projects/${editingProject._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -155,7 +157,7 @@ const ProjectManager = () => {
   const handleDeleteProject = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this project?')) {
       try {
-        const response = await fetch(`/api/projects/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`
@@ -176,7 +178,7 @@ const ProjectManager = () => {
     if (!project) return;
 
     try {
-      const response = await fetch(`/api/projects/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -202,7 +204,7 @@ const ProjectManager = () => {
     if (!project) return;
 
     try {
-      const response = await fetch(`/api/projects/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

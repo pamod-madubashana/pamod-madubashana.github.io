@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -45,7 +47,7 @@ const ArticleManager = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await fetch('/api/articles', {
+        const response = await fetch(`${API_BASE_URL}/articles`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -82,7 +84,7 @@ const ArticleManager = () => {
 
   const handleCreateArticle = async () => {
     try {
-      const response = await fetch('/api/articles', {
+      const response = await fetch(`${API_BASE_URL}/articles`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -115,7 +117,7 @@ const ArticleManager = () => {
     if (!editingArticle) return;
 
     try {
-      const response = await fetch(`/api/articles/${editingArticle._id}`, {
+      const response = await fetch(`${API_BASE_URL}/articles/${editingArticle._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -143,7 +145,7 @@ const ArticleManager = () => {
   const handleDeleteArticle = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this article?')) {
       try {
-        const response = await fetch(`/api/articles/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/articles/${id}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`
