@@ -16,14 +16,15 @@ const getApiBaseUrl = (): string => {
     }
     
     // Fallback for development when VITE_API_BASE_URL is not set
-    return `${window.location.protocol}//${window.location.hostname}:5000/api`;
+    // Use the production backend URL instead of current hostname
+    return 'https://crucial-berti-premiumqtrust-83e7436c.koyeb.app/api';
   } else {
     // Server-side environment (SSR, etc.) - though unlikely for this app
     const envBaseUrl = process.env.VITE_API_BASE_URL;
     if (envBaseUrl) {
       return envBaseUrl.endsWith('/api') ? envBaseUrl : `${envBaseUrl}/api`;
     }
-    return 'http://localhost:5000/api';
+    return 'https://crucial-berti-premiumqtrust-83e7436c.koyeb.app/api';
   }
 };
 
