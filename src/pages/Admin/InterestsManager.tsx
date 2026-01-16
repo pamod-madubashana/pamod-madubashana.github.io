@@ -85,6 +85,9 @@ const InterestsManager = () => {
 
   const handleCreateInterest = async () => {
     try {
+      // Reorder items for insertion
+      await reorderItemsForInsertion(interests, newInterest.order, '/interests', token);
+      
       const response = await fetch(`${API_BASE_URL}/interests`, {
         method: 'POST',
         headers: {
@@ -102,22 +105,7 @@ const InterestsManager = () => {
           }
         });
         const refreshedData = await refreshResponse.json();
-        
-        // Ensure contiguous ordering after creation
-        if (refreshedData.length > 0) {
-          await reorderAllItemsContiguously(refreshedData, '/interests', token);
-          // Refresh again to get the properly ordered items
-          const finalResponse = await fetch(`${API_BASE_URL}/interests`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          const finalData = await finalResponse.json();
-          setInterests(finalData);
-        } else {
-          setInterests(refreshedData);
-        }
-        
+        setInterests(refreshedData);
         setNewInterest({
           icon: 'Heart',
           label: '',
@@ -134,6 +122,9 @@ const InterestsManager = () => {
     if (!editingInterest) return;
 
     try {
+      // Reorder items for update
+      await reorderItemsForUpdate(interests, editingInterest._id, editingInterest.order, '/interests', token);
+      
       const response = await fetch(`${API_BASE_URL}/interests/${editingInterest._id}`, {
         method: 'PUT',
         headers: {
@@ -151,22 +142,7 @@ const InterestsManager = () => {
           }
         });
         const refreshedData = await refreshResponse.json();
-        
-        // Ensure contiguous ordering after update
-        if (refreshedData.length > 0) {
-          await reorderAllItemsContiguously(refreshedData, '/interests', token);
-          // Refresh again to get the properly ordered items
-          const finalResponse = await fetch(`${API_BASE_URL}/interests`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          const finalData = await finalResponse.json();
-          setInterests(finalData);
-        } else {
-          setInterests(refreshedData);
-        }
-        
+        setInterests(refreshedData);
         setEditingInterest(null);
       }
     } catch (error) {

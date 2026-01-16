@@ -21,9 +21,28 @@ export const reorderItemsForInsertion = async (
   endpoint: string,
   token: string
 ): Promise<void> => {
-  // Simply reorder all items contiguously after insertion
-  // The insertion itself will be handled by the component
-  await reorderAllItemsContiguously(items, endpoint, token);
+  // Filter items that need to be updated (order >= newItemOrder)
+  const itemsToUpdate = items.filter(item => item.order >= newItemOrder);
+  
+  // Sort items by order in descending order to avoid conflicts
+  // Process items with higher orders first
+  const sortedItems = itemsToUpdate.sort((a, b) => b.order - a.order);
+  
+  // Update items sequentially to push them down
+  for (const item of sortedItems) {
+    const response = await fetch(`${API_BASE_URL}${endpoint}/${item._id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ ...item, order: item.order + 1 })
+    });
+    
+    if (!response.ok) {
+      console.error(`Failed to update order for item ${item._id}:`, await response.text());
+    }
+  }
 };
 
 /**
@@ -124,7 +143,58 @@ export const reorderItemsForUpdate = async (
   endpoint: string,
   token: string
 ): Promise<void> => {
-  // Simply reorder all items contiguously after update
-  // The update itself will be handled by the component
-  await reorderAllItemsContiguously(items, endpoint, token);
+  const currentItem = items.find(item => item._id === itemId);
+  if (!currentItem) return;
+
+  const oldOrder = currentItem.order;
+  
+  if (newOrder === oldOrder) return; // No change needed
+
+  if (newOrder > oldOrder) {
+    // Moving down: shift items between oldOrder and newOrder down by 1
+    const itemsToShiftDown = items.filter(item => 
+      item._id !== itemId && item.order > oldOrder && item.order <= newOrder
+    );
+    
+    // Sort in ascending order to process from highest to lowest
+    const sortedDown = itemsToShiftDown.sort((a, b) => b.order - a.order);
+    
+    for (const item of sortedDown) {
+      const response = await fetch(`${API_BASE_URL}${endpoint}/${item._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ ...item, order: item.order - 1 })
+      });
+      
+      if (!response.ok) {
+        console.error(`Failed to update order for item ${item._id}:`, await response.text());
+      }
+    }
+  } else {
+    // Moving up: shift items between newOrder and oldOrder up by 1
+    const itemsToShiftUp = items.filter(item => 
+      item._id !== itemId && item.order >= newOrder && item.order < oldOrder
+    );
+    
+    // Sort in descending order to avoid conflicts
+    const sortedUp = itemsToShiftUp.sort((a, b) => b.order - a.order);
+    
+    for (const item of sortedUp) {
+      const response = await fetch(`${API_BASE_URL}${endpoint}/${item._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ ...item, order: item.order + 1 })
+      });
+      
+      if (!response.ok) {
+        console.error(`Failed to update order for item ${item._id}:`, await response.text());
+      }
+    }
+  }
 };

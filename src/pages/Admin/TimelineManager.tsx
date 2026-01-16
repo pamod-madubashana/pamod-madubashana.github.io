@@ -92,6 +92,9 @@ const TimelineManager = () => {
 
   const handleCreateItem = async () => {
     try {
+      // Reorder items for insertion
+      await reorderItemsForInsertion(timelineItems, newItem.order, '/timeline', token);
+      
       const response = await fetch(`${API_BASE_URL}/timeline`, {
         method: 'POST',
         headers: {
@@ -109,22 +112,7 @@ const TimelineManager = () => {
           }
         });
         const refreshedData = await refreshResponse.json();
-        
-        // Ensure contiguous ordering after creation
-        if (refreshedData.length > 0) {
-          await reorderAllItemsContiguously(refreshedData, '/timeline', token);
-          // Refresh again to get the properly ordered items
-          const finalResponse = await fetch(`${API_BASE_URL}/timeline`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          const finalData = await finalResponse.json();
-          setTimelineItems(finalData);
-        } else {
-          setTimelineItems(refreshedData);
-        }
-        
+        setTimelineItems(refreshedData);
         setNewItem({
           year: '',
           role: '',
@@ -144,6 +132,9 @@ const TimelineManager = () => {
     if (!editingItem) return;
 
     try {
+      // Reorder items for update
+      await reorderItemsForUpdate(timelineItems, editingItem._id, editingItem.order, '/timeline', token);
+      
       const response = await fetch(`${API_BASE_URL}/timeline/${editingItem._id}`, {
         method: 'PUT',
         headers: {
@@ -161,22 +152,7 @@ const TimelineManager = () => {
           }
         });
         const refreshedData = await refreshResponse.json();
-        
-        // Ensure contiguous ordering after update
-        if (refreshedData.length > 0) {
-          await reorderAllItemsContiguously(refreshedData, '/timeline', token);
-          // Refresh again to get the properly ordered items
-          const finalResponse = await fetch(`${API_BASE_URL}/timeline`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          const finalData = await finalResponse.json();
-          setTimelineItems(finalData);
-        } else {
-          setTimelineItems(refreshedData);
-        }
-        
+        setTimelineItems(refreshedData);
         setEditingItem(null);
       }
     } catch (error) {

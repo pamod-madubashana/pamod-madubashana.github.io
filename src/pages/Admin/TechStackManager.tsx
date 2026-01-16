@@ -85,6 +85,9 @@ const TechStackManager = () => {
 
   const handleCreateCategory = async () => {
     try {
+      // Reorder items for insertion
+      await reorderItemsForInsertion(techStackCategories, newCategory.order, '/tech-stack-categories', token);
+      
       const response = await fetch(`${API_BASE_URL}/tech-stack-categories`, {
         method: 'POST',
         headers: {
@@ -105,22 +108,7 @@ const TechStackManager = () => {
           }
         });
         const refreshedData = await refreshResponse.json();
-        
-        // Ensure contiguous ordering after creation
-        if (refreshedData.length > 0) {
-          await reorderAllItemsContiguously(refreshedData, '/tech-stack-categories', token);
-          // Refresh again to get the properly ordered items
-          const finalResponse = await fetch(`${API_BASE_URL}/tech-stack-categories`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          const finalData = await finalResponse.json();
-          setTechStackCategories(finalData);
-        } else {
-          setTechStackCategories(refreshedData);
-        }
-        
+        setTechStackCategories(refreshedData);
         setNewCategory({
           title: '',
           icon: 'Cpu',
@@ -138,6 +126,9 @@ const TechStackManager = () => {
     if (!editingCategory) return;
 
     try {
+      // Reorder items for update
+      await reorderItemsForUpdate(techStackCategories, editingCategory._id, editingCategory.order, '/tech-stack-categories', token);
+      
       const response = await fetch(`${API_BASE_URL}/tech-stack-categories/${editingCategory._id}`, {
         method: 'PUT',
         headers: {
@@ -158,22 +149,7 @@ const TechStackManager = () => {
           }
         });
         const refreshedData = await refreshResponse.json();
-        
-        // Ensure contiguous ordering after update
-        if (refreshedData.length > 0) {
-          await reorderAllItemsContiguously(refreshedData, '/tech-stack-categories', token);
-          // Refresh again to get the properly ordered items
-          const finalResponse = await fetch(`${API_BASE_URL}/tech-stack-categories`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          const finalData = await finalResponse.json();
-          setTechStackCategories(finalData);
-        } else {
-          setTechStackCategories(refreshedData);
-        }
-        
+        setTechStackCategories(refreshedData);
         setEditingCategory(null);
       }
     } catch (error) {

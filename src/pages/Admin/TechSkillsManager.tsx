@@ -84,6 +84,9 @@ const TechSkillsManager = () => {
 
   const handleCreateSkill = async () => {
     try {
+      // Reorder items for insertion
+      await reorderItemsForInsertion(techSkills, newSkill.order, '/tech-skills', token);
+      
       const response = await fetch(`${API_BASE_URL}/tech-skills`, {
         method: 'POST',
         headers: {
@@ -101,22 +104,7 @@ const TechSkillsManager = () => {
           }
         });
         const refreshedData = await refreshResponse.json();
-        
-        // Ensure contiguous ordering after creation
-        if (refreshedData.length > 0) {
-          await reorderAllItemsContiguously(refreshedData, '/tech-skills', token);
-          // Refresh again to get the properly ordered items
-          const finalResponse = await fetch(`${API_BASE_URL}/tech-skills`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          const finalData = await finalResponse.json();
-          setTechSkills(finalData);
-        } else {
-          setTechSkills(refreshedData);
-        }
-        
+        setTechSkills(refreshedData);
         setNewSkill({
           name: '',
           level: 50,
@@ -133,6 +121,9 @@ const TechSkillsManager = () => {
     if (!editingSkill) return;
 
     try {
+      // Reorder items for update
+      await reorderItemsForUpdate(techSkills, editingSkill._id, editingSkill.order, '/tech-skills', token);
+      
       const response = await fetch(`${API_BASE_URL}/tech-skills/${editingSkill._id}`, {
         method: 'PUT',
         headers: {
@@ -150,22 +141,7 @@ const TechSkillsManager = () => {
           }
         });
         const refreshedData = await refreshResponse.json();
-        
-        // Ensure contiguous ordering after update
-        if (refreshedData.length > 0) {
-          await reorderAllItemsContiguously(refreshedData, '/tech-skills', token);
-          // Refresh again to get the properly ordered items
-          const finalResponse = await fetch(`${API_BASE_URL}/tech-skills`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          const finalData = await finalResponse.json();
-          setTechSkills(finalData);
-        } else {
-          setTechSkills(refreshedData);
-        }
-        
+        setTechSkills(refreshedData);
         setEditingSkill(null);
       }
     } catch (error) {
