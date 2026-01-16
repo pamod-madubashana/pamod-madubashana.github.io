@@ -64,7 +64,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="flex min-h-screen bg-background">
       {/* Sidebar Overlay for Mobile */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -86,9 +86,9 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           width: sidebarOpen ? '280px' : '72px'
         }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed lg:static inset-y-0 left-0 z-50 bg-gray-900/95 backdrop-blur-xl border-r border-white/10 flex flex-col"
+        className="fixed lg:static inset-y-0 left-0 z-50 bg-popover backdrop-blur-xl border-r border-border flex flex-col"
       >
-        <div className="flex items-center justify-between p-4 border-b border-white/10">
+        <div className="flex items-center justify-between p-4 border-b border-border">
           <AnimatePresence mode="wait">
             {sidebarOpen && (
               <motion.div
@@ -97,11 +97,11 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 exit={{ opacity: 0, x: -20 }}
                 className="flex items-center gap-3"
               >
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+                  <Shield className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-white">Admin Panel</h1>
+                  <h1 className="text-xl font-bold">Admin Panel</h1>
                   <p className="text-xs text-muted-foreground">Portfolio Manager</p>
                 </div>
               </motion.div>
@@ -112,7 +112,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
             variant="ghost"
             size="icon"
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden text-white hover:bg-white/10"
+            className="lg:hidden hover:bg-muted"
           >
             {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </Button>
@@ -129,14 +129,14 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 to={item.path}
                 className={`group flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 ${
                   isActive
-                    ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-white/20'
-                    : 'text-muted-foreground hover:text-white hover:bg-white/5'
+                    ? 'bg-gradient-to-r from-primary/20 to-secondary/20 border border-primary/30'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}
               >
                 <div className={`p-2 rounded-lg transition-colors ${
                   isActive 
-                    ? 'bg-blue-500/30 text-blue-300' 
-                    : 'group-hover:bg-white/10 text-current'
+                    ? 'bg-primary/30 text-primary' 
+                    : 'group-hover:bg-muted text-current'
                 }`}>
                   <Icon className="w-5 h-5" />
                 </div>
@@ -155,7 +155,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 {isActive && (
                   <motion.div
                     layoutId="activeIndicator"
-                    className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400"
+                    className="ml-auto w-1.5 h-1.5 rounded-full bg-primary"
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />
                 )}
@@ -165,9 +165,9 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         </nav>
 
         {/* User Profile Section */}
-        <div className="p-4 border-t border-white/10">
+        <div className="p-4 border-t border-border">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center text-white font-bold">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-accent to-primary flex items-center justify-center text-primary-foreground font-bold">
               {user?.username?.charAt(0)?.toUpperCase() || 'A'}
             </div>
             <AnimatePresence>
@@ -178,7 +178,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                   exit={{ opacity: 0 }}
                   className="flex-1 min-w-0"
                 >
-                  <p className="text-sm font-medium text-white truncate">
+                  <p className="text-sm font-medium truncate">
                     {user?.username || 'Admin'}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
@@ -200,7 +200,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 <Button
                   variant="outline"
                   onClick={logout}
-                  className="w-full flex items-center gap-2 border-white/20 hover:bg-white/10 text-white"
+                  className="w-full flex items-center gap-2 border-border hover:bg-muted"
                 >
                   <LogOut className="w-4 h-4" />
                   Logout
@@ -214,19 +214,19 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Bar */}
-        <header className="sticky top-0 z-30 bg-gray-900/80 backdrop-blur-xl border-b border-white/10 px-6 py-4">
+        <header className="sticky top-0 z-30 bg-popover/80 backdrop-blur-xl border-b border-border px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden text-white hover:bg-white/10"
+                className="lg:hidden hover:bg-muted"
               >
                 <Menu className="w-5 h-5" />
               </Button>
               <div>
-                <h1 className="text-2xl font-bold text-white">
+                <h1 className="text-2xl font-bold">
                   {navItems.find(item => isActiveRoute(item.path))?.title || 'Dashboard'}
                 </h1>
                 <p className="text-sm text-muted-foreground">
@@ -236,15 +236,15 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
             </div>
             
             <div className="flex items-center gap-3">
-              <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground bg-black/30 px-3 py-2 rounded-full">
-                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+              <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground bg-muted px-3 py-2 rounded-full">
+                <div className="w-2 h-2 rounded-full bg-success animate-pulse"></div>
                 <span>Online</span>
               </div>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={logout}
-                className="text-white hover:bg-white/10"
+                className="hover:bg-muted"
               >
                 <LogOut className="w-5 h-5" />
               </Button>
