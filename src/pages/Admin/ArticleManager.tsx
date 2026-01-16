@@ -189,34 +189,40 @@ const ArticleManager = () => {
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="featuredImage">Featured Image</Label>
-                    <div className="space-y-3">
+                    <div className="flex gap-2">
                       <Input
                         id="featuredImage"
                         type="url"
                         value={newArticle.featuredImage}
                         onChange={(e) => setNewArticle({...newArticle, featuredImage: e.target.value})}
                         placeholder="https://example.com/image.jpg"
+                        className="flex-1"
                       />
-                      <div className="flex items-center gap-2">
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              setImageFile(file);
-                              handleImageUpload(file);
-                            }
-                          }}
-                          disabled={isUploading}
-                          className="flex-1"
-                        />
-                        {isUploading && (
-                          <span className="text-sm text-muted-foreground">Uploading...</span>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground">Enter image URL or upload a file (JPG, PNG, GIF)</p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => document.getElementById('file-upload-create')?.click()}
+                        disabled={isUploading}
+                      >
+                        {isUploading ? 'Uploading...' : 'Choose File'}
+                      </Button>
+                      <Input
+                        id="file-upload-create"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setImageFile(file);
+                            handleImageUpload(file);
+                          }
+                        }}
+                        disabled={isUploading}
+                        className="hidden"
+                      />
                     </div>
+                    <p className="text-sm text-muted-foreground">Enter image URL or upload a file (JPG, PNG, GIF)</p>
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="content">Content</Label>
@@ -384,34 +390,42 @@ const ArticleManager = () => {
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="edit-featuredImage">Featured Image</Label>
-                  <div className="space-y-3">
+                  <div className="flex gap-2">
                     <Input
                       id="edit-featuredImage"
                       type="url"
                       value={editingArticle.featuredImage || ''}
                       onChange={(e) => setEditingArticle({...editingArticle, featuredImage: e.target.value})}
                       placeholder="https://example.com/image.jpg"
+                      className="flex-1"
                     />
-                    <div className="flex items-center gap-2">
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            const reader = new FileReader();
-                            reader.onload = (event) => {
-                              const imageUrl = event.target?.result as string;
-                              setEditingArticle({...editingArticle, featuredImage: imageUrl});
-                            };
-                            reader.readAsDataURL(file);
-                          }
-                        }}
-                        className="flex-1"
-                      />
-                    </div>
-                    <p className="text-sm text-muted-foreground">Enter image URL or upload a file (JPG, PNG, GIF)</p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => document.getElementById('file-upload-edit')?.click()}
+                    >
+                      Choose File
+                    </Button>
+                    <Input
+                      id="file-upload-edit"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = (event) => {
+                            const imageUrl = event.target?.result as string;
+                            setEditingArticle({...editingArticle, featuredImage: imageUrl});
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="hidden"
+                    />
                   </div>
+                  <p className="text-sm text-muted-foreground">Enter image URL or upload a file (JPG, PNG, GIF)</p>
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="edit-content">Content</Label>
