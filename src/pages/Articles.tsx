@@ -108,13 +108,13 @@ const Articles = () => {
                         {formatDate(featuredArticle.createdAt)}
                       </span>
                     </div>
-                    <h2 className="text-2xl md:text-3xl font-bold mb-4 group-hover:text-primary transition-colors">
+                    <h2 className="text-2xl md:text-3xl font-bold mb-4 text-foreground/80 group-hover:text-primary transition-colors">
                       {featuredArticle.title}
                     </h2>
                     <p className="text-muted-foreground mb-6">
                       {featuredArticle.excerpt}
                     </p>
-                    <div className="flex flex-wrap gap-2 mb-6">
+                    <div className="flex flex-wrap gap-2 mb-6 text-muted-foreground">
                       {featuredArticle.tags.map((tag) => (
                         <span
                           key={tag}
