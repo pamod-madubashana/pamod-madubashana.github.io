@@ -377,7 +377,7 @@ const SettingsPage = () => {
           </div>
 
           <div className="mt-8 flex justify-end gap-4">
-            <Button type="submit" disabled={saving} className="flex items-center gap-2">
+            <Button type="submit" disabled={saving} className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white">
               {saving ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>

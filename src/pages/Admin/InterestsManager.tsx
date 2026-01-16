@@ -245,6 +245,7 @@ const InterestsManager = () => {
                         setIsDialogOpen(false);
                         setEditingInterest(null);
                       }}
+                      className="border-input text-foreground hover:bg-accent hover:text-accent-foreground"
                     >
                       Cancel
                     </Button>
@@ -308,7 +309,7 @@ const InterestsManager = () => {
                           size="sm"
                           variant="ghost"
                           onClick={() => handleDeleteInterest(interest._id)}
-                          className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                          className="h-8 w-8 p-0 text-red-500 hover:text-red-500"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>

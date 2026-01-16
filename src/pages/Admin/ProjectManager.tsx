@@ -365,6 +365,7 @@ const ProjectManager = () => {
                     <Button
                       variant="outline"
                       onClick={() => setIsDialogOpen(false)}
+                      className="border-input text-foreground hover:bg-accent hover:text-accent-foreground"
                     >
                       Cancel
                     </Button>
@@ -612,6 +613,7 @@ const ProjectManager = () => {
                   <Button
                     variant="outline"
                     onClick={() => setEditingProject(null)}
+                    className="border-input text-foreground hover:bg-accent hover:text-accent-foreground"
                   >
                     Cancel
                   </Button>
