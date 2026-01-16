@@ -34,7 +34,7 @@ const techStack = [
   { name: "React", level: 65 },
   { name: "TypeScript", level: 75 },
   { name: "MongoDB", level: 85 },
-  { name: "AWS", level: 70 },
+  { name: "AWS", level: 30 },
 ];
 
 export const AboutSection = () => {
