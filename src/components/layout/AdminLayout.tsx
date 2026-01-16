@@ -27,9 +27,33 @@ interface NavItem {
 }
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    // Check if we're on a desktop screen (>1024px) and initialize accordingly
+    return typeof window !== 'undefined' && window.innerWidth >= 1024;
+  });
+  
+
   const location = useLocation();
   const { logout, user } = useAuth();
+  
+  // Handle responsive sidebar state
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        // On desktop screens, ensure sidebar is open
+        setSidebarOpen(true);
+      } else {
+        // On mobile screens, collapse sidebar
+        setSidebarOpen(false);
+      }
+    };
+    
+    // Set up event listener
+    window.addEventListener('resize', handleResize);
+    
+    // Clean up event listener
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const navItems: NavItem[] = [
     {
@@ -99,12 +123,15 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       {/* Sidebar */}
       <motion.aside
         initial={false}
-        animate={{
-          x: sidebarOpen ? 0 : '-100%',
-          width: sidebarOpen ? '280px' : '72px'
+        animate={sidebarOpen ? {
+          x: 0,
+          width: '280px'
+        } : {
+          x: 0,
+          width: '72px'
         }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed lg:static inset-y-0 left-0 z-50 bg-popover backdrop-blur-xl border-r border-border flex flex-col"
+        className="fixed lg:relative inset-y-0 left-0 z-50 bg-popover backdrop-blur-xl border-r border-border flex flex-col"
       >
         <div className="flex items-center justify-between p-4 border-b border-border">
           <AnimatePresence mode="wait">
@@ -129,7 +156,12 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
+            onClick={() => {
+              // Only allow manual toggle on mobile devices
+              if (window.innerWidth < 1024) {
+                setSidebarOpen(!sidebarOpen);
+              }
+            }}
             className="lg:hidden hover:bg-muted"
           >
             {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
