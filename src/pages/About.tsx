@@ -10,37 +10,39 @@ import {
 const timeline = [
   {
     year: "2025 - Present",
-    role: "Full-Stack Developer",
-    company: "",
+    role: "Network Engineering Student",
+    company: "NIBM University",
     description:
-      "Building full-stack applications, Telegram bots, and management dashboards using React, Express, MongoDB, and Pyrogram.",
-    icon: Briefcase,
+      "Pursuing a degree in Network Engineering, focusing on networking fundamentals, system administration, and practical implementations of backend and cloud technologies.",
+    icon: Cloud,
   },
   {
     year: "2024 - 2025",
-    role: "Backend Developer",
+    role: "Full-Stack Developer",
     company: "",
     description:
-      "Developed and maintained Telegram bots with Pyrogram and aiohttp, including multi-bot managers and movie filter systems.",
-    icon: Code2,
+      "Designed and developed full-stack web applications with React, Express, and MongoDB, emphasizing scalable architecture, API integration, and responsive UI/UX design.",
+    icon: Briefcase,
   },
   {
     year: "2023 - 2024",
-    role: "Frontend Developer",
+    role: "Backend Developer",
     company: "",
     description:
-      "Created responsive web interfaces using React and Tailwind CSS, focusing on clean UI and smooth user experience.",
-    icon: Palette,
+      "Implemented robust backend systems, RESTful APIs, and asynchronous services using Node.js and Python, with a focus on reliability, modularity, and performance optimization.",
+    icon: Terminal,
   },
   {
     year: "2022 - 2023",
-    role: "Computer Science Student",
+    role: "Frontend Developer",
     company: "",
     description:
-      "Studying computer science fundamentals with hands-on focus on web development, databases, and backend systems.",
-    icon: GraduationCap,
+      "Developed responsive and interactive web interfaces using React and Tailwind CSS, applying best practices for usability, accessibility, and modern frontend architecture.",
+    icon: Palette,
   },
 ];
+
+
 
 const techCategories = [
   {
@@ -56,7 +58,7 @@ const techCategories = [
   {
     title: "Database",
     icon: Database,
-    skills: ["MongoDB", "Redis"],
+    skills: ["MongoDB", "MySQL", "Redis", "PostgreSQL"],
   },
   {
     title: "Cloud & DevOps",
@@ -113,41 +115,72 @@ const About = () => {
               My <span className="text-gradient">Journey</span>
             </motion.h2>
 
-            <div className="max-w-3xl mx-auto relative">
+            <div className="max-w-4xl mx-auto relative">
               {/* Timeline Line */}
-              <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-border md:-translate-x-px" />
+              <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-border" />
 
-              {timeline.map((item, index) => (
-                <motion.div
-                  key={item.year}
-                  initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className={`relative pl-20 md:pl-0 md:w-1/2 mb-12 ${
-                    index % 2 === 0 ? "md:pr-12 md:text-right" : "md:ml-auto md:pl-12"
-                  }`}
-                >
-                  {/* Timeline Dot */}
-                  <div
-                    className={`absolute left-6 md:left-auto ${
-                      index % 2 === 0 ? "md:-right-6" : "md:-left-6"
-                    } top-0 w-12 h-12 rounded-full bg-card border-4 border-primary flex items-center justify-center shadow-glow`}
+              {timeline.map((item, index) => {
+                const isLeft = index % 2 === 0;
+                return (
+                  <motion.div
+                    key={item.year}
+                    initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="relative mb-12 md:flex md:items-start"
                   >
-                    <item.icon className="w-5 h-5 text-primary" />
-                  </div>
+                    {/* Left Card (even index) */}
+                    <div className={`hidden md:block md:w-1/2 md:pr-12 ${isLeft ? "" : "md:invisible"}`}>
+                      {isLeft && (
+                        <div className="p-6 rounded-xl glass hover-lift text-right">
+                          <span className="text-sm font-mono text-primary">{item.year}</span>
+                          <h3 className="text-xl font-semibold mt-1 text-foreground/50">{item.role}</h3>
+                          <p className="text-sm text-muted-foreground mt-1">{item.company}</p>
+                          <p className="text-sm text-muted-foreground mt-3">{item.description}</p>
+                        </div>
+                      )}
+                    </div>
 
-                  <div className="p-6 rounded-xl glass hover-lift">
-                    <span className="text-sm font-mono text-primary">{item.year}</span>
-                    <h3 className="text-xl font-semibold mt-1 text-foreground/50">{item.role}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">{item.company}</p>
-                    <p className="text-sm text-muted-foreground mt-3">{item.description}</p>
-                  </div>
-                </motion.div>
-              ))}
+                    {/* Timeline Dot - Centered */}
+                    <div className="absolute z-10 left-8 md:left-1/2 -translate-x-1/2 top-0 w-12 h-12 rounded-full bg-card border-4 border-primary flex items-center justify-center shadow-glow">
+                      <item.icon className="w-5 h-5 text-primary" />
+                    </div>
+
+                    {/* Right Card (odd index) */}
+                    <div className={`ml-20 md:ml-0 md:w-1/2 md:pl-12 ${isLeft ? "md:hidden" : ""}`}>
+                      <div className="p-6 rounded-xl glass hover-lift text-left">
+                        <span className="text-sm font-mono text-primary">{item.year}</span>
+                        <h3 className="text-xl font-semibold mt-1 text-foreground/50">{item.role}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">{item.company}</p>
+                        <p className="text-sm text-muted-foreground mt-3">{item.description}</p>
+                      </div>
+                    </div>
+
+                    {/* Mobile Card (shows for all) */}
+                    <div className={`ml-20 md:hidden`}>
+                      <div className="p-6 rounded-xl glass hover-lift">
+                        <span className="text-sm font-mono text-primary">{item.year}</span>
+                        <h3 className="text-xl font-semibold mt-1">{item.role}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">{item.company}</p>
+                        <p className="text-sm text-muted-foreground mt-3">{item.description}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </section>
+
+        {/* 
+        <div className="p-6 rounded-xl glass hover-lift">
+          <span className="text-sm font-mono text-primary">{item.year}</span>
+          <h3 className="text-xl font-semibold mt-1 text-foreground/50">{item.role}</h3>
+          <p className="text-sm text-muted-foreground mt-1">{item.company}</p>
+          <p className="text-sm text-muted-foreground mt-3">{item.description}</p>
+        </div>
+        */}
 
         {/* Tech Stack Section */}
         <section className="py-16">
