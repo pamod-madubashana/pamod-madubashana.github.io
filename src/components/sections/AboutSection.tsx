@@ -44,17 +44,23 @@ export const AboutSection = () => {
   useEffect(() => {
     const fetchTechSkills = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/tech-skills/public`);
+        const response = await fetch(`${API_BASE_URL}/tech-stack-categories/public`);
         if (response.ok) {
-          const techSkillsData = await response.json();
-          // Map the API data to match the expected format
-          const mappedTechStack = techSkillsData.map((skill: any) => ({
-            name: skill.name,
-            level: skill.level
-          }));
-          
-          if (mappedTechStack.length > 0) {
-            setTechStack(mappedTechStack);
+          const techStackCategories = await response.json();
+          // Flatten the categories to get all skills with their levels from the tech skills API
+          // For this section, we'll fetch individual tech skills
+          const skillsResponse = await fetch(`${API_BASE_URL}/tech-skills/public`);
+          if (skillsResponse.ok) {
+            const techSkillsData = await skillsResponse.json();
+            // Map the API data to match the expected format
+            const mappedTechStack = techSkillsData.map((skill: any) => ({
+              name: skill.name,
+              level: skill.level
+            }));
+            
+            if (mappedTechStack.length > 0) {
+              setTechStack(mappedTechStack);
+            }
           }
         }
       } catch (error) {

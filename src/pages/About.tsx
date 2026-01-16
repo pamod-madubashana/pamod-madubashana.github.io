@@ -70,25 +70,15 @@ const About = () => {
         }));
         setTimeline(mappedTimeline);
         
-        // Fetch tech skills data
-        const techSkillsResponse = await fetch(`${API_BASE_URL}/tech-skills/public`);
-        if (techSkillsResponse.ok) {
-          const techSkills = await techSkillsResponse.json();
-          // Group tech skills by category
-          const groupedSkills = {};
-          techSkills.forEach((skill: any) => {
-            const category = skill.category || 'General';
-            if (!groupedSkills[category]) {
-              groupedSkills[category] = [];
-            }
-            groupedSkills[category].push(skill.name);
-          });
-          
-          // Convert to the format expected by the UI
-          const formattedTechCategories = Object.entries(groupedSkills).map(([category, skills]) => ({
-            title: category,
-            icon: iconMap[category] || iconMap['Terminal'], // default icon
-            skills: skills as string[],
+        // Fetch tech stack categories data
+        const techStackResponse = await fetch(`${API_BASE_URL}/tech-stack-categories/public`);
+        if (techStackResponse.ok) {
+          const techStackCategories = await techStackResponse.json();
+          // Map the API data to match the expected format
+          const formattedTechCategories = techStackCategories.map((category: any) => ({
+            title: category.title,
+            icon: iconMap[category.icon as keyof typeof iconMap] || iconMap['Terminal'], // default icon
+            skills: category.skills,
           }));
           
           if (formattedTechCategories.length > 0) {

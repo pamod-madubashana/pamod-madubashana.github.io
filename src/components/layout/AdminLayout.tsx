@@ -63,6 +63,11 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       icon: Code
     },
     {
+      title: 'Tech Stack',
+      path: '/admin/tech-stack',
+      icon: Package
+    },
+    {
       title: 'Interests',
       path: '/admin/interests',
       icon: Heart

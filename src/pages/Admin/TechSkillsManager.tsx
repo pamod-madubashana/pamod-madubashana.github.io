@@ -24,7 +24,7 @@ interface TechSkill {
   _id: string;
   name: string;
   level: number; // 0-100 percentage
-  category?: string; // e.g., 'frontend', 'backend', 'database', 'devops'
+  category?: string; // Not used but kept for compatibility
   order: number;
   createdAt: string;
   updatedAt: string;
@@ -41,7 +41,6 @@ const TechSkillsManager = () => {
   const [newSkill, setNewSkill] = useState({
     name: '',
     level: 50,
-    category: 'General',
     order: 0
   });
 
@@ -76,8 +75,7 @@ const TechSkillsManager = () => {
       const term = searchTerm.toLowerCase();
       setFilteredSkills(
         techSkills.filter(skill => 
-          skill.name.toLowerCase().includes(term) ||
-          (skill.category && skill.category.toLowerCase().includes(term))
+          skill.name.toLowerCase().includes(term)
         )
       );
     }
@@ -100,7 +98,6 @@ const TechSkillsManager = () => {
         setNewSkill({
           name: '',
           level: 50,
-          category: 'General',
           order: 0
         });
         setIsDialogOpen(false);
@@ -152,7 +149,8 @@ const TechSkillsManager = () => {
     }
   };
 
-  const getIconByCategory = (category: string) => {
+  const getIconByCategory = (category?: string) => {
+    if (!category) return Cpu;
     switch(category.toLowerCase()) {
       case 'frontend':
         return Code;
@@ -218,41 +216,20 @@ const TechSkillsManager = () => {
                       }
                     />
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="category">Category</Label>
-                      <select
-                        id="category"
-                        value={editingSkill ? editingSkill.category || 'General' : newSkill.category}
-                        onChange={(e) => 
-                          editingSkill 
-                            ? setEditingSkill({...editingSkill, category: e.target.value}) 
-                            : setNewSkill({...newSkill, category: e.target.value})
-                        }
-                        className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                      >
-                        <option value="General">General</option>
-                        <option value="Frontend">Frontend</option>
-                        <option value="Backend">Backend</option>
-                        <option value="Database">Database</option>
-                        <option value="DevOps">DevOps</option>
-                      </select>
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="order">Order</Label>
-                      <Input
-                        id="order"
-                        type="number"
-                        value={editingSkill ? editingSkill.order : newSkill.order}
-                        onChange={(e) => 
-                          editingSkill 
-                            ? setEditingSkill({...editingSkill, order: parseInt(e.target.value)}) 
-                            : setNewSkill({...newSkill, order: parseInt(e.target.value)})
-                        }
-                        placeholder="Order position"
-                        className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
-                      />
-                    </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="order">Order</Label>
+                    <Input
+                      id="order"
+                      type="number"
+                      value={editingSkill ? editingSkill.order : newSkill.order}
+                      onChange={(e) => 
+                        editingSkill 
+                          ? setEditingSkill({...editingSkill, order: parseInt(e.target.value)}) 
+                          : setNewSkill({...newSkill, order: parseInt(e.target.value)})
+                      }
+                      placeholder="Order position"
+                      className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
+                    />
                   </div>
                   <div className="flex justify-end gap-2 pt-4">
                     <Button
@@ -301,7 +278,7 @@ const TechSkillsManager = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredSkills.map((skill) => {
-              const IconComponent = getIconByCategory(skill.category || 'General');
+              const IconComponent = getIconByCategory(skill.category);
               return (
                 <Card key={skill._id} className="glass border border-primary/30">
                   <CardHeader>
@@ -311,7 +288,7 @@ const TechSkillsManager = () => {
                           <IconComponent className="w-5 h-5 text-primary" />
                           {skill.name}
                         </CardTitle>
-                        <CardDescription className="mt-1 capitalize">{skill.category}</CardDescription>
+                        <CardDescription className="mt-1">Level: {skill.level}%</CardDescription>
                       </div>
                       <div className="flex gap-1">
                         <Button

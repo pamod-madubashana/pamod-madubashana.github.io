@@ -21,6 +21,7 @@ import Register from './pages/Auth/Register';
 import TimelineManager from './pages/Admin/TimelineManager';
 import TechSkillsManager from './pages/Admin/TechSkillsManager';
 import InterestsManager from './pages/Admin/InterestsManager';
+import TechStackManager from './pages/Admin/TechStackManager';
 
 const queryClient = new QueryClient();
 
@@ -95,6 +96,16 @@ const App = () => (
                   <ProtectedRoute adminOnly={true}>
                     <AdminLayout>
                       <TechSkillsManager />
+                    </AdminLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin/tech-stack" 
+                element={
+                  <ProtectedRoute adminOnly={true}>
+                    <AdminLayout>
+                      <TechStackManager />
                     </AdminLayout>
                   </ProtectedRoute>
                 } 
