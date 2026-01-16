@@ -1,3 +1,5 @@
+/// <reference types="./src/types/connect-history-api-fallback" />
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
@@ -21,13 +23,13 @@ export default defineConfig(({ mode }) => ({
         rewrite: (path) => path.replace(/^\/api/, ''), // Remove /api prefix before forwarding
       },
     },
-    middlewares: [(req, res, next) => {
+    middlewares: [((req: any, res: any, next: () => void) => {
       history({
         verbose: false,
         disableDotRule: true,
         htmlAcceptHeaders: ['text/html', 'application/xhtml+xml'],
       })(req, res, next);
-    }],
+    })],
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
