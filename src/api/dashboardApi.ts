@@ -13,6 +13,15 @@ export interface DashboardStats {
     drafts: number;
     change: string;
   };
+  timeline: {
+    total: number;
+  };
+  interests: {
+    total: number;
+  };
+  techSkills: {
+    total: number;
+  };
   users: {
     total: number;
     change: string;

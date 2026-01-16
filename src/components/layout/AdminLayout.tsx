@@ -11,7 +11,10 @@ import {
   Users,
   BarChart3,
   Package,
-  Shield
+  Shield,
+  Calendar,
+  Code,
+  Heart
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
@@ -43,6 +46,21 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       title: 'Projects',
       path: '/admin/projects',
       icon: Package
+    },
+    {
+      title: 'Timeline',
+      path: '/admin/timeline',
+      icon: Calendar
+    },
+    {
+      title: 'Tech Skills',
+      path: '/admin/tech-skills',
+      icon: Code
+    },
+    {
+      title: 'Interests',
+      path: '/admin/interests',
+      icon: Heart
     },
     {
       title: 'Settings',

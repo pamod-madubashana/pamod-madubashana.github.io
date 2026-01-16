@@ -11,13 +11,16 @@ import About from "./pages/About";
 import Projects from "./pages/Projects";
 import Articles from "./pages/Articles";
 import NotFound from "./pages/NotFound";
-import AdminDashboard from "./pages/Admin/ProfessionalDashboard";
+import Dashboard from './pages/Admin/Dashboard';
 import ArticleManager from "./pages/Admin/ArticleManager";
 import SettingsPage from "./pages/Admin/Settings";
 import ProjectManager from "./pages/Admin/ProjectManager";
-import AdminLayout from "./components/layout/AdminLayout";
-import Login from "./pages/Auth/Login";
-import Register from "./pages/Auth/Register";
+import AdminLayout from './components/layout/AdminLayout';
+import Login from './pages/Auth/Login';
+import Register from './pages/Auth/Register';
+import TimelineManager from './pages/Admin/TimelineManager';
+import TechSkillsManager from './pages/Admin/TechSkillsManager';
+import InterestsManager from './pages/Admin/InterestsManager';
 
 const queryClient = new QueryClient();
 
@@ -41,7 +44,7 @@ const App = () => (
                 element={
                   <ProtectedRoute adminOnly={true}>
                     <AdminLayout>
-                      <AdminDashboard />
+                      <Dashboard />
                     </AdminLayout>
                   </ProtectedRoute>
                 } 
@@ -72,6 +75,36 @@ const App = () => (
                   <ProtectedRoute adminOnly={true}>
                     <AdminLayout>
                       <ProjectManager />
+                    </AdminLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin/timeline" 
+                element={
+                  <ProtectedRoute adminOnly={true}>
+                    <AdminLayout>
+                      <TimelineManager />
+                    </AdminLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin/tech-skills" 
+                element={
+                  <ProtectedRoute adminOnly={true}>
+                    <AdminLayout>
+                      <TechSkillsManager />
+                    </AdminLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin/interests" 
+                element={
+                  <ProtectedRoute adminOnly={true}>
+                    <AdminLayout>
+                      <InterestsManager />
                     </AdminLayout>
                   </ProtectedRoute>
                 } 
