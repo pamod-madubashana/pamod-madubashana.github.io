@@ -349,7 +349,10 @@ const TimelineManager = () => {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => setEditingItem(item)}
+                          onClick={() => {
+                            setEditingItem(item);
+                            setIsDialogOpen(true);
+                          }}
                           className="h-8 w-8 p-0"
                         >
                           <Edit className="w-4 h-4" />

@@ -49,7 +49,7 @@ const TechSkillsManager = () => {
   useEffect(() => {
     const fetchTechSkills = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/dashboard/enhanced/tech-skills`, {
+        const response = await fetch(`${API_BASE_URL}/tech-skills`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -317,7 +317,10 @@ const TechSkillsManager = () => {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => setEditingSkill(skill)}
+                          onClick={() => {
+                            setEditingSkill(skill);
+                            setIsDialogOpen(true);
+                          }}
                           className="h-8 w-8 p-0"
                         >
                           <Edit className="w-4 h-4" />

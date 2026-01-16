@@ -49,7 +49,7 @@ const InterestsManager = () => {
   useEffect(() => {
     const fetchInterests = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/dashboard/enhanced/interests`, {
+        const response = await fetch(`${API_BASE_URL}/interests`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -300,7 +300,10 @@ const InterestsManager = () => {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => setEditingInterest(interest)}
+                          onClick={() => {
+                            setEditingInterest(interest);
+                            setIsDialogOpen(true);
+                          }}
                           className="h-8 w-8 p-0"
                         >
                           <Edit className="w-4 h-4" />
