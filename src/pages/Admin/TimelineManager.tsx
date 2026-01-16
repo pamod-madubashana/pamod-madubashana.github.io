@@ -204,7 +204,7 @@ const TimelineManager = () => {
                           : setNewItem({...newItem, year: e.target.value})
                       }
                       placeholder="e.g., 2024 - Present"
-                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -218,7 +218,7 @@ const TimelineManager = () => {
                           : setNewItem({...newItem, role: e.target.value})
                       }
                       placeholder="e.g., Software Engineer"
-                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -232,7 +232,7 @@ const TimelineManager = () => {
                           : setNewItem({...newItem, company: e.target.value})
                       }
                       placeholder="e.g., Acme Corp"
-                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -246,7 +246,7 @@ const TimelineManager = () => {
                           : setNewItem({...newItem, description: e.target.value})
                       }
                       placeholder="Describe your role and responsibilities"
-                      className="min-h-[100px] w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                      className="min-h-[100px] w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -260,7 +260,7 @@ const TimelineManager = () => {
                             ? setEditingItem({...editingItem, icon: e.target.value}) 
                             : setNewItem({...newItem, icon: e.target.value})
                         }
-                        className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                        className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       >
                         <option value="Briefcase">Briefcase</option>
                         <option value="Clock">Clock</option>
@@ -282,7 +282,7 @@ const TimelineManager = () => {
                             : setNewItem({...newItem, order: parseInt(e.target.value)})
                         }
                         placeholder="Order position"
-                        className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+                        className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
                   </div>
