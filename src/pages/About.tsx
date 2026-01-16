@@ -6,43 +6,24 @@ import {
   Database, Cloud, Palette, Terminal, 
   Heart, Coffee, Music, Mountain 
 } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { timelineApi, TimelineItem } from '@/api/timelineApi';
 
-const timeline = [
-  {
-    year: "2025 - Present",
-    role: "Network Engineering Student",
-    company: "NIBM University",
-    description:
-      "Pursuing a degree in Network Engineering, focusing on networking fundamentals, system administration, and practical implementations of backend and cloud technologies.",
-    icon: Cloud,
-  },
-  {
-    year: "2024 - 2025",
-    role: "Full-Stack Developer",
-    company: "",
-    description:
-      "Designed and developed full-stack web applications with React, Express, and MongoDB, emphasizing scalable architecture, API integration, and responsive UI/UX design.",
-    icon: Briefcase,
-  },
-  {
-    year: "2023 - 2024",
-    role: "Backend Developer",
-    company: "",
-    description:
-      "Implemented robust backend systems, RESTful APIs, and asynchronous services using Node.js and Python, with a focus on reliability, modularity, and performance optimization.",
-    icon: Terminal,
-  },
-  {
-    year: "2022 - 2023",
-    role: "Frontend Developer",
-    company: "",
-    description:
-      "Developed responsive and interactive web interfaces using React and Tailwind CSS, applying best practices for usability, accessibility, and modern frontend architecture.",
-    icon: Palette,
-  },
-];
-
-
+// Icon mapping for dynamic icon rendering
+const iconMap = {
+  Briefcase,
+  Cloud,
+  Terminal,
+  Palette,
+  Database,
+  GraduationCap,
+  Award,
+  Code2,
+  Heart,
+  Coffee,
+  Music,
+  Mountain,
+};
 
 const techCategories = [
   {
@@ -75,6 +56,64 @@ const interests = [
 ];
 
 const About = () => {
+  const [timeline, setTimeline] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchTimeline = async () => {
+      try {
+        const timelineData = await timelineApi.getTimeline();
+        // Map the API data to match the expected format
+        const mappedTimeline = timelineData.map((item: TimelineItem) => ({
+          ...item,
+          icon: iconMap[item.icon as keyof typeof iconMap] || Briefcase // default to Briefcase if icon not found
+        }));
+        setTimeline(mappedTimeline);
+      } catch (error) {
+        console.error('Error fetching timeline:', error);
+        // Set default timeline if API fails
+        setTimeline([
+          {
+            year: "2025 - Present",
+            role: "Network Engineering Student",
+            company: "NIBM University",
+            description:
+              "Pursuing a degree in Network Engineering, focusing on networking fundamentals, system administration, and practical implementations of backend and cloud technologies.",
+            icon: Cloud,
+          },
+          {
+            year: "2024 - 2025",
+            role: "Full-Stack Developer",
+            company: "",
+            description:
+              "Designed and developed full-stack web applications with React, Express, and MongoDB, emphasizing scalable architecture, API integration, and responsive UI/UX design.",
+            icon: Briefcase,
+          },
+          {
+            year: "2023 - 2024",
+            role: "Backend Developer",
+            company: "",
+            description:
+              "Implemented robust backend systems, RESTful APIs, and asynchronous services using Node.js and Python, with a focus on reliability, modularity, and performance optimization.",
+            icon: Terminal,
+          },
+          {
+            year: "2022 - 2023",
+            role: "Frontend Developer",
+            company: "",
+            description:
+              "Developed responsive and interactive web interfaces using React and Tailwind CSS, applying best practices for usability, accessibility, and modern frontend architecture.",
+            icon: Palette,
+          },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchTimeline();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -104,83 +143,80 @@ const About = () => {
         </section>
 
         {/* Timeline Section */}
-        <section className="py-16 bg-muted/20">
-          <div className="container mx-auto px-4">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-3xl md:text-4xl font-bold text-center mb-16"
-            >
-              <span className="text-foreground/70">My</span> <span className="text-gradient">Journey</span>
-            </motion.h2>
+        {loading ? (
+          <div className="py-16 flex justify-center items-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        ) : (
+          <section className="py-16 bg-muted/20">
+            <div className="container mx-auto px-4">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-3xl md:text-4xl font-bold text-center mb-16"
+              >
+                <span className="text-foreground/70">My</span> <span className="text-gradient">Journey</span>
+              </motion.h2>
 
-            <div className="max-w-4xl mx-auto relative">
-              {/* Timeline Line */}
-              <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-border" />
+              <div className="max-w-4xl mx-auto relative">
+                {/* Timeline Line */}
+                <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-border" />
 
-              {timeline.map((item, index) => {
-                const isLeft = index % 2 === 0;
-                return (
-                  <motion.div
-                    key={item.year}
-                    initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="relative mb-12 md:flex md:items-start"
-                  >
-                    {/* Left Card (even index) */}
-                    <div className={`hidden md:block md:w-1/2 md:pr-12 ${isLeft ? "" : "md:invisible"}`}>
-                      {isLeft && (
-                        <div className="p-6 rounded-xl glass hover-lift text-right">
+                {timeline.map((item, index) => {
+                  const isLeft = index % 2 === 0;
+                  return (
+                    <motion.div
+                      key={item._id || item.year}
+                      initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                      className="relative mb-12 md:flex md:items-start"
+                    >
+                      {/* Left Card (even index) */}
+                      <div className={`hidden md:block md:w-1/2 md:pr-12 ${isLeft ? "" : "md:invisible"}`}>
+                        {isLeft && (
+                          <div className="p-6 rounded-xl glass hover-lift text-right">
+                            <span className="text-sm font-mono text-primary">{item.year}</span>
+                            <h3 className="text-xl font-semibold mt-1 text-foreground/50">{item.role}</h3>
+                            <p className="text-sm text-muted-foreground mt-1">{item.company}</p>
+                            <p className="text-sm text-muted-foreground mt-3">{item.description}</p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Timeline Dot - Centered */}
+                      <div className="absolute z-10 left-8 md:left-1/2 -translate-x-1/2 top-0 w-12 h-12 rounded-full bg-card border-4 border-primary flex items-center justify-center shadow-glow">
+                        <item.icon className="w-5 h-5 text-primary" />
+                      </div>
+
+                      {/* Right Card (odd index) */}
+                      <div className={`ml-20 md:ml-0 md:w-1/2 md:pl-12 ${isLeft ? "md:hidden" : ""}`}>
+                        <div className="p-6 rounded-xl glass hover-lift text-left">
                           <span className="text-sm font-mono text-primary">{item.year}</span>
                           <h3 className="text-xl font-semibold mt-1 text-foreground/50">{item.role}</h3>
                           <p className="text-sm text-muted-foreground mt-1">{item.company}</p>
                           <p className="text-sm text-muted-foreground mt-3">{item.description}</p>
                         </div>
-                      )}
-                    </div>
-
-                    {/* Timeline Dot - Centered */}
-                    <div className="absolute z-10 left-8 md:left-1/2 -translate-x-1/2 top-0 w-12 h-12 rounded-full bg-card border-4 border-primary flex items-center justify-center shadow-glow">
-                      <item.icon className="w-5 h-5 text-primary" />
-                    </div>
-
-                    {/* Right Card (odd index) */}
-                    <div className={`ml-20 md:ml-0 md:w-1/2 md:pl-12 ${isLeft ? "md:hidden" : ""}`}>
-                      <div className="p-6 rounded-xl glass hover-lift text-left">
-                        <span className="text-sm font-mono text-primary">{item.year}</span>
-                        <h3 className="text-xl font-semibold mt-1 text-foreground/50">{item.role}</h3>
-                        <p className="text-sm text-muted-foreground mt-1">{item.company}</p>
-                        <p className="text-sm text-muted-foreground mt-3">{item.description}</p>
                       </div>
-                    </div>
 
-                    {/* Mobile Card (shows for all) */}
-                    <div className={`ml-20 md:hidden`}>
-                      <div className="p-6 rounded-xl glass hover-lift">
-                        <span className="text-sm font-mono text-primary">{item.year}</span>
-                        <h3 className="text-xl font-semibold mt-1">{item.role}</h3>
-                        <p className="text-sm text-muted-foreground mt-1">{item.company}</p>
-                        <p className="text-sm text-muted-foreground mt-3">{item.description}</p>
+                      {/* Mobile Card (shows for all) */}
+                      <div className={`ml-20 md:hidden`}>
+                        <div className="p-6 rounded-xl glass hover-lift">
+                          <span className="text-sm font-mono text-primary">{item.year}</span>
+                          <h3 className="text-xl font-semibold mt-1">{item.role}</h3>
+                          <p className="text-sm text-muted-foreground mt-1">{item.company}</p>
+                          <p className="text-sm text-muted-foreground mt-3">{item.description}</p>
+                        </div>
                       </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
+                    </motion.div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        </section>
-
-        {/* 
-        <div className="p-6 rounded-xl glass hover-lift">
-          <span className="text-sm font-mono text-primary">{item.year}</span>
-          <h3 className="text-xl font-semibold mt-1 text-foreground/50">{item.role}</h3>
-          <p className="text-sm text-muted-foreground mt-1">{item.company}</p>
-          <p className="text-sm text-muted-foreground mt-3">{item.description}</p>
-        </div>
-        */}
+          </section>
+        )}
 
         {/* Tech Stack Section */}
         <section className="py-16">
