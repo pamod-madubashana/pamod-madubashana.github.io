@@ -11,7 +11,7 @@ import About from "./pages/About";
 import Projects from "./pages/Projects";
 import Articles from "./pages/Articles";
 import NotFound from "./pages/NotFound";
-import AdminDashboard from "./pages/Admin/DashboardNew";
+import AdminDashboard from "./pages/Admin/ProfessionalDashboard";
 import ArticleManager from "./pages/Admin/ArticleManager";
 import SettingsPage from "./pages/Admin/Settings";
 import ProjectManager from "./pages/Admin/ProjectManager";

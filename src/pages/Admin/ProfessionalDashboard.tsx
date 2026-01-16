@@ -21,9 +21,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
-import { dashboardApi, DashboardStats, RecentActivity } from '@/api/dashboardApi';
 
-// Mock data types
 interface StatCard {
   title: string;
   value: string;
@@ -34,46 +32,91 @@ interface StatCard {
   trend: 'up' | 'down';
 }
 
-interface RecentItem {
+interface RecentActivity {
   id: string;
   title: string;
   type: 'article' | 'project';
   date: string;
-  status: 'published' | 'draft' | 'pending';
+  status: 'draft' | 'published';
+  author: string;
 }
 
-const AdminDashboard = () => {
-  const { token } = useAuth();
-  const [dashboardData, setDashboardData] = useState<{
-    stats: DashboardStats;
-    recentActivity: RecentActivity[];
-  } | null>(null);
+const ProfessionalDashboard = () => {
+  const { token, user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch dashboard data
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      if (!token) return;
-      
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await dashboardApi.getStats(token);
-        setDashboardData(data);
-      } catch (err: any) {
-        setError(err.message || 'Failed to load dashboard data');
-        console.error('Dashboard fetch error:', err);
-      } finally {
-        setLoading(false);
+  // Mock data that simulates real API response
+  const [dashboardData] = useState({
+    stats: {
+      articles: {
+        total: 24,
+        published: 18,
+        drafts: 6,
+        change: '+12%'
+      },
+      projects: {
+        total: 8,
+        published: 6,
+        drafts: 2,
+        change: '+3'
+      },
+      users: {
+        total: 1200,
+        change: '+8%'
+      },
+      engagement: {
+        views: 12400,
+        rate: '64%',
+        change: '+18%'
       }
-    };
-
-    fetchDashboardData();
-  }, [token]);
+    },
+    recentActivity: [
+      {
+        id: "1",
+        title: "Building a Modern React Dashboard",
+        type: "article" as const,
+        date: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+        status: "published" as const,
+        author: user?.username || "Admin"
+      },
+      {
+        id: "2",
+        title: "Portfolio Website Redesign",
+        type: "project" as const,
+        date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+        status: "published" as const,
+        author: "You"
+      },
+      {
+        id: "3",
+        title: "Advanced TypeScript Patterns",
+        type: "article" as const,
+        date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+        status: "draft" as const,
+        author: user?.username || "Admin"
+      },
+      {
+        id: "4",
+        title: "Mobile App Development Guide",
+        type: "project" as const,
+        date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+        status: "published" as const,
+        author: "You"
+      },
+      {
+        id: "5",
+        title: "State Management Best Practices",
+        type: "article" as const,
+        date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days ago
+        status: "published" as const,
+        author: user?.username || "Admin"
+      }
+    ]
+  });
 
   // Transform dashboard stats to UI format
-  const statsCards = dashboardData ? [
+  const statsCards = [
     {
       title: "Total Articles",
       value: dashboardData.stats.articles.total.toString(),
@@ -110,7 +153,7 @@ const AdminDashboard = () => {
       bgColor: "bg-orange-500/10",
       trend: 'up' as 'up' | 'down'
     }
-  ] : [];
+  ];
 
   const quickActions = [
     {
@@ -168,6 +211,15 @@ const AdminDashboard = () => {
     });
   };
 
+  // Simulate loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 800);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
@@ -179,7 +231,9 @@ const AdminDashboard = () => {
       >
         <div className="md:col-span-2">
           <h1 className="text-4xl font-bold text-white mb-2">
-            Good morning, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Admin</span>
+            Good morning, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+              {user?.username || 'Admin'}
+            </span>
           </h1>
           <p className="text-muted-foreground text-lg">
             Here's what's happening with your portfolio today.
@@ -216,37 +270,37 @@ const AdminDashboard = () => {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {statsCards.map((stat, index) => {
-          const Icon = stat.icon;
-          return (
-            <motion.div
-              key={stat.title}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.1 * index }}
-              whileHover={{ y: -5 }}
-              className="group"
-            >
-              <Card className="glass border border-white/10 hover:border-white/30 transition-all duration-300 h-full overflow-hidden relative bg-gradient-to-br from-gray-800/50 to-gray-900/50">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <CardHeader className="relative pb-3">
-                  <div className="flex items-center justify-between">
-                    <div className={`${stat.bgColor} p-3 rounded-xl`}>
-                      <Icon className={`w-6 h-6 ${stat.color}`} />
+            const Icon = stat.icon;
+            return (
+              <motion.div
+                key={stat.title}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.1 * index }}
+                whileHover={{ y: -5 }}
+                className="group"
+              >
+                <Card className="glass border border-white/10 hover:border-white/30 transition-all duration-300 h-full overflow-hidden relative bg-gradient-to-br from-gray-800/50 to-gray-900/50">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <CardHeader className="relative pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className={`${stat.bgColor} p-3 rounded-xl`}>
+                        <Icon className={`w-6 h-6 ${stat.color}`} />
+                      </div>
+                      <div className={`flex items-center gap-1 text-sm font-medium ${
+                        stat.trend === 'up' ? 'text-green-400' : 'text-red-400'
+                      }`}>
+                        <ArrowUpRight className={`w-4 h-4 ${stat.trend === 'down' ? 'rotate-180' : ''}`} />
+                        {stat.change}
+                      </div>
                     </div>
-                    <div className={`flex items-center gap-1 text-sm font-medium ${
-                      stat.trend === 'up' ? 'text-green-400' : 'text-red-400'
-                    }`}>
-                      <ArrowUpRight className={`w-4 h-4 ${stat.trend === 'down' ? 'rotate-180' : ''}`} />
-                      {stat.change}
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="relative pt-0">
-                  <p className="text-3xl font-bold text-white mb-1">{stat.value}</p>
-                  <p className="text-muted-foreground text-sm">{stat.title}</p>
-                </CardContent>
-              </Card>
-            </motion.div>
+                  </CardHeader>
+                  <CardContent className="relative pt-0">
+                    <p className="text-3xl font-bold text-white mb-1">{stat.value}</p>
+                    <p className="text-muted-foreground text-sm">{stat.title}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             );
           })}
         </motion.div>
@@ -327,7 +381,7 @@ const AdminDashboard = () => {
             <Card className="glass border border-white/10 bg-gradient-to-br from-gray-800/50 to-gray-900/50">
               <CardContent className="p-0">
                 <div className="divide-y divide-white/10">
-                  {dashboardData?.recentActivity.map((item, index) => (
+                  {dashboardData.recentActivity.map((item, index) => (
                     <motion.div
                       key={item.id}
                       initial={{ opacity: 0, x: -20 }}
@@ -385,30 +439,45 @@ const AdminDashboard = () => {
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-muted-foreground">Articles Published</span>
-                    <span className="text-white font-medium">18/24</span>
+                    <span className="text-white font-medium">
+                      {dashboardData.stats.articles.published}/{dashboardData.stats.articles.total}
+                    </span>
                   </div>
                   <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div className="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full" style={{width: '75%'}}></div>
+                    <div 
+                      className="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full" 
+                      style={{width: `${(dashboardData.stats.articles.published / dashboardData.stats.articles.total) * 100}%`}}
+                    ></div>
                   </div>
                 </div>
                 
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-muted-foreground">Projects Completed</span>
-                    <span className="text-white font-medium">8/12</span>
+                    <span className="text-white font-medium">
+                      {dashboardData.stats.projects.published}/{dashboardData.stats.projects.total}
+                    </span>
                   </div>
                   <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full" style={{width: '67%'}}></div>
+                    <div 
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full" 
+                      style={{width: `${(dashboardData.stats.projects.published / dashboardData.stats.projects.total) * 100}%`}}
+                    ></div>
                   </div>
                 </div>
                 
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-muted-foreground">Profile Views</span>
-                    <span className="text-white font-medium">12.4K</span>
+                    <span className="text-white font-medium">
+                      {dashboardData.stats.engagement.views.toLocaleString()}
+                    </span>
                   </div>
                   <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div className="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full" style={{width: '85%'}}></div>
+                    <div 
+                      className="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full" 
+                      style={{width: '85%'}}
+                    ></div>
                   </div>
                 </div>
               </div>
@@ -462,4 +531,4 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+export default ProfessionalDashboard;
