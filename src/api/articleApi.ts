@@ -32,7 +32,7 @@ export interface UpdateArticleData {
   featuredImage?: string;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+import { API_BASE_URL } from '../lib/apiConfig';
 
 export const articleApi = {
   getPublishedArticles: async (): Promise<{ articles: Article[] }> => {
