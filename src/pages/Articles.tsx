@@ -73,7 +73,7 @@ const Articles = () => {
                 Blog
               </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-                Thoughts & <span className="text-gradient">Ideas</span>
+                <span className="text-foreground/70">Thoughts & </span><span className="text-gradient">Ideas</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Writing about web development, programming best practices, and lessons 

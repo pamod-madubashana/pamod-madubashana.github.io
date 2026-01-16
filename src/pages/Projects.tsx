@@ -92,7 +92,7 @@ const Projects = () => {
                 My Work
               </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-                Featured <span className="text-gradient">Projects</span>
+                <span className="text-foreground/70">Featured </span><span className="text-gradient">Projects</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 A collection of projects I've built over the years. From full-stack applications 
