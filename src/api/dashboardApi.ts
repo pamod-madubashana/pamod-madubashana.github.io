@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '../lib/apiConfig';
+import { apiCache, cacheKeys } from '../lib/cache';
 
 export interface DashboardStats {
   articles: {
@@ -62,6 +63,13 @@ export interface AnalyticsData {
 
 export const dashboardApi = {
   getStats: async (token: string): Promise<DashboardData> => {
+    const cacheKey = cacheKeys.dashboard.stats(token);
+    const cachedData = apiCache.get<DashboardData>(cacheKey);
+    
+    if (cachedData) {
+      return cachedData;
+    }
+    
     const response = await fetch(`${API_BASE_URL}/dashboard/stats`, {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -73,10 +81,20 @@ export const dashboardApi = {
       throw new Error(`Failed to fetch dashboard stats: ${response.status} - ${errorText}`);
     }
     
-    return response.json();
+    const data = await response.json();
+    apiCache.set(cacheKey, data, 300000); // 5 minute TTL for dashboard stats
+    
+    return data;
   },
 
   getAnalytics: async (token: string): Promise<AnalyticsData> => {
+    const cacheKey = cacheKeys.dashboard.analytics(token);
+    const cachedData = apiCache.get<AnalyticsData>(cacheKey);
+    
+    if (cachedData) {
+      return cachedData;
+    }
+    
     const response = await fetch(`${API_BASE_URL}/dashboard/analytics`, {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -88,6 +106,9 @@ export const dashboardApi = {
       throw new Error(`Failed to fetch analytics: ${response.status} - ${errorText}`);
     }
     
-    return response.json();
+    const data = await response.json();
+    apiCache.set(cacheKey, data, 300000); // 5 minute TTL for dashboard analytics
+    
+    return data;
   }
 };

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { API_BASE_URL } from '@/lib/apiConfig';
+import { settingsApi } from '@/api/settingsApi';
 
 interface Settings {
   aboutContent: string;
@@ -53,14 +53,8 @@ export const SettingsProvider = ({ children }: SettingsProviderProps) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`${API_BASE_URL}/settings`);
       
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to fetch settings: ${response.status} - ${errorText}`);
-      }
-      
-      const data = await response.json();
+      const data = await settingsApi.getSettings();
       setSettings(data);
     } catch (err: any) {
       setError(err.message || 'Error fetching settings');

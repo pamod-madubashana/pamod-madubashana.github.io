@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { API_BASE_URL } from '@/lib/apiConfig';
+import { projectApi } from '@/api/projectApi';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -49,15 +49,8 @@ const ProjectManager = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/projects/all`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        const data = await response.json();
-        if (response.ok) {
-          setProjects(data.projects || []);
-        }
+        const data = await projectApi.getAllProjects(token);
+        setProjects(data.projects || []);
       } catch (error) {
         console.error('Error fetching projects:', error);
       } finally {
@@ -86,35 +79,25 @@ const ProjectManager = () => {
 
   const handleCreateProject = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/projects`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          ...newProject,
-          techStack: newProject.techStack.split(',').map(tag => tag.trim()).filter(tag => tag),
-          screenshots: newProject.screenshots ? newProject.screenshots.split(',').map(url => url.trim()).filter(url => url) : []
-        })
+      const result = await projectApi.createProject({
+        ...newProject,
+        techStack: newProject.techStack.split(',').map(tag => tag.trim()).filter(tag => tag),
+        screenshots: newProject.screenshots ? newProject.screenshots.split(',').map(url => url.trim()).filter(url => url) : []
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        setProjects([data.project, ...projects]);
-        setNewProject({
-          title: '',
-          description: '',
-          techStack: '',
-          githubUrl: '',
-          liveUrl: '',
-          featured: false,
-          status: 'draft',
-          thumbnail: '',
-          screenshots: ''
-        });
-        setIsDialogOpen(false);
-      }
+      
+      setProjects([result.project, ...projects]);
+      setNewProject({
+        title: '',
+        description: '',
+        techStack: '',
+        githubUrl: '',
+        liveUrl: '',
+        featured: false,
+        status: 'draft',
+        thumbnail: '',
+        screenshots: ''
+      });
+      setIsDialogOpen(false);
     } catch (error) {
       console.error('Error creating project:', error);
     }
@@ -124,30 +107,20 @@ const ProjectManager = () => {
     if (!editingProject) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/projects/${editingProject._id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          title: editingProject.title,
-          description: editingProject.description,
-          techStack: editingProject.techStack,
-          githubUrl: editingProject.githubUrl,
-          liveUrl: editingProject.liveUrl,
-          featured: editingProject.featured,
-          status: editingProject.status,
-          thumbnail: editingProject.thumbnail,
-          screenshots: editingProject.screenshots
-        })
+      const result = await projectApi.updateProject(editingProject._id, {
+        title: editingProject.title,
+        description: editingProject.description,
+        techStack: editingProject.techStack,
+        githubUrl: editingProject.githubUrl,
+        liveUrl: editingProject.liveUrl,
+        featured: editingProject.featured,
+        status: editingProject.status,
+        thumbnail: editingProject.thumbnail,
+        screenshots: editingProject.screenshots
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        setProjects(projects.map(p => p._id === editingProject._id ? data.project : p));
-        setEditingProject(null);
-      }
+      
+      setProjects(projects.map(p => p._id === editingProject._id ? result.project : p));
+      setEditingProject(null);
     } catch (error) {
       console.error('Error updating project:', error);
     }
@@ -156,16 +129,8 @@ const ProjectManager = () => {
   const handleDeleteProject = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this project?')) {
       try {
-        const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (response.ok) {
-          setProjects(projects.filter(project => project._id !== id));
-        }
+        await projectApi.deleteProject(id);
+        setProjects(projects.filter(project => project._id !== id));
       } catch (error) {
         console.error('Error deleting project:', error);
       }
@@ -177,22 +142,12 @@ const ProjectManager = () => {
     if (!project) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          ...project,
-          featured: !project.featured
-        })
+      const result = await projectApi.updateProject(id, {
+        ...project,
+        featured: !project.featured
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        setProjects(projects.map(p => p._id === id ? data.project : p));
-      }
+      
+      setProjects(projects.map(p => p._id === id ? result.project : p));
     } catch (error) {
       console.error('Error toggling featured status:', error);
     }
@@ -203,22 +158,12 @@ const ProjectManager = () => {
     if (!project) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          ...project,
-          status: project.status === 'published' ? 'draft' : 'published'
-        })
+      const result = await projectApi.updateProject(id, {
+        ...project,
+        status: project.status === 'published' ? 'draft' : 'published'
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        setProjects(projects.map(p => p._id === id ? data.project : p));
-      }
+      
+      setProjects(projects.map(p => p._id === id ? result.project : p));
     } catch (error) {
       console.error('Error toggling publish status:', error);
     }

@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '../lib/apiConfig';
+import { apiCache, cacheKeys } from '../lib/cache';
 
 export interface TechSkill {
   _id: string;
@@ -17,6 +18,13 @@ export interface TechSkillsResponse {
 
 export const techSkillsApi = {
   getTechSkills: async (): Promise<TechSkill[]> => {
+    const cacheKey = cacheKeys.techSkills();
+    const cachedData = apiCache.get<TechSkill[]>(cacheKey);
+    
+    if (cachedData) {
+      return cachedData;
+    }
+    
     const response = await fetch(`${API_BASE_URL}/enhanced-dashboard/tech-skills`);
     
     if (!response.ok) {
@@ -24,10 +32,20 @@ export const techSkillsApi = {
       throw new Error(`Failed to fetch tech skills: ${response.status} - ${errorText}`);
     }
     
-    return response.json();
+    const data = await response.json();
+    apiCache.set(cacheKey, data);
+    
+    return data;
   },
 
   getAllTechSkills: async (token: string): Promise<TechSkill[]> => {
+    const cacheKey = cacheKeys.techSkills();
+    const cachedData = apiCache.get<TechSkill[]>(cacheKey);
+    
+    if (cachedData) {
+      return cachedData;
+    }
+    
     const response = await fetch(`${API_BASE_URL}/tech-skills`, {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -39,7 +57,10 @@ export const techSkillsApi = {
       throw new Error(`Failed to fetch all tech skills: ${response.status} - ${errorText}`);
     }
     
-    return response.json();
+    const data = await response.json();
+    apiCache.set(cacheKey, data);
+    
+    return data;
   },
 
   createTechSkill: async (token: string, techSkillData: Omit<TechSkill, '_id' | 'createdAt' | 'updatedAt'>): Promise<TechSkill> => {
@@ -57,7 +78,12 @@ export const techSkillsApi = {
       throw new Error(`Failed to create tech skill: ${response.status} - ${errorText}`);
     }
     
-    return response.json();
+    const result = await response.json();
+    
+    // Invalidate cache after creating a tech skill
+    apiCache.invalidate('techskills:*');
+    
+    return result;
   },
 
   updateTechSkill: async (token: string, id: string, techSkillData: Partial<Omit<TechSkill, '_id' | 'createdAt' | 'updatedAt'>>): Promise<TechSkill> => {
@@ -75,7 +101,12 @@ export const techSkillsApi = {
       throw new Error(`Failed to update tech skill: ${response.status} - ${errorText}`);
     }
     
-    return response.json();
+    const result = await response.json();
+    
+    // Invalidate cache after updating a tech skill
+    apiCache.invalidate('techskills:*');
+    
+    return result;
   },
 
   deleteTechSkill: async (token: string, id: string): Promise<void> => {
@@ -90,5 +121,8 @@ export const techSkillsApi = {
       const errorText = await response.text();
       throw new Error(`Failed to delete tech skill: ${response.status} - ${errorText}`);
     }
+    
+    // Invalidate cache after deleting a tech skill
+    apiCache.invalidate('techskills:*');
   }
 };

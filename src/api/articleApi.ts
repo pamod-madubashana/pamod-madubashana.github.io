@@ -33,18 +33,37 @@ export interface UpdateArticleData {
 }
 
 import { API_BASE_URL } from '../lib/apiConfig';
+import { apiCache, cacheKeys } from '../lib/cache';
 
 export const articleApi = {
   getPublishedArticles: async (): Promise<{ articles: Article[] }> => {
+    const cacheKey = cacheKeys.articles.published();
+    const cachedData = apiCache.get<{ articles: Article[] }>(cacheKey);
+    
+    if (cachedData) {
+      return cachedData;
+    }
+    
     const response = await fetch(`${API_BASE_URL}/articles`);
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`Failed to fetch published articles: ${response.status} - ${errorText}`);
     }
-    return response.json();
+    
+    const data = await response.json();
+    apiCache.set(cacheKey, data);
+    
+    return data;
   },
 
   getAllArticles: async (token: string): Promise<{ articles: Article[] }> => {
+    const cacheKey = cacheKeys.articles.all();
+    const cachedData = apiCache.get<{ articles: Article[] }>(cacheKey);
+    
+    if (cachedData) {
+      return cachedData;
+    }
+    
     const response = await fetch(`${API_BASE_URL}/articles`, {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -54,16 +73,31 @@ export const articleApi = {
       const errorText = await response.text();
       throw new Error(`Failed to fetch all articles: ${response.status} - ${errorText}`);
     }
-    return response.json();
+    
+    const data = await response.json();
+    apiCache.set(cacheKey, data);
+    
+    return data;
   },
 
   getArticleById: async (id: string): Promise<Article> => {
-    const response = await fetch(`${API_BASE_URL}/${id}`);
+    const cacheKey = cacheKeys.articles.byId(id);
+    const cachedData = apiCache.get<Article>(cacheKey);
+    
+    if (cachedData) {
+      return cachedData;
+    }
+    
+    const response = await fetch(`${API_BASE_URL}/articles/${id}`);
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`Failed to fetch article: ${response.status} - ${errorText}`);
     }
-    return response.json();
+    
+    const data = await response.json();
+    apiCache.set(cacheKey, data);
+    
+    return data;
   },
 
   createArticle: async (token: string, articleData: CreateArticleData): Promise<{ message: string; article: Article }> => {
@@ -79,7 +113,13 @@ export const articleApi = {
       const errorText = await response.text();
       throw new Error(`Failed to create article: ${response.status} - ${errorText}`);
     }
-    return response.json();
+    
+    const result = await response.json();
+    
+    // Invalidate cache after creating an article
+    apiCache.invalidate('articles:*');
+    
+    return result;
   },
 
   updateArticle: async (token: string, id: string, articleData: UpdateArticleData): Promise<{ message: string; article: Article }> => {
@@ -95,7 +135,14 @@ export const articleApi = {
       const errorText = await response.text();
       throw new Error(`Failed to update article: ${response.status} - ${errorText}`);
     }
-    return response.json();
+    
+    const result = await response.json();
+    
+    // Invalidate cache after updating an article
+    apiCache.delete(cacheKeys.articles.byId(id));
+    apiCache.invalidate('articles:*');
+    
+    return result;
   },
 
   deleteArticle: async (token: string, id: string): Promise<{ message: string }> => {
@@ -109,6 +156,13 @@ export const articleApi = {
       const errorText = await response.text();
       throw new Error(`Failed to delete article: ${response.status} - ${errorText}`);
     }
-    return response.json();
+    
+    const result = await response.json();
+    
+    // Invalidate cache after deleting an article
+    apiCache.delete(cacheKeys.articles.byId(id));
+    apiCache.invalidate('articles:*');
+    
+    return result;
   }
 };

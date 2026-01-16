@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '../lib/apiConfig';
+import { apiCache, cacheKeys } from '../lib/cache';
 
 interface Project {
   _id: string;
@@ -29,6 +30,13 @@ export const projectApi = {
     search?: string;
     featured?: boolean;
   }): Promise<GetProjectsResponse> => {
+    const cacheKey = cacheKeys.projects.all(params);
+    const cachedData = apiCache.get<GetProjectsResponse>(cacheKey);
+    
+    if (cachedData) {
+      return cachedData;
+    }
+    
     // Build query string from params
     const queryParams = new URLSearchParams();
     if (params?.page) queryParams.append('page', params.page.toString());
@@ -44,16 +52,55 @@ export const projectApi = {
       const errorText = await response.text();
       throw new Error(`Failed to fetch projects: ${response.status} - ${errorText}`);
     }
-    return response.json();
+    
+    const data = await response.json();
+    apiCache.set(cacheKey, data);
+    
+    return data;
+  },
+
+  getAllProjects: async (token: string): Promise<GetProjectsResponse> => {
+    const cacheKey = cacheKeys.projects.all();
+    const cachedData = apiCache.get<GetProjectsResponse>(cacheKey);
+    
+    if (cachedData) {
+      return cachedData;
+    }
+    
+    const response = await fetch(`${API_BASE_URL}/projects/all`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to fetch all projects: ${response.status} - ${errorText}`);
+    }
+    
+    const data = await response.json();
+    apiCache.set(cacheKey, data);
+    
+    return data;
   },
 
   getProject: async (id: string): Promise<Project> => {
+    const cacheKey = cacheKeys.projects.byId(id);
+    const cachedData = apiCache.get<Project>(cacheKey);
+    
+    if (cachedData) {
+      return cachedData;
+    }
+    
     const response = await fetch(`${API_BASE_URL}/projects/${id}`);
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`Failed to fetch project: ${response.status} - ${errorText}`);
     }
-    return response.json();
+    
+    const data = await response.json();
+    apiCache.set(cacheKey, data);
+    
+    return data;
   },
 
   createProject: async (projectData: Omit<Project, '_id' | 'createdAt' | 'updatedAt'>): Promise<{ message: string; project: Project }> => {
@@ -70,7 +117,13 @@ export const projectApi = {
       const errorText = await response.text();
       throw new Error(`Failed to create project: ${response.status} - ${errorText}`);
     }
-    return response.json();
+    
+    const result = await response.json();
+    
+    // Invalidate cache after creating a project
+    apiCache.invalidate('projects:*');
+    
+    return result;
   },
 
   updateProject: async (id: string, projectData: Partial<Project>): Promise<{ message: string; project: Project }> => {
@@ -87,7 +140,14 @@ export const projectApi = {
       const errorText = await response.text();
       throw new Error(`Failed to update project: ${response.status} - ${errorText}`);
     }
-    return response.json();
+    
+    const result = await response.json();
+    
+    // Invalidate cache after updating a project
+    apiCache.delete(cacheKeys.projects.byId(id));
+    apiCache.invalidate('projects:*');
+    
+    return result;
   },
 
   deleteProject: async (id: string): Promise<{ message: string }> => {
@@ -102,6 +162,13 @@ export const projectApi = {
       const errorText = await response.text();
       throw new Error(`Failed to delete project: ${response.status} - ${errorText}`);
     }
-    return response.json();
+    
+    const result = await response.json();
+    
+    // Invalidate cache after deleting a project
+    apiCache.delete(cacheKeys.projects.byId(id));
+    apiCache.invalidate('projects:*');
+    
+    return result;
   },
 };

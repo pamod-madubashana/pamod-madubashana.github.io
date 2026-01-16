@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '../lib/apiConfig';
+import { apiCache, cacheKeys } from '../lib/cache';
 
 export interface TimelineItem {
   _id: string;
@@ -19,6 +20,13 @@ export interface TimelineResponse {
 
 export const timelineApi = {
   getTimeline: async (): Promise<TimelineItem[]> => {
+    const cacheKey = cacheKeys.timeline();
+    const cachedData = apiCache.get<TimelineItem[]>(cacheKey);
+    
+    if (cachedData) {
+      return cachedData;
+    }
+    
     const response = await fetch(`${API_BASE_URL}/enhanced-dashboard/timeline`);
     
     if (!response.ok) {
@@ -26,10 +34,20 @@ export const timelineApi = {
       throw new Error(`Failed to fetch timeline: ${response.status} - ${errorText}`);
     }
     
-    return response.json();
+    const data = await response.json();
+    apiCache.set(cacheKey, data);
+    
+    return data;
   },
 
   getAllTimeline: async (token: string): Promise<TimelineItem[]> => {
+    const cacheKey = cacheKeys.timeline();
+    const cachedData = apiCache.get<TimelineItem[]>(cacheKey);
+    
+    if (cachedData) {
+      return cachedData;
+    }
+    
     const response = await fetch(`${API_BASE_URL}/timeline`, {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -41,7 +59,10 @@ export const timelineApi = {
       throw new Error(`Failed to fetch all timeline items: ${response.status} - ${errorText}`);
     }
     
-    return response.json();
+    const data = await response.json();
+    apiCache.set(cacheKey, data);
+    
+    return data;
   },
 
   createTimeline: async (token: string, timelineData: Omit<TimelineItem, '_id' | 'createdAt' | 'updatedAt'>): Promise<TimelineItem> => {
@@ -59,7 +80,12 @@ export const timelineApi = {
       throw new Error(`Failed to create timeline item: ${response.status} - ${errorText}`);
     }
     
-    return response.json();
+    const result = await response.json();
+    
+    // Invalidate cache after creating a timeline item
+    apiCache.invalidate('timeline:*');
+    
+    return result;
   },
 
   updateTimeline: async (token: string, id: string, timelineData: Partial<Omit<TimelineItem, '_id' | 'createdAt' | 'updatedAt'>>): Promise<TimelineItem> => {
@@ -77,7 +103,12 @@ export const timelineApi = {
       throw new Error(`Failed to update timeline item: ${response.status} - ${errorText}`);
     }
     
-    return response.json();
+    const result = await response.json();
+    
+    // Invalidate cache after updating a timeline item
+    apiCache.invalidate('timeline:*');
+    
+    return result;
   },
 
   deleteTimeline: async (token: string, id: string): Promise<void> => {
@@ -92,5 +123,8 @@ export const timelineApi = {
       const errorText = await response.text();
       throw new Error(`Failed to delete timeline item: ${response.status} - ${errorText}`);
     }
+    
+    // Invalidate cache after deleting a timeline item
+    apiCache.invalidate('timeline:*');
   }
 };
