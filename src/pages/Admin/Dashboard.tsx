@@ -312,64 +312,14 @@ const Dashboard = () => {
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Quick Actions */}
+      <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Content Area */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           className="lg:col-span-2 space-y-6"
         >
-          <div>
-            <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-              <Zap className="w-6 h-6 text-accent" />
-              Quick Actions
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {quickActions.map((action, index) => {
-                const Icon = action.icon;
-                return (
-                  <motion.div
-                    key={action.title}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 * index }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="h-full"
-                  >
-                    <Link to={action.path}>
-                      <Card className="glass border border-border hover:border-primary/30 transition-all duration-300 h-full overflow-hidden group relative card-hover">
-                        <CardHeader className="pb-4">
-                          <div className={`w-12 h-12 rounded-xl bg-gradient-to-r from-primary to-secondary flex items-center justify-center mb-4`}>
-                            <Icon className="w-6 h-6 text-primary-foreground" />
-                          </div>
-                          <CardTitle className="text-xl group-hover:text-primary transition-colors duration-300">
-                            {action.title}
-                          </CardTitle>
-                          <CardDescription className="text-muted-foreground">
-                            {action.description}
-                          </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <Button className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity">
-                            {action.action === 'create' ? (
-                              <>
-                                <Plus className="w-4 h-4 mr-2" />
-                                Create
-                              </>
-                            ) : (
-                              'View Details'
-                            )}
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    </Link>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
 
           {/* Recent Activity */}
           <div>
@@ -421,6 +371,68 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           </div>
+          
+          {/* Performance Overview - Moved Down */}
+          <div>
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+              <BarChart3 className="w-6 h-6 text-success" />
+              Performance Overview
+            </h2>
+            <Card className="glass border border-border">
+              <CardContent className="p-6 space-y-4">
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-muted-foreground">Articles Published</span>
+                      <span className="font-medium">
+                        {dashboardData?.stats.articles.published}/{dashboardData?.stats.articles.total}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full" 
+                        style={{width: dashboardData ? `${(dashboardData.stats.articles.published / dashboardData.stats.articles.total) * 100}%` : '0%'}}
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-muted-foreground">Projects Completed</span>
+                      <span className="font-medium">
+                        {dashboardData?.stats.projects.published}/{dashboardData?.stats.projects.total}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full" 
+                        style={{width: dashboardData ? `${(dashboardData.stats.projects.published / dashboardData.stats.projects.total) * 100}%` : '0%'}}
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-muted-foreground">Profile Views</span>
+                      <span className="font-medium">
+                        {dashboardData?.stats.engagement.views.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full" 
+                        style={{width: '85%'}}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <Button className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90">
+                  View Detailed Analytics
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </motion.div>
 
         {/* Sidebar Widgets */}
@@ -430,66 +442,33 @@ const Dashboard = () => {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="space-y-6"
         >
-          {/* Performance Widget */}
+
+          {/* Quick Actions - Simplified */}
           <Card className="glass border border-border">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="w-5 h-5 text-success" />
-                Performance Overview
+                <Zap className="w-5 h-5 text-accent" />
+                Quick Actions
               </CardTitle>
-              <CardDescription>Monthly analytics summary</CardDescription>
+              <CardDescription>Frequently used actions</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-muted-foreground">Articles Published</span>
-                    <span className="font-medium">
-                      {dashboardData?.stats.articles.published}/{dashboardData?.stats.articles.total}
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div 
-                      className="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full" 
-                      style={{width: dashboardData ? `${(dashboardData.stats.articles.published / dashboardData.stats.articles.total) * 100}%` : '0%'}}
-                    ></div>
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-muted-foreground">Projects Completed</span>
-                    <span className="font-medium">
-                      {dashboardData?.stats.projects.published}/{dashboardData?.stats.projects.total}
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div 
-                      className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full" 
-                      style={{width: dashboardData ? `${(dashboardData.stats.projects.published / dashboardData.stats.projects.total) * 100}%` : '0%'}}
-                    ></div>
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-muted-foreground">Profile Views</span>
-                    <span className="font-medium">
-                      {dashboardData?.stats.engagement.views.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div 
-                      className="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full" 
-                      style={{width: '85%'}}
-                    ></div>
-                  </div>
-                </div>
+            <CardContent>
+              <div className="grid grid-cols-1 gap-3">
+                {quickActions.slice(0, 2).map((action) => {
+                  const Icon = action.icon;
+                  return (
+                    <Link key={action.title} to={action.path}>
+                      <Button 
+                        variant="outline" 
+                        className="w-full justify-start gap-3 h-12 hover:bg-primary/10 transition-colors"
+                      >
+                        <Icon className="w-5 h-5 text-primary" />
+                        <span>{action.title}</span>
+                      </Button>
+                    </Link>
+                  );
+                })}
               </div>
-              
-              <Button className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90">
-                View Detailed Analytics
-              </Button>
             </CardContent>
           </Card>
 
@@ -503,28 +482,20 @@ const Dashboard = () => {
               <CardDescription>Deadlines and reminders</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <div className="flex items-start gap-3 p-3 rounded-lg bg-warning/10 border border-warning/20">
                   <div className="w-2 h-2 rounded-full bg-warning mt-2 flex-shrink-0"></div>
                   <div>
-                    <p className="font-medium">Finish portfolio redesign</p>
-                    <p className="text-sm text-muted-foreground">Due tomorrow</p>
+                    <p className="font-medium text-sm">Finish portfolio redesign</p>
+                    <p className="text-xs text-muted-foreground">Due tomorrow</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start gap-3 p-3 rounded-lg bg-primary/10 border border-primary/20">
                   <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0"></div>
                   <div>
-                    <p className="font-medium">Write React hooks article</p>
-                    <p className="text-sm text-muted-foreground">Due in 3 days</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/10 border border-secondary/20">
-                  <div className="w-2 h-2 rounded-full bg-secondary mt-2 flex-shrink-0"></div>
-                  <div>
-                    <p className="font-medium">Update project screenshots</p>
-                    <p className="text-sm text-muted-foreground">Due next week</p>
+                    <p className="font-medium text-sm">Write React hooks article</p>
+                    <p className="text-xs text-muted-foreground">Due in 3 days</p>
                   </div>
                 </div>
               </div>
