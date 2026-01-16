@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { API_BASE_URL } from '@/lib/apiConfig';
+import { reorderItemsForInsertion, reorderItemsForUpdate, reorderItemsForDeletion, reorderAllItemsContiguously } from '@/lib/orderUtils';
 
 interface TechStackCategory {
   _id: string;
@@ -97,8 +98,29 @@ const TechStackManager = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        setTechStackCategories([data, ...techStackCategories]);
+        // Refresh the list to get updated orders
+        const refreshResponse = await fetch(`${API_BASE_URL}/tech-stack-categories`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const refreshedData = await refreshResponse.json();
+        
+        // Ensure contiguous ordering after creation
+        if (refreshedData.length > 0) {
+          await reorderAllItemsContiguously(refreshedData, '/tech-stack-categories', token);
+          // Refresh again to get the properly ordered items
+          const finalResponse = await fetch(`${API_BASE_URL}/tech-stack-categories`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          const finalData = await finalResponse.json();
+          setTechStackCategories(finalData);
+        } else {
+          setTechStackCategories(refreshedData);
+        }
+        
         setNewCategory({
           title: '',
           icon: 'Cpu',
@@ -129,8 +151,29 @@ const TechStackManager = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        setTechStackCategories(techStackCategories.map(cat => cat._id === editingCategory._id ? data : cat));
+        // Refresh the list to get updated orders
+        const refreshResponse = await fetch(`${API_BASE_URL}/tech-stack-categories`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const refreshedData = await refreshResponse.json();
+        
+        // Ensure contiguous ordering after update
+        if (refreshedData.length > 0) {
+          await reorderAllItemsContiguously(refreshedData, '/tech-stack-categories', token);
+          // Refresh again to get the properly ordered items
+          const finalResponse = await fetch(`${API_BASE_URL}/tech-stack-categories`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          const finalData = await finalResponse.json();
+          setTechStackCategories(finalData);
+        } else {
+          setTechStackCategories(refreshedData);
+        }
+        
         setEditingCategory(null);
       }
     } catch (error) {
@@ -141,6 +184,13 @@ const TechStackManager = () => {
   const handleDeleteCategory = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this tech stack category?')) {
       try {
+        // Find the deleted item to get its order
+        const deletedCategory = techStackCategories.find(cat => cat._id === id);
+        if (!deletedCategory) return;
+        
+        // Reorder items for deletion
+        await reorderItemsForDeletion(techStackCategories, deletedCategory.order, '/tech-stack-categories', token);
+        
         const response = await fetch(`${API_BASE_URL}/tech-stack-categories/${id}`, {
           method: 'DELETE',
           headers: {
@@ -149,7 +199,14 @@ const TechStackManager = () => {
         });
 
         if (response.ok) {
-          setTechStackCategories(techStackCategories.filter(cat => cat._id !== id));
+          // Refresh the list to get updated orders
+          const refreshResponse = await fetch(`${API_BASE_URL}/tech-stack-categories`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          const refreshedData = await refreshResponse.json();
+          setTechStackCategories(refreshedData);
         }
       } catch (error) {
         console.error('Error deleting tech stack category:', error);

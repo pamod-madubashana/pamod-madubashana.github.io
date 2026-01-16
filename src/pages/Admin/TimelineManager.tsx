@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { API_BASE_URL } from '@/lib/apiConfig';
+import { reorderItemsForInsertion, reorderItemsForUpdate, reorderItemsForDeletion, reorderAllItemsContiguously } from '@/lib/orderUtils';
 
 interface TimelineItem {
   _id: string;
@@ -101,8 +102,29 @@ const TimelineManager = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        setTimelineItems([data, ...timelineItems]);
+        // Refresh the list to get updated orders
+        const refreshResponse = await fetch(`${API_BASE_URL}/timeline`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const refreshedData = await refreshResponse.json();
+        
+        // Ensure contiguous ordering after creation
+        if (refreshedData.length > 0) {
+          await reorderAllItemsContiguously(refreshedData, '/timeline', token);
+          // Refresh again to get the properly ordered items
+          const finalResponse = await fetch(`${API_BASE_URL}/timeline`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          const finalData = await finalResponse.json();
+          setTimelineItems(finalData);
+        } else {
+          setTimelineItems(refreshedData);
+        }
+        
         setNewItem({
           year: '',
           role: '',
@@ -132,8 +154,29 @@ const TimelineManager = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        setTimelineItems(timelineItems.map(item => item._id === editingItem._id ? data : item));
+        // Refresh the list to get updated orders
+        const refreshResponse = await fetch(`${API_BASE_URL}/timeline`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const refreshedData = await refreshResponse.json();
+        
+        // Ensure contiguous ordering after update
+        if (refreshedData.length > 0) {
+          await reorderAllItemsContiguously(refreshedData, '/timeline', token);
+          // Refresh again to get the properly ordered items
+          const finalResponse = await fetch(`${API_BASE_URL}/timeline`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          const finalData = await finalResponse.json();
+          setTimelineItems(finalData);
+        } else {
+          setTimelineItems(refreshedData);
+        }
+        
         setEditingItem(null);
       }
     } catch (error) {
@@ -144,6 +187,13 @@ const TimelineManager = () => {
   const handleDeleteItem = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this timeline item?')) {
       try {
+        // Find the deleted item to get its order
+        const deletedItem = timelineItems.find(item => item._id === id);
+        if (!deletedItem) return;
+        
+        // Reorder items for deletion
+        await reorderItemsForDeletion(timelineItems, deletedItem.order, '/timeline', token);
+        
         const response = await fetch(`${API_BASE_URL}/timeline/${id}`, {
           method: 'DELETE',
           headers: {
@@ -152,7 +202,14 @@ const TimelineManager = () => {
         });
 
         if (response.ok) {
-          setTimelineItems(timelineItems.filter(item => item._id !== id));
+          // Refresh the list to get updated orders
+          const refreshResponse = await fetch(`${API_BASE_URL}/timeline`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          const refreshedData = await refreshResponse.json();
+          setTimelineItems(refreshedData);
         }
       } catch (error) {
         console.error('Error deleting timeline item:', error);

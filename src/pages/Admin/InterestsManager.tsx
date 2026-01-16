@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { API_BASE_URL } from '@/lib/apiConfig';
+import { reorderItemsForInsertion, reorderItemsForUpdate, reorderItemsForDeletion, reorderAllItemsContiguously } from '@/lib/orderUtils';
 
 interface Interest {
   _id: string;
@@ -94,8 +95,29 @@ const InterestsManager = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        setInterests([data, ...interests]);
+        // Refresh the list to get updated orders
+        const refreshResponse = await fetch(`${API_BASE_URL}/interests`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const refreshedData = await refreshResponse.json();
+        
+        // Ensure contiguous ordering after creation
+        if (refreshedData.length > 0) {
+          await reorderAllItemsContiguously(refreshedData, '/interests', token);
+          // Refresh again to get the properly ordered items
+          const finalResponse = await fetch(`${API_BASE_URL}/interests`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          const finalData = await finalResponse.json();
+          setInterests(finalData);
+        } else {
+          setInterests(refreshedData);
+        }
+        
         setNewInterest({
           icon: 'Heart',
           label: '',
@@ -122,8 +144,29 @@ const InterestsManager = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        setInterests(interests.map(interest => interest._id === editingInterest._id ? data : interest));
+        // Refresh the list to get updated orders
+        const refreshResponse = await fetch(`${API_BASE_URL}/interests`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const refreshedData = await refreshResponse.json();
+        
+        // Ensure contiguous ordering after update
+        if (refreshedData.length > 0) {
+          await reorderAllItemsContiguously(refreshedData, '/interests', token);
+          // Refresh again to get the properly ordered items
+          const finalResponse = await fetch(`${API_BASE_URL}/interests`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          const finalData = await finalResponse.json();
+          setInterests(finalData);
+        } else {
+          setInterests(refreshedData);
+        }
+        
         setEditingInterest(null);
       }
     } catch (error) {
@@ -134,6 +177,13 @@ const InterestsManager = () => {
   const handleDeleteInterest = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this interest?')) {
       try {
+        // Find the deleted item to get its order
+        const deletedInterest = interests.find(interest => interest._id === id);
+        if (!deletedInterest) return;
+        
+        // Reorder items for deletion
+        await reorderItemsForDeletion(interests, deletedInterest.order, '/interests', token);
+        
         const response = await fetch(`${API_BASE_URL}/interests/${id}`, {
           method: 'DELETE',
           headers: {
@@ -142,7 +192,14 @@ const InterestsManager = () => {
         });
 
         if (response.ok) {
-          setInterests(interests.filter(interest => interest._id !== id));
+          // Refresh the list to get updated orders
+          const refreshResponse = await fetch(`${API_BASE_URL}/interests`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          const refreshedData = await refreshResponse.json();
+          setInterests(refreshedData);
         }
       } catch (error) {
         console.error('Error deleting interest:', error);

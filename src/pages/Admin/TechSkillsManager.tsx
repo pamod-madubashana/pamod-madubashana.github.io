@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { API_BASE_URL } from '@/lib/apiConfig';
+import { reorderItemsForInsertion, reorderItemsForUpdate, reorderItemsForDeletion, reorderAllItemsContiguously } from '@/lib/orderUtils';
 
 interface TechSkill {
   _id: string;
@@ -93,8 +94,29 @@ const TechSkillsManager = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        setTechSkills([data, ...techSkills]);
+        // Refresh the list to get updated orders
+        const refreshResponse = await fetch(`${API_BASE_URL}/tech-skills`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const refreshedData = await refreshResponse.json();
+        
+        // Ensure contiguous ordering after creation
+        if (refreshedData.length > 0) {
+          await reorderAllItemsContiguously(refreshedData, '/tech-skills', token);
+          // Refresh again to get the properly ordered items
+          const finalResponse = await fetch(`${API_BASE_URL}/tech-skills`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          const finalData = await finalResponse.json();
+          setTechSkills(finalData);
+        } else {
+          setTechSkills(refreshedData);
+        }
+        
         setNewSkill({
           name: '',
           level: 50,
@@ -121,8 +143,29 @@ const TechSkillsManager = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        setTechSkills(techSkills.map(skill => skill._id === editingSkill._id ? data : skill));
+        // Refresh the list to get updated orders
+        const refreshResponse = await fetch(`${API_BASE_URL}/tech-skills`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const refreshedData = await refreshResponse.json();
+        
+        // Ensure contiguous ordering after update
+        if (refreshedData.length > 0) {
+          await reorderAllItemsContiguously(refreshedData, '/tech-skills', token);
+          // Refresh again to get the properly ordered items
+          const finalResponse = await fetch(`${API_BASE_URL}/tech-skills`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          const finalData = await finalResponse.json();
+          setTechSkills(finalData);
+        } else {
+          setTechSkills(refreshedData);
+        }
+        
         setEditingSkill(null);
       }
     } catch (error) {
@@ -133,6 +176,13 @@ const TechSkillsManager = () => {
   const handleDeleteSkill = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this tech skill?')) {
       try {
+        // Find the deleted item to get its order
+        const deletedSkill = techSkills.find(skill => skill._id === id);
+        if (!deletedSkill) return;
+        
+        // Reorder items for deletion
+        await reorderItemsForDeletion(techSkills, deletedSkill.order, '/tech-skills', token);
+        
         const response = await fetch(`${API_BASE_URL}/tech-skills/${id}`, {
           method: 'DELETE',
           headers: {
@@ -141,7 +191,14 @@ const TechSkillsManager = () => {
         });
 
         if (response.ok) {
-          setTechSkills(techSkills.filter(skill => skill._id !== id));
+          // Refresh the list to get updated orders
+          const refreshResponse = await fetch(`${API_BASE_URL}/tech-skills`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          const refreshedData = await refreshResponse.json();
+          setTechSkills(refreshedData);
         }
       } catch (error) {
         console.error('Error deleting tech skill:', error);
