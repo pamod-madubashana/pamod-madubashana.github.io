@@ -9,33 +9,37 @@
 
 @layer base {
   :root {
-    --background: 220 20% 97%;
-    --foreground: 220 30% 10%;
+    /* Professional Dark Theme */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 30% 10%;
+    --card: 240 10% 6.7%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 30% 10%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 195 100% 50%;
-    --primary-foreground: 220 30% 5%;
+    /* Sleek Electric Blue Primary */
+    --primary: 186 100% 50%; /* #00eeff */
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 260 100% 65%;
-    --secondary-foreground: 0 0% 100%;
+    /* Deep Purple Secondary */
+    --secondary: 249 60% 65%; /* #7a6ff0 */
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 220 15% 90%;
-    --muted-foreground: 220 15% 40%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
 
-    --accent: 170 100% 45%;
-    --accent-foreground: 220 30% 5%;
+    /* Emerald Green Accent */
+    --accent: 160 100% 50%; /* #00ffb3 */
+    --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 85% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 347 87% 49%; /* #ff4d6d */
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 220 20% 85%;
-    --input: 220 20% 85%;
-    --ring: 195 100% 50%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 186 100% 50%;
 
     --radius: 0.75rem;
 
@@ -69,33 +73,37 @@
   }
 
   .dark {
-    --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
+    /* Enhanced Professional Dark Theme */
+    --background: 240 10% 3.9%; /* #0a0a0f */
+    --foreground: 0 0% 98%;
 
-    --card: 222 47% 10%;
-    --card-foreground: 210 40% 98%;
+    --card: 240 10% 6.7%; /* #1a1a24 */
+    --card-foreground: 0 0% 98%;
 
-    --popover: 222 47% 8%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 240 10% 3.9%; /* #050508 */
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 195 100% 50%;
-    --primary-foreground: 222 47% 6%;
+    /* Sleek Electric Blue Primary */
+    --primary: 186 100% 50%; /* #00eeff */
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 260 100% 65%;
+    /* Deep Purple Secondary */
+    --secondary: 249 60% 65%; /* #7a6ff0 */
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 222 30% 20%;
-    --muted-foreground: 220 15% 65%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
 
-    --accent: 170 100% 45%;
-    --accent-foreground: 222 47% 6%;
+    /* Emerald Green Accent */
+    --accent: 160 100% 50%; /* #00ffb3 */
+    --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 85% 60%;
+    --destructive: 347 87% 49%; /* #ff4d6d */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 222 30% 18%;
-    --input: 222 30% 18%;
-    --ring: 195 100% 50%;
+    --border: 240 3.7% 15.9%; /* #2a2a3a */
+    --input: 240 3.7% 15.9%;
+    --ring: 186 100% 50%;
 
     --sidebar-background: 222 47% 8%;
     --sidebar-foreground: 210 40% 98%;
@@ -138,16 +146,45 @@
 }
 
 @layer components {
+  /* Professional Glass Effect */
   .glass {
-    @apply bg-card/80 backdrop-blur-xl border border-border/50;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
-  }
-
-  .glass-strong {
     @apply bg-card/90 backdrop-blur-2xl border border-border/60;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform;
+    box-shadow: 0 4px 20px rgba(0, 238, 255, 0.1);
+  }
+
+  .glass-strong {
+    @apply bg-card/95 backdrop-blur-3xl border border-border/80;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+    box-shadow: 0 8px 30px rgba(122, 111, 240, 0.15);
+  }
+
+  /* Professional Hover Effects */
+  .card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 238, 255, 0.15);
+    border-color: hsl(var(--primary) / 0.3);
+  }
+
+  /* Gradient Text Effects */
+  .gradient-text {
+    background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    transition: all 0.3s ease;
+  }
+
+  .gradient-text:hover {
+    background: linear-gradient(90deg, hsl(var(--secondary)), hsl(var(--accent)));
+    background-clip: text;
+    -webkit-background-clip: text;
   }
 
   .neon-glow {
