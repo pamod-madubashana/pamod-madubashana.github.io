@@ -96,9 +96,13 @@ const Articles = () => {
                 <div className="grid md:grid-cols-2 gap-0">
                   <div className="relative aspect-video md:aspect-auto overflow-hidden bg-muted/20 flex items-center justify-center">
                     <img
-                      src={generatePlaceholderImage(featuredArticle.title)}
+                      src={featuredArticle.featuredImage || generatePlaceholderImage(featuredArticle.title)}
                       alt={featuredArticle.title}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      onError={(e) => {
+                        // Fallback to placeholder if image fails to load
+                        e.currentTarget.src = generatePlaceholderImage(featuredArticle.title);
+                      }}
                     />
                   </div>
                   <div className="p-8 md:p-12 flex flex-col justify-center">
@@ -154,9 +158,13 @@ const Articles = () => {
                 >
                   <div className="relative aspect-video overflow-hidden bg-muted/20 flex items-center justify-center">
                     <img
-                      src={generatePlaceholderImage(article.title)}
+                      src={article.featuredImage || generatePlaceholderImage(article.title)}
                       alt={article.title}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      onError={(e) => {
+                        // Fallback to placeholder if image fails to load
+                        e.currentTarget.src = generatePlaceholderImage(article.title);
+                      }}
                     />
                   </div>
                   <div className="p-6">

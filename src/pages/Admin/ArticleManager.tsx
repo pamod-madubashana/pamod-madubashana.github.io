@@ -21,10 +21,32 @@ const ArticleManager = () => {
     title: '',
     content: '',
     excerpt: '',
+    featuredImage: '',
     status: 'draft' as 'draft' | 'published',
     tags: '' // Will be converted to array
   });
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const { token } = useAuth();
+
+  // Handle image file upload
+  const handleImageUpload = async (file: File) => {
+    setIsUploading(true);
+    try {
+      // For now, we'll simulate image upload by creating a data URL
+      // In production, you'd upload to a service like Cloudinary, AWS S3, etc.
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageUrl = e.target?.result as string;
+        setNewArticle({...newArticle, featuredImage: imageUrl});
+        setIsUploading(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      setIsUploading(false);
+    }
+  };
 
   // Fetch articles
   useEffect(() => {
@@ -61,7 +83,11 @@ const ArticleManager = () => {
   const handleCreateArticle = async () => {
     try {
       const articleData: CreateArticleData = {
-        ...newArticle,
+        title: newArticle.title,
+        content: newArticle.content,
+        excerpt: newArticle.excerpt,
+        featuredImage: newArticle.featuredImage,
+        status: newArticle.status,
         tags: newArticle.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
       };
       
@@ -71,6 +97,7 @@ const ArticleManager = () => {
         title: '',
         content: '',
         excerpt: '',
+        featuredImage: '',
         status: 'draft',
         tags: ''
       });
@@ -88,6 +115,7 @@ const ArticleManager = () => {
         title: editingArticle.title,
         content: editingArticle.content,
         excerpt: editingArticle.excerpt,
+        featuredImage: editingArticle.featuredImage,
         status: editingArticle.status,
         tags: editingArticle.tags
       };
@@ -158,6 +186,37 @@ const ArticleManager = () => {
                       placeholder="Brief description of the article"
                       rows={3}
                     />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="featuredImage">Featured Image</Label>
+                    <div className="space-y-3">
+                      <Input
+                        id="featuredImage"
+                        type="url"
+                        value={newArticle.featuredImage}
+                        onChange={(e) => setNewArticle({...newArticle, featuredImage: e.target.value})}
+                        placeholder="https://example.com/image.jpg"
+                      />
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              setImageFile(file);
+                              handleImageUpload(file);
+                            }
+                          }}
+                          disabled={isUploading}
+                          className="flex-1"
+                        />
+                        {isUploading && (
+                          <span className="text-sm text-muted-foreground">Uploading...</span>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground">Enter image URL or upload a file (JPG, PNG, GIF)</p>
+                    </div>
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="content">Content</Label>
@@ -322,6 +381,37 @@ const ArticleManager = () => {
                     placeholder="Brief description of the article"
                     rows={3}
                   />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="edit-featuredImage">Featured Image</Label>
+                  <div className="space-y-3">
+                    <Input
+                      id="edit-featuredImage"
+                      type="url"
+                      value={editingArticle.featuredImage || ''}
+                      onChange={(e) => setEditingArticle({...editingArticle, featuredImage: e.target.value})}
+                      placeholder="https://example.com/image.jpg"
+                    />
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                              const imageUrl = event.target?.result as string;
+                              setEditingArticle({...editingArticle, featuredImage: imageUrl});
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                        className="flex-1"
+                      />
+                    </div>
+                    <p className="text-sm text-muted-foreground">Enter image URL or upload a file (JPG, PNG, GIF)</p>
+                  </div>
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="edit-content">Content</Label>
