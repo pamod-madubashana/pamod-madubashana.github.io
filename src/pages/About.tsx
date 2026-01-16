@@ -9,31 +9,35 @@ import {
 
 const timeline = [
   {
-    year: "2023 - Present",
-    role: "Senior Full-Stack Developer",
-    company: "TechCorp Inc.",
-    description: "Leading development of enterprise SaaS platform serving 100k+ users.",
+    year: "2025 - Present",
+    role: "Full-Stack Developer",
+    company: "",
+    description:
+      "Building full-stack applications, Telegram bots, and management dashboards using React, Express, MongoDB, and Pyrogram.",
     icon: Briefcase,
   },
   {
-    year: "2021 - 2023",
-    role: "Full-Stack Developer",
-    company: "StartupX",
-    description: "Built and scaled a real-time collaboration tool from 0 to 50k users.",
+    year: "2024 - 2025",
+    role: "Backend Developer",
+    company: "",
+    description:
+      "Developed and maintained Telegram bots with Pyrogram and aiohttp, including multi-bot managers and movie filter systems.",
     icon: Code2,
   },
   {
-    year: "2019 - 2021",
+    year: "2023 - 2024",
     role: "Frontend Developer",
-    company: "DigitalAgency",
-    description: "Developed responsive web applications for Fortune 500 clients.",
+    company: "",
+    description:
+      "Created responsive web interfaces using React and Tailwind CSS, focusing on clean UI and smooth user experience.",
     icon: Palette,
   },
   {
-    year: "2015 - 2019",
-    role: "Computer Science Degree",
-    company: "MIT",
-    description: "Bachelor's degree with focus on software engineering and AI.",
+    year: "2022 - Present",
+    role: "Computer Science Student",
+    company: "",
+    description:
+      "Studying computer science fundamentals with hands-on focus on web development, databases, and backend systems.",
     icon: GraduationCap,
   },
 ];
@@ -42,30 +46,30 @@ const techCategories = [
   {
     title: "Frontend",
     icon: Palette,
-    skills: ["React", "TypeScript", "Next.js", "Tailwind CSS", "Framer Motion"],
+    skills: ["React", "JavaScript", "Tailwind CSS", "HTML", "CSS"],
   },
   {
     title: "Backend",
     icon: Terminal,
-    skills: ["Node.js", "Express", "Python", "FastAPI", "GraphQL"],
+    skills: ["Node.js", "Express", "Python", "Pyrogram", "aiohttp"],
   },
   {
     title: "Database",
     icon: Database,
-    skills: ["PostgreSQL", "MongoDB", "Redis", "Prisma", "Supabase"],
+    skills: ["MongoDB", "Redis"],
   },
   {
     title: "Cloud & DevOps",
     icon: Cloud,
-    skills: ["AWS", "Docker", "Kubernetes", "CI/CD", "Vercel"],
+    skills: ["GitHub Actions", "Koyeb", "Vercel", "Docker (Basics)", "Git"],
   },
 ];
 
 const interests = [
-  { icon: Coffee, label: "Coffee Enthusiast" },
-  { icon: Music, label: "Music Producer" },
-  { icon: Mountain, label: "Hiking" },
-  { icon: Heart, label: "Open Source" },
+  { icon: Code2, label: "Telegram Bot Development" },
+  { icon: Database, label: "Backend Architecture" },
+  { icon: Palette, label: "UI Design" },
+  { icon: Coffee, label: "Late-Night Debugging" },
 ];
 
 const About = () => {
@@ -86,7 +90,7 @@ const About = () => {
                 About Me
               </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-                Building the Future,{" "}
+                <span className="text-foreground/70">Building the Future,</span>{" "}
                 <span className="text-gradient">One Line at a Time</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -135,7 +139,7 @@ const About = () => {
 
                   <div className="p-6 rounded-xl glass hover-lift">
                     <span className="text-sm font-mono text-primary">{item.year}</span>
-                    <h3 className="text-xl font-semibold mt-1">{item.role}</h3>
+                    <h3 className="text-xl font-semibold mt-1 text-foreground/50">{item.role}</h3>
                     <p className="text-sm text-muted-foreground mt-1">{item.company}</p>
                     <p className="text-sm text-muted-foreground mt-3">{item.description}</p>
                   </div>
@@ -154,7 +158,7 @@ const About = () => {
               viewport={{ once: true }}
               className="text-3xl md:text-4xl font-bold text-center mb-16"
             >
-              Tech <span className="text-gradient">Stack</span>
+              <span className="text-foreground/70">Tech</span> <span className="text-gradient">Stack</span>
             </motion.h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
@@ -170,12 +174,12 @@ const About = () => {
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                     <category.icon className="w-6 h-6 text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold mb-4">{category.title}</h3>
+                  <h3 className="text-lg font-semibold mb-4 text-foreground/50">{category.title}</h3>
                   <div className="flex flex-wrap gap-2">
                     {category.skills.map((skill) => (
                       <span
                         key={skill}
-                        className="px-2 py-1 text-xs font-mono bg-muted/50 rounded-md"
+                        className="px-2 py-1 text-xs font-mono bg-muted/50 text-foreground/30 rounded-md"
                       >
                         {skill}
                       </span>
@@ -197,7 +201,7 @@ const About = () => {
               className="max-w-2xl mx-auto text-center"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-8">
-                Beyond <span className="text-gradient">Code</span>
+                <span className="text-foreground/70">Beyond </span><span className="text-gradient">Code</span>
               </h2>
               <div className="flex flex-wrap justify-center gap-4">
                 {interests.map((interest, index) => (
@@ -210,7 +214,7 @@ const About = () => {
                     className="flex items-center gap-2 px-4 py-2 rounded-full glass"
                   >
                     <interest.icon className="w-4 h-4 text-primary" />
-                    <span className="text-sm">{interest.label}</span>
+                    <span className="text-sm text-foreground/50">{interest.label}</span>
                   </motion.div>
                 ))}
               </div>
