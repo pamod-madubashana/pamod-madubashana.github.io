@@ -22,6 +22,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { API_BASE_URL } from '@/lib/apiConfig';
 import { reorderItemsForInsertion, reorderItemsForUpdate, reorderItemsForDeletion, reorderAllItemsContiguously } from '@/lib/orderUtils';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 interface Interest {
   _id: string;
@@ -44,6 +45,12 @@ const InterestsManager = () => {
     icon: 'Heart',
     label: '',
     order: 0
+  });
+  
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    id: '',
+    type: ''
   });
 
   // Fetch interests
@@ -151,38 +158,49 @@ const InterestsManager = () => {
   };
 
   const handleDeleteInterest = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this interest?')) {
-      try {
-        // Find the deleted item to get its order
-        const deletedInterest = interests.find(interest => interest._id === id);
-        if (!deletedInterest) return;
-        
-        // Reorder items for deletion
-        await reorderItemsForDeletion(interests, deletedInterest.order, '/interests', token);
-        
-        const response = await fetch(`${API_BASE_URL}/interests/${id}`, {
-          method: 'DELETE',
+    try {
+      // Find the deleted item to get its order
+      const deletedInterest = interests.find(interest => interest._id === id);
+      if (!deletedInterest) return;
+      
+      // Reorder items for deletion
+      await reorderItemsForDeletion(interests, deletedInterest.order, '/interests', token);
+      
+      const response = await fetch(`${API_BASE_URL}/interests/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        // Refresh the list to get updated orders
+        const refreshResponse = await fetch(`${API_BASE_URL}/interests`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
-
-        if (response.ok) {
-          // Refresh the list to get updated orders
-          const refreshResponse = await fetch(`${API_BASE_URL}/interests`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          const refreshedData = await refreshResponse.json();
-          setInterests(refreshedData);
-        }
-      } catch (error) {
-        console.error('Error deleting interest:', error);
+        const refreshedData = await refreshResponse.json();
+        setInterests(refreshedData);
       }
+    } catch (error) {
+      console.error('Error deleting interest:', error);
     }
   };
 
+  const openConfirmDialog = (id: string, type: string) => {
+    setConfirmDialog({ isOpen: true, id, type });
+  };
+  
+  const closeConfirmDialog = () => {
+    setConfirmDialog({ isOpen: false, id: '', type: '' });
+  };
+  
+  const confirmDelete = () => {
+    handleDeleteInterest(confirmDialog.id);
+    closeConfirmDialog();
+  };
+  
   const getIconComponent = (iconName: string) => {
     switch(iconName) {
       case 'Code2': return Code2;
@@ -347,7 +365,7 @@ const InterestsManager = () => {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => handleDeleteInterest(interest._id)}
+                          onClick={() => openConfirmDialog(interest._id, 'delete')}
                           className="h-8 w-8 p-0 text-red-500 hover:text-red-500"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -362,7 +380,18 @@ const InterestsManager = () => {
         )}
       </div>
     </div>
+    
   );
+  <ConfirmDialog
+      isOpen={confirmDialog.isOpen}
+      onClose={closeConfirmDialog}
+      onConfirm={confirmDelete}
+      title="Confirm Deletion"
+      message="Are you sure you want to delete this interest? This action cannot be undone."
+      confirmText="Delete"
+      cancelText="Cancel"
+      variant="destructive"
+    />
 };
 
 export default InterestsManager;

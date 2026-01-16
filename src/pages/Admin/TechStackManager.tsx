@@ -19,6 +19,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { API_BASE_URL } from '@/lib/apiConfig';
 import { reorderItemsForInsertion, reorderItemsForUpdate, reorderItemsForDeletion, reorderAllItemsContiguously } from '@/lib/orderUtils';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 interface TechStackCategory {
   _id: string;
@@ -43,6 +44,12 @@ const TechStackManager = () => {
     icon: 'Cpu',
     skills: [''] as string[],
     order: 0
+  });
+  
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    id: '',
+    type: ''
   });
 
   // Fetch tech stack categories
@@ -158,36 +165,47 @@ const TechStackManager = () => {
   };
 
   const handleDeleteCategory = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this tech stack category?')) {
-      try {
-        // Find the deleted item to get its order
-        const deletedCategory = techStackCategories.find(cat => cat._id === id);
-        if (!deletedCategory) return;
-        
-        // Reorder items for deletion
-        await reorderItemsForDeletion(techStackCategories, deletedCategory.order, '/tech-stack-categories', token);
-        
-        const response = await fetch(`${API_BASE_URL}/tech-stack-categories/${id}`, {
-          method: 'DELETE',
+    try {
+      // Find the deleted item to get its order
+      const deletedCategory = techStackCategories.find(cat => cat._id === id);
+      if (!deletedCategory) return;
+      
+      // Reorder items for deletion
+      await reorderItemsForDeletion(techStackCategories, deletedCategory.order, '/tech-stack-categories', token);
+      
+      const response = await fetch(`${API_BASE_URL}/tech-stack-categories/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        // Refresh the list to get updated orders
+        const refreshResponse = await fetch(`${API_BASE_URL}/tech-stack-categories`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
-
-        if (response.ok) {
-          // Refresh the list to get updated orders
-          const refreshResponse = await fetch(`${API_BASE_URL}/tech-stack-categories`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          const refreshedData = await refreshResponse.json();
-          setTechStackCategories(refreshedData);
-        }
-      } catch (error) {
-        console.error('Error deleting tech stack category:', error);
+        const refreshedData = await refreshResponse.json();
+        setTechStackCategories(refreshedData);
       }
+    } catch (error) {
+      console.error('Error deleting tech stack category:', error);
     }
+  };
+  
+  const openConfirmDialog = (id: string, type: string) => {
+    setConfirmDialog({ isOpen: true, id, type });
+  };
+  
+  const closeConfirmDialog = () => {
+    setConfirmDialog({ isOpen: false, id: '', type: '' });
+  };
+  
+  const confirmDelete = () => {
+    handleDeleteCategory(confirmDialog.id);
+    closeConfirmDialog();
   };
 
   const getIconComponent = (iconName: string) => {
@@ -447,7 +465,7 @@ const TechStackManager = () => {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => handleDeleteCategory(category._id)}
+                          onClick={() => openConfirmDialog(category._id, 'delete')}
                           className="h-8 w-8 p-0 text-red-500 hover:text-red-500"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -471,7 +489,18 @@ const TechStackManager = () => {
         )}
       </div>
     </div>
+ 
   );
+     <ConfirmDialog
+      isOpen={confirmDialog.isOpen}
+      onClose={closeConfirmDialog}
+      onConfirm={confirmDelete}
+      title="Confirm Deletion"
+      message="Are you sure you want to delete this tech stack category? This action cannot be undone."
+      confirmText="Delete"
+      cancelText="Cancel"
+      variant="destructive"
+    />
 };
 
 export default TechStackManager;

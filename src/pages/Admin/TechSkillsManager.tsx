@@ -20,6 +20,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { API_BASE_URL } from '@/lib/apiConfig';
 import { reorderItemsForInsertion, reorderItemsForUpdate, reorderItemsForDeletion, reorderAllItemsContiguously } from '@/lib/orderUtils';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 interface TechSkill {
   _id: string;
@@ -43,6 +44,12 @@ const TechSkillsManager = () => {
     name: '',
     level: 50,
     order: 0
+  });
+  
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    id: '',
+    type: ''
   });
 
   // Fetch tech skills
@@ -150,36 +157,47 @@ const TechSkillsManager = () => {
   };
 
   const handleDeleteSkill = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this tech skill?')) {
-      try {
-        // Find the deleted item to get its order
-        const deletedSkill = techSkills.find(skill => skill._id === id);
-        if (!deletedSkill) return;
-        
-        // Reorder items for deletion
-        await reorderItemsForDeletion(techSkills, deletedSkill.order, '/tech-skills', token);
-        
-        const response = await fetch(`${API_BASE_URL}/tech-skills/${id}`, {
-          method: 'DELETE',
+    try {
+      // Find the deleted item to get its order
+      const deletedSkill = techSkills.find(skill => skill._id === id);
+      if (!deletedSkill) return;
+      
+      // Reorder items for deletion
+      await reorderItemsForDeletion(techSkills, deletedSkill.order, '/tech-skills', token);
+      
+      const response = await fetch(`${API_BASE_URL}/tech-skills/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        // Refresh the list to get updated orders
+        const refreshResponse = await fetch(`${API_BASE_URL}/tech-skills`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
-
-        if (response.ok) {
-          // Refresh the list to get updated orders
-          const refreshResponse = await fetch(`${API_BASE_URL}/tech-skills`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          const refreshedData = await refreshResponse.json();
-          setTechSkills(refreshedData);
-        }
-      } catch (error) {
-        console.error('Error deleting tech skill:', error);
+        const refreshedData = await refreshResponse.json();
+        setTechSkills(refreshedData);
       }
+    } catch (error) {
+      console.error('Error deleting tech skill:', error);
     }
+  };
+  
+  const openConfirmDialog = (id: string, type: string) => {
+    setConfirmDialog({ isOpen: true, id, type });
+  };
+  
+  const closeConfirmDialog = () => {
+    setConfirmDialog({ isOpen: false, id: '', type: '' });
+  };
+  
+  const confirmDelete = () => {
+    handleDeleteSkill(confirmDialog.id);
+    closeConfirmDialog();
   };
 
   const getIconByCategory = (category?: string) => {
@@ -341,7 +359,7 @@ const TechSkillsManager = () => {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => handleDeleteSkill(skill._id)}
+                          onClick={() => openConfirmDialog(skill._id, 'delete')}
                           className="h-8 w-8 p-0 text-red-500 hover:text-red-500"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -371,6 +389,16 @@ const TechSkillsManager = () => {
       </div>
     </div>
   );
+  <ConfirmDialog
+      isOpen={confirmDialog.isOpen}
+      onClose={closeConfirmDialog}
+      onConfirm={confirmDelete}
+      title="Confirm Deletion"
+      message="Are you sure you want to delete this tech skill? This action cannot be undone."
+      confirmText="Delete"
+      cancelText="Cancel"
+      variant="destructive"
+    />
 };
 
 export default TechSkillsManager;

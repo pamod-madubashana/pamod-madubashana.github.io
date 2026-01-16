@@ -20,6 +20,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { API_BASE_URL } from '@/lib/apiConfig';
 import { reorderItemsForInsertion, reorderItemsForUpdate, reorderItemsForDeletion, reorderAllItemsContiguously } from '@/lib/orderUtils';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 interface TimelineItem {
   _id: string;
@@ -48,6 +49,12 @@ const TimelineManager = () => {
     description: '',
     icon: 'Briefcase',
     order: 0
+  });
+  
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    id: '',
+    type: ''
   });
 
   // Fetch timeline items
@@ -161,36 +168,47 @@ const TimelineManager = () => {
   };
 
   const handleDeleteItem = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this timeline item?')) {
-      try {
-        // Find the deleted item to get its order
-        const deletedItem = timelineItems.find(item => item._id === id);
-        if (!deletedItem) return;
-        
-        // Reorder items for deletion
-        await reorderItemsForDeletion(timelineItems, deletedItem.order, '/timeline', token);
-        
-        const response = await fetch(`${API_BASE_URL}/timeline/${id}`, {
-          method: 'DELETE',
+    try {
+      // Find the deleted item to get its order
+      const deletedItem = timelineItems.find(item => item._id === id);
+      if (!deletedItem) return;
+      
+      // Reorder items for deletion
+      await reorderItemsForDeletion(timelineItems, deletedItem.order, '/timeline', token);
+      
+      const response = await fetch(`${API_BASE_URL}/timeline/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        // Refresh the list to get updated orders
+        const refreshResponse = await fetch(`${API_BASE_URL}/timeline`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
-
-        if (response.ok) {
-          // Refresh the list to get updated orders
-          const refreshResponse = await fetch(`${API_BASE_URL}/timeline`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          const refreshedData = await refreshResponse.json();
-          setTimelineItems(refreshedData);
-        }
-      } catch (error) {
-        console.error('Error deleting timeline item:', error);
+        const refreshedData = await refreshResponse.json();
+        setTimelineItems(refreshedData);
       }
+    } catch (error) {
+      console.error('Error deleting timeline item:', error);
     }
+  };
+  
+  const openConfirmDialog = (id: string, type: string) => {
+    setConfirmDialog({ isOpen: true, id, type });
+  };
+  
+  const closeConfirmDialog = () => {
+    setConfirmDialog({ isOpen: false, id: '', type: '' });
+  };
+  
+  const confirmDelete = () => {
+    handleDeleteItem(confirmDialog.id);
+    closeConfirmDialog();
   };
 
   const getIconComponent = (iconName: string) => {
@@ -396,7 +414,7 @@ const TimelineManager = () => {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => handleDeleteItem(item._id)}
+                          onClick={() => openConfirmDialog(item._id, 'delete')}
                           className="h-8 w-8 p-0 text-red-500 hover:text-red-500"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -418,6 +436,16 @@ const TimelineManager = () => {
       </div>
     </div>
   );
+  <ConfirmDialog
+      isOpen={confirmDialog.isOpen}
+      onClose={closeConfirmDialog}
+      onConfirm={confirmDelete}
+      title="Confirm Deletion"
+      message="Are you sure you want to delete this timeline item? This action cannot be undone."
+      confirmText="Delete"
+      cancelText="Cancel"
+      variant="destructive"
+    />
 };
 
 export default TimelineManager;
