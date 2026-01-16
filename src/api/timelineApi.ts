@@ -27,7 +27,7 @@ export const timelineApi = {
       return cachedData;
     }
     
-    const response = await fetch(`${API_BASE_URL}/enhanced-dashboard/timeline`);
+    const response = await fetch(`${API_BASE_URL}/timeline/public`);
     
     if (!response.ok) {
       const errorText = await response.text();
