@@ -7,9 +7,9 @@ export interface Article {
   status: 'draft' | 'published';
   tags: string[];
   featuredImage?: string;
-  author: {
+  author?: {
     username: string;
-  };
+  } | null;
   createdAt: string;
   updatedAt: string;
 }

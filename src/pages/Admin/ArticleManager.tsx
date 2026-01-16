@@ -318,7 +318,7 @@ const ArticleManager = () => {
                     </Badge>
                   </div>
                   <CardDescription>
-                    By {article.author.username} • {formatDate(article.createdAt)}
+                    By {article.author?.username || 'Unknown Author'} • {formatDate(article.createdAt)}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
