@@ -196,7 +196,7 @@ const InterestsManager = () => {
                           : setNewInterest({...newInterest, label: e.target.value})
                       }
                       placeholder="e.g., Telegram Bot Development"
-                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+                      className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -210,7 +210,7 @@ const InterestsManager = () => {
                             ? setEditingInterest({...editingInterest, icon: e.target.value}) 
                             : setNewInterest({...newInterest, icon: e.target.value})
                         }
-                        className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                        className="w-full rounded-md border-none bg-gray-800 px-3 py-2 text-white focus:ring-0 focus:ring-offset-0"
                       >
                         <option value="Heart">Heart</option>
                         <option value="Code2">Code</option>
@@ -234,7 +234,7 @@ const InterestsManager = () => {
                             : setNewInterest({...newInterest, order: parseInt(e.target.value)})
                         }
                         placeholder="Order position"
-                        className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+                        className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                       />
                     </div>
                   </div>

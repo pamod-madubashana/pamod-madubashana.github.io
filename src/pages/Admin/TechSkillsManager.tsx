@@ -200,7 +200,7 @@ const TechSkillsManager = () => {
                           : setNewSkill({...newSkill, name: e.target.value})
                       }
                       placeholder="e.g., JavaScript, Python, React"
-                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -250,7 +250,7 @@ const TechSkillsManager = () => {
                             : setNewSkill({...newSkill, order: parseInt(e.target.value)})
                         }
                         placeholder="Order position"
-                        className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                       />
                     </div>
                   </div>

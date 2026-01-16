@@ -260,7 +260,7 @@ const ProjectManager = () => {
                       value={newProject.title}
                       onChange={(e) => setNewProject({...newProject, title: e.target.value})}
                       placeholder="Enter project title"
-                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -271,7 +271,7 @@ const ProjectManager = () => {
                       onChange={(e) => setNewProject({...newProject, description: e.target.value})}
                       placeholder="Describe your project"
                       rows={4}
-                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -281,7 +281,7 @@ const ProjectManager = () => {
                       value={newProject.techStack}
                       onChange={(e) => setNewProject({...newProject, techStack: e.target.value})}
                       placeholder="React, Node.js, MongoDB, etc."
-                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -293,7 +293,7 @@ const ProjectManager = () => {
                         value={newProject.githubUrl}
                         onChange={(e) => setNewProject({...newProject, githubUrl: e.target.value})}
                         placeholder="https://github.com/username/repo"
-                        className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                       />
                     </div>
                     <div className="grid gap-2">
@@ -304,7 +304,7 @@ const ProjectManager = () => {
                         value={newProject.liveUrl}
                         onChange={(e) => setNewProject({...newProject, liveUrl: e.target.value})}
                         placeholder="https://project-name.vercel.app"
-                        className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                       />
                     </div>
                   </div>
@@ -316,7 +316,7 @@ const ProjectManager = () => {
                       value={newProject.thumbnail}
                       onChange={(e) => setNewProject({...newProject, thumbnail: e.target.value})}
                       placeholder="https://example.com/image.jpg"
-                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -326,7 +326,7 @@ const ProjectManager = () => {
                       value={newProject.screenshots}
                       onChange={(e) => setNewProject({...newProject, screenshots: e.target.value})}
                       placeholder="https://example.com/screenshot1.jpg, https://example.com/screenshot2.jpg"
-                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -507,7 +507,7 @@ const ProjectManager = () => {
                     value={editingProject.title}
                     onChange={(e) => setEditingProject({...editingProject, title: e.target.value})}
                     placeholder="Enter project title"
-                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                   />
                 </div>
                 <div className="grid gap-2">
@@ -518,7 +518,7 @@ const ProjectManager = () => {
                     onChange={(e) => setEditingProject({...editingProject, description: e.target.value})}
                     placeholder="Describe your project"
                     rows={4}
-                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                   />
                 </div>
                 <div className="grid gap-2">
@@ -528,7 +528,7 @@ const ProjectManager = () => {
                     value={editingProject.techStack.join(', ')}
                     onChange={(e) => setEditingProject({...editingProject, techStack: e.target.value.split(',').map(tag => tag.trim())})}
                     placeholder="React, Node.js, MongoDB, etc."
-                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                   />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -540,7 +540,7 @@ const ProjectManager = () => {
                       value={editingProject.githubUrl || ''}
                       onChange={(e) => setEditingProject({...editingProject, githubUrl: e.target.value})}
                       placeholder="https://github.com/username/repo"
-                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -551,7 +551,7 @@ const ProjectManager = () => {
                       value={editingProject.liveUrl || ''}
                       onChange={(e) => setEditingProject({...editingProject, liveUrl: e.target.value})}
                       placeholder="https://project-name.vercel.app"
-                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                     />
                   </div>
                 </div>
@@ -563,7 +563,7 @@ const ProjectManager = () => {
                     value={editingProject.thumbnail || ''}
                     onChange={(e) => setEditingProject({...editingProject, thumbnail: e.target.value})}
                     placeholder="https://example.com/image.jpg"
-                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                   />
                 </div>
                 <div className="grid gap-2">
@@ -573,7 +573,7 @@ const ProjectManager = () => {
                     value={editingProject.screenshots?.join(', ') || ''}
                     onChange={(e) => setEditingProject({...editingProject, screenshots: e.target.value.split(',').map(url => url.trim())})}
                     placeholder="https://example.com/screenshot1.jpg, https://example.com/screenshot2.jpg"
-                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                   />
                 </div>
                 <div className="grid gap-2">
