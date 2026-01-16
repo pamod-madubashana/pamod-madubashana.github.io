@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from 'react';
 import { timelineApi, TimelineItem } from '@/api/timelineApi';
+import { API_BASE_URL } from '@/lib/apiConfig';
 
 // Icon mapping for dynamic icon rendering
 const iconMap = {
@@ -25,43 +26,42 @@ const iconMap = {
   Mountain,
 };
 
-const techCategories = [
-  {
-    title: "Frontend",
-    icon: Palette,
-    skills: ["React", "JavaScript", "Tailwind CSS", "HTML", "CSS"],
-  },
-  {
-    title: "Backend",
-    icon: Terminal,
-    skills: ["Node.js", "Express", "Python", "Pyrogram", "aiohttp"],
-  },
-  {
-    title: "Database",
-    icon: Database,
-    skills: ["MongoDB", "MySQL", "Redis", "PostgreSQL"],
-  },
-  {
-    title: "Cloud & DevOps",
-    icon: Cloud,
-    skills: ["GitHub Actions", "Koyeb", "Vercel", "Docker (Basics)", "Git"],
-  },
-];
-
-const interests = [
-  { icon: Code2, label: "Telegram Bot Development" },
-  { icon: Database, label: "Backend Architecture" },
-  { icon: Palette, label: "UI Design" },
-  { icon: Coffee, label: "Late-Night Debugging" },
-];
-
 const About = () => {
   const [timeline, setTimeline] = useState<any[]>([]);
+  const [techCategories, setTechCategories] = useState<any[]>([
+    {
+      title: "Frontend",
+      icon: Palette,
+      skills: ["React", "JavaScript", "Tailwind CSS", "HTML", "CSS"],
+    },
+    {
+      title: "Backend",
+      icon: Terminal,
+      skills: ["Node.js", "Express", "Python", "Pyrogram", "aiohttp"],
+    },
+    {
+      title: "Database",
+      icon: Database,
+      skills: ["MongoDB", "MySQL", "Redis", "PostgreSQL"],
+    },
+    {
+      title: "Cloud & DevOps",
+      icon: Cloud,
+      skills: ["GitHub Actions", "Koyeb", "Vercel", "Docker (Basics)", "Git"],
+    },
+  ]);
+  const [interests, setInterests] = useState<any[]>([
+    { icon: Code2, label: "Telegram Bot Development" },
+    { icon: Database, label: "Backend Architecture" },
+    { icon: Palette, label: "UI Design" },
+    { icon: Coffee, label: "Late-Night Debugging" },
+  ]);
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    const fetchTimeline = async () => {
+    const fetchAllData = async () => {
       try {
+        // Fetch timeline data
         const timelineData = await timelineApi.getTimeline();
         // Map the API data to match the expected format
         const mappedTimeline = timelineData.map((item: TimelineItem) => ({
@@ -69,9 +69,49 @@ const About = () => {
           icon: iconMap[item.icon as keyof typeof iconMap] || Briefcase // default to Briefcase if icon not found
         }));
         setTimeline(mappedTimeline);
+        
+        // Fetch tech skills data
+        const techSkillsResponse = await fetch(`${API_BASE_URL}/dashboard/enhanced/tech-skills`);
+        if (techSkillsResponse.ok) {
+          const techSkills = await techSkillsResponse.json();
+          // Group tech skills by category
+          const groupedSkills = {};
+          techSkills.forEach((skill: any) => {
+            const category = skill.category || 'General';
+            if (!groupedSkills[category]) {
+              groupedSkills[category] = [];
+            }
+            groupedSkills[category].push(skill.name);
+          });
+          
+          // Convert to the format expected by the UI
+          const formattedTechCategories = Object.entries(groupedSkills).map(([category, skills]) => ({
+            title: category,
+            icon: iconMap[category] || iconMap['Terminal'], // default icon
+            skills: skills as string[],
+          }));
+          
+          if (formattedTechCategories.length > 0) {
+            setTechCategories(formattedTechCategories);
+          }
+        }
+        
+        // Fetch interests data
+        const interestsResponse = await fetch(`${API_BASE_URL}/dashboard/enhanced/interests`);
+        if (interestsResponse.ok) {
+          const interestsData = await interestsResponse.json();
+          const formattedInterests = interestsData.map((interest: any) => ({
+            ...interest,
+            icon: iconMap[interest.icon as keyof typeof iconMap] || Code2 // default to Code2 if icon not found
+          }));
+          
+          if (formattedInterests.length > 0) {
+            setInterests(formattedInterests);
+          }
+        }
       } catch (error) {
-        console.error('Error fetching timeline:', error);
-        // Set default timeline if API fails
+        console.error('Error fetching data:', error);
+        // Still set default timeline if API fails
         setTimeline([
           {
             year: "2025 - Present",
@@ -111,7 +151,7 @@ const About = () => {
       }
     };
     
-    fetchTimeline();
+    fetchAllData();
   }, []);
 
   return (
