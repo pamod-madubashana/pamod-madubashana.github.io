@@ -350,10 +350,6 @@ const ArticleManager = () => {
                       <Trash2 className="w-4 h-4 mr-2" />
                       Delete
                     </Button>
-                    <Button variant="outline" size="sm">
-                      <Eye className="w-4 h-4 mr-2" />
-                      View
-                    </Button>
                   </div>
                 </CardContent>
               </Card>

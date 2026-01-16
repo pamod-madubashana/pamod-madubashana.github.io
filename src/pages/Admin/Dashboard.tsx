@@ -88,7 +88,7 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${API_BASE_URL}/enhanced-dashboard/dashboard`, {
+        const response = await fetch(`${API_BASE_URL}/dashboard/enhanced/dashboard`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

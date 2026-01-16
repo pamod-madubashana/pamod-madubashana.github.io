@@ -69,7 +69,18 @@ const SettingsPage = () => {
         });
         const data = await response.json();
         if (response.ok) {
-          setSettings(data);
+          // Merge API data with default structure to ensure socialLinks exists
+          setSettings({
+            ...settings,
+            ...data,
+            socialLinks: {
+              github: '',
+              linkedin: '',
+              twitter: '',
+              email: '',
+              ...(data.socialLinks || {})
+            }
+          });
         }
       } catch (error) {
         console.error('Error fetching settings:', error);
