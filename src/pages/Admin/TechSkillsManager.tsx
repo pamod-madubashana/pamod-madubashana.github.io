@@ -218,6 +218,7 @@ const TechSkillsManager = () => {
   };
 
   return (
+    <>
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         <header className="mb-8">
@@ -388,8 +389,7 @@ const TechSkillsManager = () => {
         )}
       </div>
     </div>
-  );
-  <ConfirmDialog
+    <ConfirmDialog
       isOpen={confirmDialog.isOpen}
       onClose={closeConfirmDialog}
       onConfirm={confirmDelete}
@@ -399,6 +399,8 @@ const TechSkillsManager = () => {
       cancelText="Cancel"
       variant="destructive"
     />
+    </>
+  );
 };
 
 export default TechSkillsManager;
