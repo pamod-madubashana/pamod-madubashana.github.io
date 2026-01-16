@@ -248,7 +248,7 @@ const ProjectManager = () => {
                   New Project
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+              <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-gray-900 text-white border border-gray-700">
                 <DialogHeader>
                   <DialogTitle>Create New Project</DialogTitle>
                 </DialogHeader>
@@ -260,6 +260,7 @@ const ProjectManager = () => {
                       value={newProject.title}
                       onChange={(e) => setNewProject({...newProject, title: e.target.value})}
                       placeholder="Enter project title"
+                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -270,6 +271,7 @@ const ProjectManager = () => {
                       onChange={(e) => setNewProject({...newProject, description: e.target.value})}
                       placeholder="Describe your project"
                       rows={4}
+                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -279,6 +281,7 @@ const ProjectManager = () => {
                       value={newProject.techStack}
                       onChange={(e) => setNewProject({...newProject, techStack: e.target.value})}
                       placeholder="React, Node.js, MongoDB, etc."
+                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -290,6 +293,7 @@ const ProjectManager = () => {
                         value={newProject.githubUrl}
                         onChange={(e) => setNewProject({...newProject, githubUrl: e.target.value})}
                         placeholder="https://github.com/username/repo"
+                        className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                       />
                     </div>
                     <div className="grid gap-2">
@@ -300,6 +304,7 @@ const ProjectManager = () => {
                         value={newProject.liveUrl}
                         onChange={(e) => setNewProject({...newProject, liveUrl: e.target.value})}
                         placeholder="https://project-name.vercel.app"
+                        className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                       />
                     </div>
                   </div>
@@ -311,6 +316,7 @@ const ProjectManager = () => {
                       value={newProject.thumbnail}
                       onChange={(e) => setNewProject({...newProject, thumbnail: e.target.value})}
                       placeholder="https://example.com/image.jpg"
+                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -320,6 +326,7 @@ const ProjectManager = () => {
                       value={newProject.screenshots}
                       onChange={(e) => setNewProject({...newProject, screenshots: e.target.value})}
                       placeholder="https://example.com/screenshot1.jpg, https://example.com/screenshot2.jpg"
+                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -488,7 +495,7 @@ const ProjectManager = () => {
         {/* Edit Project Dialog */}
         {editingProject && (
           <Dialog open={!!editingProject} onOpenChange={(open) => !open && setEditingProject(null)}>
-            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-gray-900 text-white border border-gray-700">
               <DialogHeader>
                 <DialogTitle>Edit Project</DialogTitle>
               </DialogHeader>
@@ -500,6 +507,7 @@ const ProjectManager = () => {
                     value={editingProject.title}
                     onChange={(e) => setEditingProject({...editingProject, title: e.target.value})}
                     placeholder="Enter project title"
+                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                   />
                 </div>
                 <div className="grid gap-2">
@@ -510,6 +518,7 @@ const ProjectManager = () => {
                     onChange={(e) => setEditingProject({...editingProject, description: e.target.value})}
                     placeholder="Describe your project"
                     rows={4}
+                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                   />
                 </div>
                 <div className="grid gap-2">
@@ -519,6 +528,7 @@ const ProjectManager = () => {
                     value={editingProject.techStack.join(', ')}
                     onChange={(e) => setEditingProject({...editingProject, techStack: e.target.value.split(',').map(tag => tag.trim())})}
                     placeholder="React, Node.js, MongoDB, etc."
+                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                   />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -530,6 +540,7 @@ const ProjectManager = () => {
                       value={editingProject.githubUrl || ''}
                       onChange={(e) => setEditingProject({...editingProject, githubUrl: e.target.value})}
                       placeholder="https://github.com/username/repo"
+                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -540,6 +551,7 @@ const ProjectManager = () => {
                       value={editingProject.liveUrl || ''}
                       onChange={(e) => setEditingProject({...editingProject, liveUrl: e.target.value})}
                       placeholder="https://project-name.vercel.app"
+                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                     />
                   </div>
                 </div>
@@ -551,6 +563,7 @@ const ProjectManager = () => {
                     value={editingProject.thumbnail || ''}
                     onChange={(e) => setEditingProject({...editingProject, thumbnail: e.target.value})}
                     placeholder="https://example.com/image.jpg"
+                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                   />
                 </div>
                 <div className="grid gap-2">
@@ -560,6 +573,7 @@ const ProjectManager = () => {
                     value={editingProject.screenshots?.join(', ') || ''}
                     onChange={(e) => setEditingProject({...editingProject, screenshots: e.target.value.split(',').map(url => url.trim())})}
                     placeholder="https://example.com/screenshot1.jpg, https://example.com/screenshot2.jpg"
+                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                   />
                 </div>
                 <div className="grid gap-2">

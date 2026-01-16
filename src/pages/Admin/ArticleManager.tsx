@@ -163,7 +163,7 @@ const ArticleManager = () => {
                   New Article
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+              <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-gray-900 text-white border border-gray-700">
                 <DialogHeader>
                   <DialogTitle>Create New Article</DialogTitle>
                 </DialogHeader>
@@ -175,6 +175,7 @@ const ArticleManager = () => {
                       value={newArticle.title}
                       onChange={(e) => setNewArticle({...newArticle, title: e.target.value})}
                       placeholder="Enter article title"
+                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -185,6 +186,7 @@ const ArticleManager = () => {
                       onChange={(e) => setNewArticle({...newArticle, excerpt: e.target.value})}
                       placeholder="Brief description of the article"
                       rows={3}
+                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -196,7 +198,7 @@ const ArticleManager = () => {
                         value={newArticle.featuredImage}
                         onChange={(e) => setNewArticle({...newArticle, featuredImage: e.target.value})}
                         placeholder="https://example.com/image.jpg"
-                        className="flex-1"
+                        className="flex-1 bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                       />
                       <Button
                         type="button"
@@ -232,6 +234,7 @@ const ArticleManager = () => {
                       onChange={(e) => setNewArticle({...newArticle, content: e.target.value})}
                       placeholder="Write your article content here..."
                       rows={8}
+                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -241,6 +244,7 @@ const ArticleManager = () => {
                       value={newArticle.tags}
                       onChange={(e) => setNewArticle({...newArticle, tags: e.target.value})}
                       placeholder="tag1, tag2, tag3"
+                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -360,7 +364,7 @@ const ArticleManager = () => {
         {/* Edit Article Dialog */}
         {editingArticle && (
           <Dialog open={!!editingArticle} onOpenChange={(open) => !open && setEditingArticle(null)}>
-            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-gray-900 text-white border border-gray-700">
               <DialogHeader>
                 <DialogTitle>Edit Article</DialogTitle>
               </DialogHeader>
@@ -372,6 +376,7 @@ const ArticleManager = () => {
                     value={editingArticle.title}
                     onChange={(e) => setEditingArticle({...editingArticle, title: e.target.value})}
                     placeholder="Enter article title"
+                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                   />
                 </div>
                 <div className="grid gap-2">
@@ -382,6 +387,7 @@ const ArticleManager = () => {
                     onChange={(e) => setEditingArticle({...editingArticle, excerpt: e.target.value})}
                     placeholder="Brief description of the article"
                     rows={3}
+                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                   />
                 </div>
                 <div className="grid gap-2">
@@ -393,7 +399,7 @@ const ArticleManager = () => {
                       value={editingArticle.featuredImage || ''}
                       onChange={(e) => setEditingArticle({...editingArticle, featuredImage: e.target.value})}
                       placeholder="https://example.com/image.jpg"
-                      className="flex-1"
+                      className="flex-1 bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                     />
                     <Button
                       type="button"
@@ -431,6 +437,7 @@ const ArticleManager = () => {
                     onChange={(e) => setEditingArticle({...editingArticle, content: e.target.value})}
                     placeholder="Write your article content here..."
                     rows={8}
+                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                   />
                 </div>
                 <div className="grid gap-2">
@@ -440,6 +447,7 @@ const ArticleManager = () => {
                     value={editingArticle.tags.join(', ')}
                     onChange={(e) => setEditingArticle({...editingArticle, tags: e.target.value.split(',').map(tag => tag.trim())})}
                     placeholder="tag1, tag2, tag3"
+                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                   />
                 </div>
                 <div className="grid gap-2">

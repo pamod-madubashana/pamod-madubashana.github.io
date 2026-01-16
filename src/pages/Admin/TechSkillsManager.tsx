@@ -184,7 +184,7 @@ const TechSkillsManager = () => {
                   New Skill
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+              <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-gray-900 text-white border border-gray-700">
                 <DialogHeader>
                   <DialogTitle>{editingSkill ? 'Edit Skill' : 'Add New Skill'}</DialogTitle>
                 </DialogHeader>
@@ -200,6 +200,7 @@ const TechSkillsManager = () => {
                           : setNewSkill({...newSkill, name: e.target.value})
                       }
                       placeholder="e.g., JavaScript, Python, React"
+                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -228,7 +229,7 @@ const TechSkillsManager = () => {
                             ? setEditingSkill({...editingSkill, category: e.target.value}) 
                             : setNewSkill({...newSkill, category: e.target.value})
                         }
-                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                       >
                         <option value="General">General</option>
                         <option value="Frontend">Frontend</option>
@@ -249,6 +250,7 @@ const TechSkillsManager = () => {
                             : setNewSkill({...newSkill, order: parseInt(e.target.value)})
                         }
                         placeholder="Order position"
+                        className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                       />
                     </div>
                   </div>

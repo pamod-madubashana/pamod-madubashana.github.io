@@ -180,7 +180,7 @@ const InterestsManager = () => {
                   New Interest
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+              <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-gray-900 text-white border border-gray-700">
                 <DialogHeader>
                   <DialogTitle>{editingInterest ? 'Edit Interest' : 'Add New Interest'}</DialogTitle>
                 </DialogHeader>
@@ -196,6 +196,7 @@ const InterestsManager = () => {
                           : setNewInterest({...newInterest, label: e.target.value})
                       }
                       placeholder="e.g., Telegram Bot Development"
+                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -209,7 +210,7 @@ const InterestsManager = () => {
                             ? setEditingInterest({...editingInterest, icon: e.target.value}) 
                             : setNewInterest({...newInterest, icon: e.target.value})
                         }
-                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                       >
                         <option value="Heart">Heart</option>
                         <option value="Code2">Code</option>
@@ -233,6 +234,7 @@ const InterestsManager = () => {
                             : setNewInterest({...newInterest, order: parseInt(e.target.value)})
                         }
                         placeholder="Order position"
+                        className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                       />
                     </div>
                   </div>
