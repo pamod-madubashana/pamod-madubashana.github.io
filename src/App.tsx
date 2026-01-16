@@ -11,10 +11,11 @@ import About from "./pages/About";
 import Projects from "./pages/Projects";
 import Articles from "./pages/Articles";
 import NotFound from "./pages/NotFound";
-import AdminDashboard from "./pages/Admin/Dashboard";
+import AdminDashboard from "./pages/Admin/DashboardNew";
 import ArticleManager from "./pages/Admin/ArticleManager";
 import SettingsPage from "./pages/Admin/Settings";
 import ProjectManager from "./pages/Admin/ProjectManager";
+import AdminLayout from "./components/layout/AdminLayout";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 
@@ -39,7 +40,9 @@ const App = () => (
                 path="/admin" 
                 element={
                   <ProtectedRoute adminOnly={true}>
-                    <AdminDashboard />
+                    <AdminLayout>
+                      <AdminDashboard />
+                    </AdminLayout>
                   </ProtectedRoute>
                 } 
               />
@@ -47,7 +50,9 @@ const App = () => (
                 path="/admin/articles" 
                 element={
                   <ProtectedRoute adminOnly={true}>
-                    <ArticleManager />
+                    <AdminLayout>
+                      <ArticleManager />
+                    </AdminLayout>
                   </ProtectedRoute>
                 } 
               />
@@ -55,7 +60,9 @@ const App = () => (
                 path="/admin/settings" 
                 element={
                   <ProtectedRoute adminOnly={true}>
-                    <SettingsPage />
+                    <AdminLayout>
+                      <SettingsPage />
+                    </AdminLayout>
                   </ProtectedRoute>
                 } 
               />
@@ -63,7 +70,9 @@ const App = () => (
                 path="/admin/projects" 
                 element={
                   <ProtectedRoute adminOnly={true}>
-                    <ProjectManager />
+                    <AdminLayout>
+                      <ProjectManager />
+                    </AdminLayout>
                   </ProtectedRoute>
                 } 
               />
