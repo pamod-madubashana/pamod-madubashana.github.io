@@ -27,33 +27,14 @@ interface NavItem {
 }
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(() => {
-    // Check if we're on a desktop screen (>1024px) and initialize accordingly
-    return typeof window !== 'undefined' && window.innerWidth >= 1024;
-  });
+  // Always keep sidebar open
+  const sidebarOpen = true;
   
 
   const location = useLocation();
   const { logout, user } = useAuth();
   
-  // Handle responsive sidebar state
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        // On desktop screens, ensure sidebar is open
-        setSidebarOpen(true);
-      } else {
-        // On mobile screens, collapse sidebar
-        setSidebarOpen(false);
-      }
-    };
-    
-    // Set up event listener
-    window.addEventListener('resize', handleResize);
-    
-    // Clean up event listener
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+
 
   const navItems: NavItem[] = [
     {
@@ -94,8 +75,9 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   ];
 
   // Close sidebar when route changes (mobile)
+  // Note: sidebar is always open in this implementation
   useEffect(() => {
-    setSidebarOpen(false);
+    // No-op since sidebar is always open
   }, [location]);
 
   const isActiveRoute = (path: string) => {
@@ -115,7 +97,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
-            onClick={() => setSidebarOpen(false)}
+            onClick={() => {}}
           />
         )}
       </AnimatePresence>
@@ -123,15 +105,12 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       {/* Sidebar */}
       <motion.aside
         initial={false}
-        animate={sidebarOpen ? {
+        animate={{
           x: 0,
           width: '280px'
-        } : {
-          x: 0,
-          width: '72px'
         }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed lg:relative inset-y-0 left-0 z-50 bg-popover backdrop-blur-xl border-r border-border flex flex-col"
+        className="fixed inset-y-0 left-0 z-50 bg-popover backdrop-blur-xl border-r border-border flex flex-col"
       >
         <div className="flex items-center justify-between p-4 border-b border-border">
           <AnimatePresence mode="wait">
@@ -156,16 +135,11 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => {
-              // Only allow manual toggle on mobile devices
-              if (window.innerWidth < 1024) {
-                setSidebarOpen(!sidebarOpen);
-              }
-            }}
             className="lg:hidden hover:bg-muted"
           >
-            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            <Menu className="w-5 h-5" />
           </Button>
+
         </div>
 
         <nav className="flex-1 p-4 space-y-2">
@@ -262,7 +236,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       </motion.aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 ml-[280px]">
         {/* Top Bar */}
         <header className="sticky top-0 z-30 bg-popover/80 backdrop-blur-xl border-b border-border px-6 py-4">
           <div className="flex items-center justify-between">
@@ -270,7 +244,6 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => setSidebarOpen(true)}
                 className="lg:hidden hover:bg-muted"
               >
                 <Menu className="w-5 h-5" />
@@ -303,8 +276,10 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 p-6 overflow-auto">
-          {children}
+        <main className="flex-1 overflow-auto">
+          <div className="p-6 pt-0 md:pt-6">
+            {children}
+          </div>
         </main>
       </div>
     </div>
