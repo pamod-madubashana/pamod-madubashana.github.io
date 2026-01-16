@@ -31,10 +31,10 @@ const skills = [
 const techStack = [
   { name: "Python", level: 95 },
   { name: "JavaScript", level: 80 },
-  { name: "React", level: 95 },
-  { name: "TypeScript", level: 70 },
-  { name: "MongoDB", level: 80 },
-  { name: "AWS", level: 75 },
+  { name: "React", level: 65 },
+  { name: "TypeScript", level: 75 },
+  { name: "MongoDB", level: 85 },
+  { name: "AWS", level: 70 },
 ];
 
 export const AboutSection = () => {

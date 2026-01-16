@@ -33,7 +33,7 @@ const timeline = [
     icon: Palette,
   },
   {
-    year: "2022 - Present",
+    year: "2022 - 2023",
     role: "Computer Science Student",
     company: "",
     description:
