@@ -71,7 +71,7 @@ const About = () => {
         setTimeline(mappedTimeline);
         
         // Fetch tech skills data
-        const techSkillsResponse = await fetch(`${API_BASE_URL}/dashboard/enhanced/tech-skills`);
+        const techSkillsResponse = await fetch(`${API_BASE_URL}/tech-skills/public`);
         if (techSkillsResponse.ok) {
           const techSkills = await techSkillsResponse.json();
           // Group tech skills by category
@@ -97,7 +97,7 @@ const About = () => {
         }
         
         // Fetch interests data
-        const interestsResponse = await fetch(`${API_BASE_URL}/dashboard/enhanced/interests`);
+        const interestsResponse = await fetch(`${API_BASE_URL}/interests/public`);
         if (interestsResponse.ok) {
           const interestsData = await interestsResponse.json();
           const formattedInterests = interestsData.map((interest: any) => ({
