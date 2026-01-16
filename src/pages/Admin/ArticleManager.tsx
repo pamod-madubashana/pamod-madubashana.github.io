@@ -205,6 +205,7 @@ const ArticleManager = () => {
                         size="sm"
                         onClick={() => document.getElementById('file-upload-create')?.click()}
                         disabled={isUploading}
+                        className="border-input text-foreground hover:bg-accent hover:text-accent-foreground"
                       >
                         {isUploading ? 'Uploading...' : 'Choose File'}
                       </Button>
@@ -273,6 +274,7 @@ const ArticleManager = () => {
                     <Button
                       variant="outline"
                       onClick={() => setIsDialogOpen(false)}
+                      className="border-input text-foreground hover:bg-accent hover:text-accent-foreground"
                     >
                       Cancel
                     </Button>
@@ -405,6 +407,7 @@ const ArticleManager = () => {
                       variant="outline"
                       size="sm"
                       onClick={() => document.getElementById('file-upload-edit')?.click()}
+                      className="border-input text-foreground hover:bg-accent hover:text-accent-foreground"
                     >
                       Choose File
                     </Button>
@@ -476,6 +479,7 @@ const ArticleManager = () => {
                   <Button
                     variant="outline"
                     onClick={() => setEditingArticle(null)}
+                    className="border-input text-foreground hover:bg-accent hover:text-accent-foreground"
                   >
                     Cancel
                   </Button>
