@@ -161,7 +161,6 @@ const ProfessionalDashboard = () => {
       description: "Create blog post",
       icon: FileText,
       path: "/admin/articles",
-      color: "from-blue-500 to-cyan-500",
       action: "create"
     },
     {
@@ -169,7 +168,6 @@ const ProfessionalDashboard = () => {
       description: "Showcase work",
       icon: Package,
       path: "/admin/projects",
-      color: "from-purple-500 to-pink-500",
       action: "create"
     },
     {
@@ -177,7 +175,6 @@ const ProfessionalDashboard = () => {
       description: "Performance metrics",
       icon: BarChart3,
       path: "/admin/analytics",
-      color: "from-green-500 to-emerald-500",
       action: "view"
     }
   ];
@@ -185,9 +182,9 @@ const ProfessionalDashboard = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'published':
-        return <Badge variant="default" className="bg-green-500/20 text-green-400 border-green-500/30">Published</Badge>;
+        return <Badge variant="default" className="bg-success/20 text-success border-success/30">Published</Badge>;
       case 'draft':
-        return <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">Draft</Badge>;
+        return <Badge variant="secondary" className="bg-warning/20 text-warning border-warning/30">Draft</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -221,17 +218,17 @@ const ProfessionalDashboard = () => {
   }, []);
 
   return (
-    <div className="space-y-8">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Welcome Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="grid grid-cols-1 md:grid-cols-3 gap-6"
+        className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
       >
         <div className="md:col-span-2">
-          <h1 className="text-4xl font-bold text-white mb-2">
-            Good morning, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+          <h1 className="text-3xl md:text-4xl font-bold mb-2">
+            Good morning, <span className="gradient-text">
               {user?.username || 'Admin'}
             </span>
           </h1>
@@ -246,30 +243,31 @@ const ProfessionalDashboard = () => {
               <span>Updated just now</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse"></div>
-              <span className="text-sm text-green-400 font-medium">All systems operational</span>
+              <div className="w-3 h-3 rounded-full bg-[#00cc88] animate-pulse"></div>
+              <span className="text-sm text-[#00cc88] font-medium">All systems operational</span>
             </div>
           </div>
         </div>
       </motion.div>
 
       {/* Stats Cards */}
-      {loading ? (
-        <div className="flex justify-center items-center py-20">
-          <Loader2 className="w-8 h-8 text-primary animate-spin" />
-        </div>
-      ) : error ? (
-        <div className="text-center py-20 text-red-400">
-          Error loading dashboard: {error}
-        </div>
-      ) : (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
-          {statsCards.map((stat, index) => {
+      <div className="space-y-6">
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="w-8 h-8 text-primary animate-spin" />
+          </div>
+        ) : error ? (
+          <div className="text-center py-20 text-destructive">
+            Error loading dashboard: {error}
+          </div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          >
+            {statsCards.map((stat, index) => {
             const Icon = stat.icon;
             return (
               <motion.div
@@ -277,18 +275,17 @@ const ProfessionalDashboard = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.1 * index }}
-                whileHover={{ y: -5 }}
-                className="group"
+                whileHover={{ y: -4 }}
+                className="group card-hover"
               >
-                <Card className="glass border border-white/10 hover:border-white/30 transition-all duration-300 h-full overflow-hidden relative bg-gradient-to-br from-gray-800/50 to-gray-900/50">
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <Card className="glass border border-border hover:border-primary/30 transition-all duration-300 h-full overflow-hidden relative">
                   <CardHeader className="relative pb-3">
                     <div className="flex items-center justify-between">
-                      <div className={`${stat.bgColor} p-3 rounded-xl`}>
+                      <div className={`${stat.bgColor} p-3 rounded-lg`}>
                         <Icon className={`w-6 h-6 ${stat.color}`} />
                       </div>
                       <div className={`flex items-center gap-1 text-sm font-medium ${
-                        stat.trend === 'up' ? 'text-green-400' : 'text-red-400'
+                        stat.trend === 'up' ? 'text-success' : 'text-destructive'
                       }`}>
                         <ArrowUpRight className={`w-4 h-4 ${stat.trend === 'down' ? 'rotate-180' : ''}`} />
                         {stat.change}
@@ -296,17 +293,18 @@ const ProfessionalDashboard = () => {
                     </div>
                   </CardHeader>
                   <CardContent className="relative pt-0">
-                    <p className="text-3xl font-bold text-white mb-1">{stat.value}</p>
+                    <p className="text-3xl font-bold mb-1">{stat.value}</p>
                     <p className="text-muted-foreground text-sm">{stat.title}</p>
                   </CardContent>
                 </Card>
               </motion.div>
             );
-          })}
-        </motion.div>
-      )}
+            })}
+          </motion.div>
+        )}
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Quick Actions */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -315,8 +313,8 @@ const ProfessionalDashboard = () => {
           className="lg:col-span-2 space-y-6"
         >
           <div>
-            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-              <Zap className="w-6 h-6 text-yellow-400" />
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+              <Zap className="w-6 h-6 text-accent" />
               Quick Actions
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -333,13 +331,12 @@ const ProfessionalDashboard = () => {
                     className="h-full"
                   >
                     <Link to={action.path}>
-                      <Card className="glass border border-white/10 hover:border-white/30 transition-all duration-300 h-full overflow-hidden group relative bg-gradient-to-br from-gray-800/50 to-gray-900/50">
-                        <div className={`absolute inset-0 bg-gradient-to-br ${action.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
+                      <Card className="glass border border-border hover:border-primary/30 transition-all duration-300 h-full overflow-hidden group relative card-hover">
                         <CardHeader className="pb-4">
-                          <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${action.color} flex items-center justify-center mb-4`}>
-                            <Icon className="w-6 h-6 text-white" />
+                          <div className={`w-12 h-12 rounded-xl bg-gradient-to-r from-primary to-secondary flex items-center justify-center mb-4`}>
+                            <Icon className="w-6 h-6 text-primary-foreground" />
                           </div>
-                          <CardTitle className="text-xl text-white group-hover:text-primary transition-colors duration-300">
+                          <CardTitle className="text-xl group-hover:text-primary transition-colors duration-300">
                             {action.title}
                           </CardTitle>
                           <CardDescription className="text-muted-foreground">
@@ -347,7 +344,7 @@ const ProfessionalDashboard = () => {
                           </CardDescription>
                         </CardHeader>
                         <CardContent>
-                          <Button className={`w-full bg-gradient-to-r ${action.color} hover:opacity-90 transition-opacity`}>
+                          <Button className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity">
                             {action.action === 'create' ? (
                               <>
                                 <Plus className="w-4 h-4 mr-2" />
@@ -369,8 +366,8 @@ const ProfessionalDashboard = () => {
           {/* Recent Activity */}
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-                <Clock className="w-6 h-6 text-blue-400" />
+              <h2 className="text-2xl font-bold flex items-center gap-3">
+                <Clock className="w-6 h-6 text-primary" />
                 Recent Activity
               </h2>
               <Button variant="ghost" className="text-primary hover:text-primary/80">
@@ -378,9 +375,9 @@ const ProfessionalDashboard = () => {
               </Button>
             </div>
             
-            <Card className="glass border border-white/10 bg-gradient-to-br from-gray-800/50 to-gray-900/50">
+            <Card className="glass border border-border">
               <CardContent className="p-0">
-                <div className="divide-y divide-white/10">
+                <div className="divide-y divide-border">
                   {dashboardData.recentActivity.map((item, index) => (
                     <motion.div
                       key={item.id}
@@ -393,8 +390,8 @@ const ProfessionalDashboard = () => {
                         <div className="flex items-center gap-4">
                           <div className={`p-2 rounded-lg ${
                             item.type === 'article' 
-                              ? 'bg-blue-500/20 text-blue-400' 
-                              : 'bg-purple-500/20 text-purple-400'
+                              ? 'bg-primary/20 text-primary' 
+                              : 'bg-secondary/20 text-secondary'
                           }`}>
                             {item.type === 'article' ? (
                               <FileText className="w-5 h-5" />
@@ -403,7 +400,7 @@ const ProfessionalDashboard = () => {
                             )}
                           </div>
                           <div>
-                            <h3 className="font-medium text-white">{item.title}</h3>
+                            <h3 className="font-medium">{item.title}</h3>
                             <p className="text-sm text-muted-foreground">{formatDate(item.date)}</p>
                             <p className="text-xs text-muted-foreground/70">by {item.author}</p>
                           </div>
@@ -426,10 +423,10 @@ const ProfessionalDashboard = () => {
           className="space-y-6"
         >
           {/* Performance Widget */}
-          <Card className="glass border border-white/10 bg-gradient-to-br from-gray-800/50 to-gray-900/50">
+          <Card className="glass border border-border">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
-                <BarChart3 className="w-5 h-5 text-green-400" />
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-success" />
                 Performance Overview
               </CardTitle>
               <CardDescription>Monthly analytics summary</CardDescription>
@@ -439,7 +436,7 @@ const ProfessionalDashboard = () => {
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-muted-foreground">Articles Published</span>
-                    <span className="text-white font-medium">
+                    <span className="font-medium">
                       {dashboardData.stats.articles.published}/{dashboardData.stats.articles.total}
                     </span>
                   </div>
@@ -454,7 +451,7 @@ const ProfessionalDashboard = () => {
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-muted-foreground">Projects Completed</span>
-                    <span className="text-white font-medium">
+                    <span className="font-medium">
                       {dashboardData.stats.projects.published}/{dashboardData.stats.projects.total}
                     </span>
                   </div>
@@ -469,7 +466,7 @@ const ProfessionalDashboard = () => {
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-muted-foreground">Profile Views</span>
-                    <span className="text-white font-medium">
+                    <span className="font-medium">
                       {dashboardData.stats.engagement.views.toLocaleString()}
                     </span>
                   </div>
@@ -482,43 +479,43 @@ const ProfessionalDashboard = () => {
                 </div>
               </div>
               
-              <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:opacity-90">
+              <Button className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90">
                 View Detailed Analytics
               </Button>
             </CardContent>
           </Card>
 
           {/* Upcoming Deadlines */}
-          <Card className="glass border border-white/10 bg-gradient-to-br from-gray-800/50 to-gray-900/50">
+          <Card className="glass border border-border">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
-                <Calendar className="w-5 h-5 text-orange-400" />
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-warning" />
                 Upcoming Tasks
               </CardTitle>
               <CardDescription>Deadlines and reminders</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
-                  <div className="w-2 h-2 rounded-full bg-orange-400 mt-2 flex-shrink-0"></div>
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-warning/10 border border-warning/20">
+                  <div className="w-2 h-2 rounded-full bg-warning mt-2 flex-shrink-0"></div>
                   <div>
-                    <p className="text-white font-medium">Finish portfolio redesign</p>
+                    <p className="font-medium">Finish portfolio redesign</p>
                     <p className="text-sm text-muted-foreground">Due tomorrow</p>
                   </div>
                 </div>
                 
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                  <div className="w-2 h-2 rounded-full bg-blue-400 mt-2 flex-shrink-0"></div>
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-primary/10 border border-primary/20">
+                  <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0"></div>
                   <div>
-                    <p className="text-white font-medium">Write React hooks article</p>
+                    <p className="font-medium">Write React hooks article</p>
                     <p className="text-sm text-muted-foreground">Due in 3 days</p>
                   </div>
                 </div>
                 
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                  <div className="w-2 h-2 rounded-full bg-purple-400 mt-2 flex-shrink-0"></div>
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/10 border border-secondary/20">
+                  <div className="w-2 h-2 rounded-full bg-secondary mt-2 flex-shrink-0"></div>
                   <div>
-                    <p className="text-white font-medium">Update project screenshots</p>
+                    <p className="font-medium">Update project screenshots</p>
                     <p className="text-sm text-muted-foreground">Due next week</p>
                   </div>
                 </div>
