@@ -386,7 +386,10 @@ const TechStackManager = () => {
             {filteredCategories.map((category) => {
               const IconComponent = getIconComponent(category.icon);
               return (
-                <Card key={category._id} className="glass border border-primary/30">
+                <Card key={category._id} className="glass border border-primary/30 relative">
+                  <div className="absolute -top-2 -left-2 bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold z-10">
+                    {category.order}
+                  </div>
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div>

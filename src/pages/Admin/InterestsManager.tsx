@@ -287,7 +287,10 @@ const InterestsManager = () => {
             {filteredInterests.map((interest) => {
               const IconComponent = getIconComponent(interest.icon);
               return (
-                <Card key={interest._id} className="glass border border-primary/30">
+                <Card key={interest._id} className="glass border border-primary/30 relative">
+                  <div className="absolute -top-2 -left-2 bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold z-10">
+                    {interest.order}
+                  </div>
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div>
