@@ -81,22 +81,20 @@ const languageColors: Record<string, string> = {
 
 const languages = [
   "All",
-  // Frontend
-  "React", "Vue", "Angular", "Svelte", "Next.js", "HTML",
-  // Backend
-  "Node.js", "Express", "Django", "Flask", "FastAPI", "Spring", "Laravel", ".NET",
-  // Languages
-  "TypeScript", "JavaScript", "Python", "Java", "Go", "Rust", "PHP", "Ruby", "Swift", "Kotlin", "CSharp", "CPlusPlus", "Pyrogram",
-  // Databases
-  "MongoDB", "PostgreSQL", "MySQL", "Redis", "Firebase", "SQLite", "DynamoDB",
-  // Styling
-  "Tailwind CSS", "Bootstrap", "Sass", "MaterialUI", "ChakraUI",
-  // Mobile/Desktop
-  "ReactNative", "Flutter", "Electron",
-  // DevOps/Cloud
-  "Docker", "Kubernetes", "AWS", "Azure", "GCP", "Terraform",
-  // Tools
-  "GraphQL", "REST", "Webpack", "Vite", "Jest", "Cypress"
+  "Python",
+  "JavaScript",
+  "TypeScript",
+  "React",
+  "Express",
+  "MongoDB",
+  "MySQL",
+  "Docker",
+  "AWS",
+  "PostgreSQL",
+  "Java",
+  "Go",
+  "Dart",
+  "PHP"
 ];
 
 interface Project {
