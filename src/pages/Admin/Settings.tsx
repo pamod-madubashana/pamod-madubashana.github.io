@@ -162,7 +162,7 @@ const SettingsPage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Left Column - Social Links */}
             <div className="space-y-6">
-              <Card className="glass border border-primary/30">
+              <Card className="glass border border-primary/30 h-full">
                 <CardHeader>
                   <CardTitle>Social Links</CardTitle>
                   <CardDescription>Connect with visitors on social platforms</CardDescription>
