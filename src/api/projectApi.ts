@@ -103,8 +103,7 @@ export const projectApi = {
     return data;
   },
 
-  createProject: async (projectData: Omit<Project, '_id' | 'createdAt' | 'updatedAt'>): Promise<{ message: string; project: Project }> => {
-    const token = localStorage.getItem('token');
+  createProject: async (token: string, projectData: Omit<Project, '_id' | 'createdAt' | 'updatedAt'>): Promise<{ message: string; project: Project }> => {
     const response = await fetch(`${API_BASE_URL}/projects`, {
       method: 'POST',
       headers: {
@@ -115,6 +114,7 @@ export const projectApi = {
     });
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('Create project error details:', errorText);
       throw new Error(`Failed to create project: ${response.status} - ${errorText}`);
     }
     
@@ -126,8 +126,7 @@ export const projectApi = {
     return result;
   },
 
-  updateProject: async (id: string, projectData: Partial<Project>): Promise<{ message: string; project: Project }> => {
-    const token = localStorage.getItem('token');
+  updateProject: async (id: string, token: string, projectData: Partial<Project>): Promise<{ message: string; project: Project }> => {
     const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
       method: 'PUT',
       headers: {
@@ -138,6 +137,7 @@ export const projectApi = {
     });
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('Update project error details:', errorText);
       throw new Error(`Failed to update project: ${response.status} - ${errorText}`);
     }
     
@@ -150,8 +150,7 @@ export const projectApi = {
     return result;
   },
 
-  deleteProject: async (id: string): Promise<{ message: string }> => {
-    const token = localStorage.getItem('token');
+  deleteProject: async (id: string, token: string): Promise<{ message: string }> => {
     const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
       method: 'DELETE',
       headers: {
@@ -160,6 +159,7 @@ export const projectApi = {
     });
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('Delete project error details:', errorText);
       throw new Error(`Failed to delete project: ${response.status} - ${errorText}`);
     }
     

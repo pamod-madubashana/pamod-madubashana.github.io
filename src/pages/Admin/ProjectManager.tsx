@@ -78,12 +78,43 @@ const ProjectManager = () => {
   }, [searchTerm, projects]);
 
   const handleCreateProject = async () => {
+    // Validate required fields
+    if (!newProject.title.trim()) {
+      console.error('Error: Title is required');
+      return;
+    }
+    if (!newProject.description.trim()) {
+      console.error('Error: Description is required');
+      return;
+    }
+    
+    const techStackArray = newProject.techStack.split(',').map(tag => tag.trim()).filter(tag => tag);
+    if (techStackArray.length === 0) {
+      console.error('Error: At least one tech stack item is required');
+      return;
+    }
+    
     try {
-      const result = await projectApi.createProject({
-        ...newProject,
-        techStack: newProject.techStack.split(',').map(tag => tag.trim()).filter(tag => tag),
+      // Prepare project data, excluding empty URL fields to satisfy backend validation
+      const projectData: any = {
+        title: newProject.title,
+        description: newProject.description,
+        techStack: techStackArray,
+        status: newProject.status,
+        featured: newProject.featured,
+        thumbnail: newProject.thumbnail,
         screenshots: newProject.screenshots ? newProject.screenshots.split(',').map(url => url.trim()).filter(url => url) : []
-      });
+      };
+      
+      if (newProject.githubUrl.trim()) {
+        projectData.githubUrl = newProject.githubUrl.trim();
+      }
+      
+      if (newProject.liveUrl.trim()) {
+        projectData.liveUrl = newProject.liveUrl.trim();
+      }
+      
+      const result = await projectApi.createProject(token, projectData);
       
       setProjects([result.project, ...projects]);
       setNewProject({
@@ -106,18 +137,42 @@ const ProjectManager = () => {
   const handleUpdateProject = async () => {
     if (!editingProject) return;
 
+    // Validate required fields
+    if (!editingProject.title.trim()) {
+      console.error('Error: Title is required');
+      return;
+    }
+    if (!editingProject.description.trim()) {
+      console.error('Error: Description is required');
+      return;
+    }
+    
+    if (editingProject.techStack.length === 0) {
+      console.error('Error: At least one tech stack item is required');
+      return;
+    }
+    
     try {
-      const result = await projectApi.updateProject(editingProject._id, {
+      // Prepare project data, excluding empty URL fields to satisfy backend validation
+      const projectData: any = {
         title: editingProject.title,
         description: editingProject.description,
         techStack: editingProject.techStack,
-        githubUrl: editingProject.githubUrl,
-        liveUrl: editingProject.liveUrl,
         featured: editingProject.featured,
         status: editingProject.status,
         thumbnail: editingProject.thumbnail,
         screenshots: editingProject.screenshots
-      });
+      };
+      
+      if (editingProject.githubUrl && editingProject.githubUrl.trim()) {
+        projectData.githubUrl = editingProject.githubUrl.trim();
+      }
+      
+      if (editingProject.liveUrl && editingProject.liveUrl.trim()) {
+        projectData.liveUrl = editingProject.liveUrl.trim();
+      }
+      
+      const result = await projectApi.updateProject(editingProject._id, token, projectData);
       
       setProjects(projects.map(p => p._id === editingProject._id ? result.project : p));
       setEditingProject(null);
@@ -129,7 +184,7 @@ const ProjectManager = () => {
   const handleDeleteProject = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this project?')) {
       try {
-        await projectApi.deleteProject(id);
+        await projectApi.deleteProject(id, token);
         setProjects(projects.filter(project => project._id !== id));
       } catch (error) {
         console.error('Error deleting project:', error);
@@ -142,10 +197,21 @@ const ProjectManager = () => {
     if (!project) return;
 
     try {
-      const result = await projectApi.updateProject(id, {
+      // Prepare project data, excluding empty URL fields to satisfy backend validation
+      const projectData: any = {
         ...project,
         featured: !project.featured
-      });
+      };
+      
+      // Clean up URL fields to avoid validation issues
+      if (projectData.githubUrl && !projectData.githubUrl.trim()) {
+        delete projectData.githubUrl;
+      }
+      if (projectData.liveUrl && !projectData.liveUrl.trim()) {
+        delete projectData.liveUrl;
+      }
+      
+      const result = await projectApi.updateProject(id, token, projectData);
       
       setProjects(projects.map(p => p._id === id ? result.project : p));
     } catch (error) {
@@ -158,10 +224,21 @@ const ProjectManager = () => {
     if (!project) return;
 
     try {
-      const result = await projectApi.updateProject(id, {
+      // Prepare project data, excluding empty URL fields to satisfy backend validation
+      const projectData: any = {
         ...project,
         status: project.status === 'published' ? 'draft' : 'published'
-      });
+      };
+      
+      // Clean up URL fields to avoid validation issues
+      if (projectData.githubUrl && !projectData.githubUrl.trim()) {
+        delete projectData.githubUrl;
+      }
+      if (projectData.liveUrl && !projectData.liveUrl.trim()) {
+        delete projectData.liveUrl;
+      }
+      
+      const result = await projectApi.updateProject(id, token, projectData);
       
       setProjects(projects.map(p => p._id === id ? result.project : p));
     } catch (error) {
