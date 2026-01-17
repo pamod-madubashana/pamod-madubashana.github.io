@@ -5,21 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Page Not Found</title>
   <script>
-    (function () {
-      try {
-        var path = window.location.pathname;
-        // Avoid looping if we already redirected
-        if (!sessionStorage.getItem('gh_redirected')) {
-          sessionStorage.setItem('gh_redirected', '1');
-          sessionStorage.setItem('redirectPath', path);
-          // Redirect to root index.html using absolute origin
-          window.location.replace(window.location.origin + '/');
-        } else {
-          // Cleanup the flag so further 404s can redirect again later
-          sessionStorage.removeItem('gh_redirected');
-        }
-      } catch (e) {}
-    })();
+    const redirect = window.location.pathname;
+      window.location.replace(
+        window.location.origin + "/?redirect=" + redirect
+      );
   </script>
 </head>
 <body>
