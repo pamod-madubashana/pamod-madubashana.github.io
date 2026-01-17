@@ -159,8 +159,8 @@ const SettingsPage = () => {
         </header>
 
         <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 gap-6">
-            {/* Main Column - Site Content */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left Column - Social Links */}
             <div className="space-y-6">
               <Card className="glass border border-primary/30">
                 <CardHeader>
@@ -212,8 +212,11 @@ const SettingsPage = () => {
                   </div>
                 </CardContent>
               </Card>
-
-              <Card className="glass border border-primary/30">
+            </div>
+            
+            {/* Right Column - Site Sections */}
+            <div className="space-y-6">
+              <Card className="glass border border-primary/30 h-full">
                 <CardHeader>
                   <CardTitle>Site Sections</CardTitle>
                   <CardDescription>Control which sections are visible</CardDescription>
