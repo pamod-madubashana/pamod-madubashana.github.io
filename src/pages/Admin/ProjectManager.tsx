@@ -254,15 +254,45 @@ const ProjectManager = () => {
                     </div>
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="thumbnail">Thumbnail URL</Label>
-                    <Input
-                      id="thumbnail"
-                      type="url"
-                      value={newProject.thumbnail}
-                      onChange={(e) => setNewProject({...newProject, thumbnail: e.target.value})}
-                      placeholder="https://example.com/image.jpg"
-                      className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
-                    />
+                    <Label htmlFor="thumbnail">Thumbnail</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="thumbnail"
+                        type="url"
+                        value={newProject.thumbnail}
+                        onChange={(e) => setNewProject({...newProject, thumbnail: e.target.value})}
+                        placeholder="https://example.com/image.jpg"
+                        className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => document.getElementById('file-upload-project-create')?.click()}
+                        disabled={false}
+                        className="border-input text-foreground hover:bg-accent hover:text-accent-foreground"
+                      >
+                        Choose File
+                      </Button>
+                      <Input
+                        id="file-upload-project-create"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                              const imageUrl = event.target?.result as string;
+                              setNewProject({...newProject, thumbnail: imageUrl});
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                        className="hidden"
+                      />
+                    </div>
+                    <p className="text-sm text-muted-foreground">Enter image URL or upload a file (JPG, PNG, GIF)</p>
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="screenshots">Screenshots URLs (comma separated)</Label>
@@ -502,15 +532,44 @@ const ProjectManager = () => {
                   </div>
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="edit-thumbnail">Thumbnail URL</Label>
-                  <Input
-                    id="edit-thumbnail"
-                    type="url"
-                    value={editingProject.thumbnail || ''}
-                    onChange={(e) => setEditingProject({...editingProject, thumbnail: e.target.value})}
-                    placeholder="https://example.com/image.jpg"
-                    className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
-                  />
+                  <Label htmlFor="edit-thumbnail">Thumbnail</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="edit-thumbnail"
+                      type="url"
+                      value={editingProject.thumbnail || ''}
+                      onChange={(e) => setEditingProject({...editingProject, thumbnail: e.target.value})}
+                      placeholder="https://example.com/image.jpg"
+                      className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => document.getElementById('file-upload-project-edit')?.click()}
+                      className="border-input text-foreground hover:bg-accent hover:text-accent-foreground"
+                    >
+                      Choose File
+                    </Button>
+                    <Input
+                      id="file-upload-project-edit"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = (event) => {
+                            const imageUrl = event.target?.result as string;
+                            setEditingProject({...editingProject, thumbnail: imageUrl});
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="hidden"
+                    />
+                  </div>
+                  <p className="text-sm text-muted-foreground">Enter image URL or upload a file (JPG, PNG, GIF)</p>
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="edit-screenshots">Screenshots URLs (comma separated)</Label>
