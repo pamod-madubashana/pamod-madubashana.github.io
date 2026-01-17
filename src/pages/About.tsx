@@ -221,21 +221,11 @@ const About = () => {
                         <item.icon className="w-5 h-5 text-primary" />
                       </div>
 
-                      {/* Right Card (odd index) */}
+                      {/* Right Card (odd index) - Shows on desktop and mobile */}
                       <div className={`ml-20 md:ml-0 md:w-1/2 md:pl-12 ${isLeft ? "md:hidden" : ""}`}>
                         <div className="p-6 rounded-xl glass hover-lift text-left">
                           <span className="text-sm font-mono text-primary">{item.year}</span>
                           <h3 className="text-xl font-semibold mt-1 text-foreground/50">{item.role}</h3>
-                          <p className="text-sm text-muted-foreground mt-1">{item.company}</p>
-                          <p className="text-sm text-muted-foreground mt-3">{item.description}</p>
-                        </div>
-                      </div>
-
-                      {/* Mobile Card (shows for all) */}
-                      <div className={`ml-20 md:hidden`}>
-                        <div className="p-6 rounded-xl glass hover-lift">
-                          <span className="text-sm font-mono text-primary">{item.year}</span>
-                          <h3 className="text-xl font-semibold mt-1">{item.role}</h3>
                           <p className="text-sm text-muted-foreground mt-1">{item.company}</p>
                           <p className="text-sm text-muted-foreground mt-3">{item.description}</p>
                         </div>
