@@ -168,50 +168,7 @@ const Dashboard = () => {
     }
   ] : [];
 
-  const quickActions = [
-    {
-      title: "New Article",
-      description: "Create blog post",
-      icon: FileText,
-      path: "/admin/articles",
-      action: "create"
-    },
-    {
-      title: "Add Project",
-      description: "Showcase work",
-      icon: Package,
-      path: "/admin/projects",
-      action: "create"
-    },
-    {
-      title: "New Timeline",
-      description: "Manage timeline",
-      icon: Calendar,
-      path: "/admin/timeline",
-      action: "manage"
-    },
-    {
-      title: "New Tech Skills",
-      description: "Manage skills",
-      icon: Award,
-      path: "/admin/tech-skills",
-      action: "manage"
-    },
-    {
-      title: "New Tech Stack",
-      description: "Manage stack",
-      icon: Award,
-      path: "/admin/tech-stack",
-      action: "manage"
-    },
-    {
-      title: "New Interests",
-      description: "Manage interests",
-      icon: Award,
-      path: "/admin/interests",
-      action: "manage"
-    }
-  ];
+
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -329,13 +286,13 @@ const Dashboard = () => {
         )}
       </div>
 
-      <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="mt-8 grid grid-cols-1 gap-6">
         {/* Main Content Area */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="lg:col-span-2 space-y-6"
+          className="space-y-6"
         >
 
           {/* Recent Activity */}
@@ -391,45 +348,6 @@ const Dashboard = () => {
 
         </motion.div>
 
-        {/* Sidebar Widgets */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="space-y-6"
-        >
-
-          {/* Quick Actions - Enhanced */}
-          <div className="pt-[58px]">
-            <Card className="glass border border-border h-full">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-accent" />
-                  Quick Actions
-                </CardTitle>
-                <CardDescription>All your management tools</CardDescription>
-              </CardHeader>
-              <CardContent className="pb-4">
-                <div className="grid grid-cols-1 gap-3">
-                  {quickActions.map((action) => {
-                    const Icon = action.icon;
-                    return (
-                      <Link key={action.title} to={action.path}>
-                        <Button 
-                          variant="outline" 
-                          className="w-full justify-start gap-3 h-12 hover:bg-primary/10 transition-colors"
-                        >
-                          <Icon className="w-5 h-5 text-primary" />
-                          <span>{action.title}</span>
-                        </Button>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </motion.div>
       </div>
     </>
   );
