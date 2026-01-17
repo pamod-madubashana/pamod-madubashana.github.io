@@ -6,6 +6,7 @@ import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { SettingsProvider } from "./contexts/SettingsContext";
 import ProtectedRoute from "./components/RouteProtector";
+import ScrollToTop from "./components/ScrollToTop";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Projects from "./pages/Projects";
@@ -33,6 +34,7 @@ const App = () => (
           <div className="dark">
             <Toaster />
             <Sonner />
+            <ScrollToTop />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/about" element={<About />} />
