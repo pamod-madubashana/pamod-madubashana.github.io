@@ -9,7 +9,6 @@ const navLinks = [
   { name: "About", path: "/about" },
   { name: "Projects", path: "/projects" },
   { name: "Articles", path: "/articles" },
-  { name: "Contact", path: "/#contact" },
 ];
 
 const socialLinks = [
@@ -57,7 +56,7 @@ export const Navbar = () => {
           : "bg-transparent"
       }`}
     >
-      <div className="container mx-auto px-4 navbar-container">
+      <div className="container mx-auto px-4 navbar-container transform3d">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to="/" className="relative group">
@@ -135,16 +134,18 @@ export const Navbar = () => {
       <AnimatePresence mode="wait">
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0, y: -20 }}
-            animate={{ opacity: 1, height: "auto", y: 0 }}
-            exit={{ opacity: 0, height: 0, y: -20 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ 
-              type: "spring", 
-              stiffness: 300, 
-              damping: 30,
-              duration: 0.3 
+              duration: 0.2
             }}
-            className="md:hidden glass-strong border-t border-border"
+            className="md:hidden glass-strong border-t border-border overflow-hidden"
+            style={{
+              maxHeight: isOpen ? "300px" : "0",
+              overflow: "hidden",
+              transition: "max-height 0.25s ease-in-out"
+            }}
           >
             <div className="container mx-auto px-4 py-4">
               <div className="flex flex-col gap-2">
