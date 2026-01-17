@@ -8,7 +8,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/contexts/AuthContext';
-import { useTheme } from '@/contexts/ThemeProvider';
 import { useSettings } from '@/contexts/SettingsContext';
 import { Settings as SettingsIcon, Save, CheckCircle, XCircle } from 'lucide-react';
 
@@ -16,11 +15,6 @@ interface Settings {
   _id?: string;
   aboutContent: string;
   featuredRepos: string[];
-  themeOptions: {
-    primaryColor: string;
-    secondaryColor: string;
-    fontFamily: string;
-  };
   siteSections: {
     showAbout: boolean;
     showProjects: boolean;
@@ -39,11 +33,6 @@ const SettingsPage = () => {
   const [settings, setSettings] = useState<Settings>({
     aboutContent: '',
     featuredRepos: [],
-    themeOptions: {
-      primaryColor: '#3b82f6',
-      secondaryColor: '#8b5cf6',
-      fontFamily: 'Inter, sans-serif'
-    },
     siteSections: {
       showAbout: true,
       showProjects: true,
@@ -98,15 +87,6 @@ const SettingsPage = () => {
     }));
   };
 
-  const handleThemeChange = (field: string, value: string) => {
-    setSettings(prev => ({
-      ...prev,
-      themeOptions: {
-        ...prev.themeOptions,
-        [field]: value
-      }
-    }));
-  };
 
   const handleSectionChange = (field: string, value: boolean) => {
     setSettings(prev => ({
@@ -129,13 +109,13 @@ const SettingsPage = () => {
   };
 
   const { refreshSettings } = useSettings();
-  const { refreshTheme } = useTheme();
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     
     try {
+      console.log('Sending settings to backend:', settings);
       const response = await fetch(`${API_BASE_URL}/settings`, {
         method: 'PUT',
         headers: {
@@ -144,16 +124,17 @@ const SettingsPage = () => {
         },
         body: JSON.stringify(settings)
       });
+      
+      const responseText = await response.text();
+      console.log('Response from backend:', response.status, responseText);
 
       if (response.ok) {
         setSavedSuccessfully(true);
-        // Refresh settings and theme to apply changes immediately
+        // Refresh settings to apply changes immediately
         await refreshSettings(true);
-        refreshTheme();
         setTimeout(() => setSavedSuccessfully(false), 3000);
       } else {
-        const errorData = await response.text();
-        console.error('Error saving settings:', response.status, errorData);
+        console.error('Error saving settings:', response.status, responseText);
       }
     } catch (error) {
       console.error('Network error saving settings:', error);
@@ -261,64 +242,8 @@ const SettingsPage = () => {
               </Card>
             </div>
 
-            {/* Right Column - Theme & Sections */}
+            {/* Right Column - Site Sections */}
             <div className="space-y-6">
-              <Card className="glass border border-primary/30">
-                <CardHeader>
-                  <CardTitle>Theme Options</CardTitle>
-                  <CardDescription>Customize the look and feel</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="primaryColor">Primary Color</Label>
-                      <div className="flex items-center gap-2">
-                        <Input
-                          id="primaryColor"
-                          type="color"
-                          value={settings.themeOptions.primaryColor}
-                          onChange={(e) => handleThemeChange('primaryColor', e.target.value)}
-                          className="w-12 h-10 p-1"
-                        />
-                        <Input
-                          type="text"
-                          value={settings.themeOptions.primaryColor}
-                          onChange={(e) => handleThemeChange('primaryColor', e.target.value)}
-                          placeholder="#3b82f6"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="secondaryColor">Secondary Color</Label>
-                      <div className="flex items-center gap-2">
-                        <Input
-                          id="secondaryColor"
-                          type="color"
-                          value={settings.themeOptions.secondaryColor}
-                          onChange={(e) => handleThemeChange('secondaryColor', e.target.value)}
-                          className="w-12 h-10 p-1"
-                        />
-                        <Input
-                          type="text"
-                          value={settings.themeOptions.secondaryColor}
-                          onChange={(e) => handleThemeChange('secondaryColor', e.target.value)}
-                          placeholder="#8b5cf6"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="fontFamily">Font Family</Label>
-                      <Input
-                        id="fontFamily"
-                        value={settings.themeOptions.fontFamily}
-                        onChange={(e) => handleThemeChange('fontFamily', e.target.value)}
-                        placeholder="Inter, sans-serif"
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
               <Card className="glass border border-primary/30">
                 <CardHeader>
                   <CardTitle>Site Sections</CardTitle>
