@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { API_BASE_URL } from '@/lib/apiConfig';
+import { settingsApi } from '@/api/settingsApi';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,6 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeProvider';
+import { useSettings } from '@/contexts/SettingsContext';
 import { Settings as SettingsIcon, Save, CheckCircle, XCircle } from 'lucide-react';
 
 interface Settings {
@@ -62,33 +65,24 @@ const SettingsPage = () => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/settings`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
+        // Use the settings API with force refresh
+        const data = await settingsApi.getSettings(true); // Force refresh to get latest from backend
+        // Merge API data with default structure to ensure all fields exist
+        setSettings(prev => ({
+          ...prev,
+          ...data,
+          featuredRepos: Array.isArray(data.featuredRepos) ? data.featuredRepos.filter(repo => repo.trim() !== '') : [],
+          socialLinks: {
+            github: '',
+            linkedin: '',
+            twitter: '',
+            email: '',
+            ...(prev.socialLinks || {}),
+            ...(data.socialLinks || {})
           }
-        });
-        if (response.ok) {
-          const data = await response.json();
-          // Merge API data with default structure to ensure all fields exist
-          setSettings(prev => ({
-            ...prev,
-            ...data,
-            featuredRepos: Array.isArray(data.featuredRepos) ? data.featuredRepos.filter(repo => repo.trim() !== '') : [],
-            socialLinks: {
-              github: '',
-              linkedin: '',
-              twitter: '',
-              email: '',
-              ...(prev.socialLinks || {}),
-              ...(data.socialLinks || {})
-            }
-          }));
-        } else {
-          const errorData = await response.text();
-          console.error('Error fetching settings:', response.status, errorData);
-        }
+        }));
       } catch (error) {
-        console.error('Network error fetching settings:', error);
+        console.error('Error fetching settings:', error);
       } finally {
         setLoading(false);
       }
@@ -134,6 +128,9 @@ const SettingsPage = () => {
     }));
   };
 
+  const { refreshSettings } = useSettings();
+  const { refreshTheme } = useTheme();
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -150,6 +147,9 @@ const SettingsPage = () => {
 
       if (response.ok) {
         setSavedSuccessfully(true);
+        // Refresh settings and theme to apply changes immediately
+        await refreshSettings(true);
+        refreshTheme();
         setTimeout(() => setSavedSuccessfully(false), 3000);
       } else {
         const errorData = await response.text();

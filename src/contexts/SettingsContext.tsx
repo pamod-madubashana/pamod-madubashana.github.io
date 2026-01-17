@@ -27,7 +27,7 @@ interface SettingsContextType {
   settings: Settings | null;
   loading: boolean;
   error: string | null;
-  refreshSettings: () => Promise<void>;
+  refreshSettings: (forceRefresh?: boolean) => Promise<void>;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -49,12 +49,12 @@ export const SettingsProvider = ({ children }: SettingsProviderProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSettings = async () => {
+  const fetchSettings = async (forceRefresh = false) => {
     try {
       setLoading(true);
       setError(null);
       
-      const data = await settingsApi.getSettings();
+      const data = await settingsApi.getSettings(forceRefresh);
       setSettings(data);
     } catch (err: any) {
       setError(err.message || 'Error fetching settings');
@@ -65,14 +65,14 @@ export const SettingsProvider = ({ children }: SettingsProviderProps) => {
   };
 
   useEffect(() => {
-    fetchSettings();
+    fetchSettings(false); // Initial load, can use cache
   }, []);
 
   const value = {
     settings,
     loading,
     error,
-    refreshSettings: fetchSettings
+    refreshSettings: (forceRefresh = true) => fetchSettings(forceRefresh)
   };
 
   return (

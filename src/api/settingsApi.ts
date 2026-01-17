@@ -46,12 +46,15 @@ export interface UpdateSettingsData {
 }
 
 export const settingsApi = {
-  getSettings: async (): Promise<Settings> => {
+  getSettings: async (forceRefresh = false): Promise<Settings> => {
     const cacheKey = cacheKeys.settings();
-    const cachedData = apiCache.get<Settings>(cacheKey);
     
-    if (cachedData) {
-      return cachedData;
+    if (!forceRefresh) {
+      const cachedData = apiCache.get<Settings>(cacheKey);
+      
+      if (cachedData) {
+        return cachedData;
+      }
     }
     
     const response = await fetch(`${API_BASE_URL}/settings`);
