@@ -350,7 +350,7 @@ const Dashboard = () => {
               </Button>
             </div>
             
-            <Card className="glass border border-border">
+            <Card className="glass border border-border h-full">
               <CardContent className="p-0">
                 <div className="divide-y divide-border">
                   {dashboardData?.recentActivity.map((item, index) => (
@@ -400,33 +400,35 @@ const Dashboard = () => {
         >
 
           {/* Quick Actions - Enhanced */}
-          <Card className="glass border border-border">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Zap className="w-5 h-5 text-accent" />
-                Quick Actions
-              </CardTitle>
-              <CardDescription>All your management tools</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 gap-3">
-                {quickActions.map((action) => {
-                  const Icon = action.icon;
-                  return (
-                    <Link key={action.title} to={action.path}>
-                      <Button 
-                        variant="outline" 
-                        className="w-full justify-start gap-3 h-12 hover:bg-primary/10 transition-colors"
-                      >
-                        <Icon className="w-5 h-5 text-primary" />
-                        <span>{action.title}</span>
-                      </Button>
-                    </Link>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
+          <div className="pt-[58px]">
+            <Card className="glass border border-border h-full">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-accent" />
+                  Quick Actions
+                </CardTitle>
+                <CardDescription>All your management tools</CardDescription>
+              </CardHeader>
+              <CardContent className="pb-4">
+                <div className="grid grid-cols-1 gap-3">
+                  {quickActions.map((action) => {
+                    const Icon = action.icon;
+                    return (
+                      <Link key={action.title} to={action.path}>
+                        <Button 
+                          variant="outline" 
+                          className="w-full justify-start gap-3 h-12 hover:bg-primary/10 transition-colors"
+                        >
+                          <Icon className="w-5 h-5 text-primary" />
+                          <span>{action.title}</span>
+                        </Button>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </motion.div>
       </div>
     </>
