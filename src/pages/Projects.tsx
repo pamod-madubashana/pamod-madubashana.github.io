@@ -165,26 +165,33 @@ const Projects = () => {
                     className="group rounded-xl overflow-hidden glass hover-lift"
                   >
                     {/* Content - using a placeholder image for now */}
+                    
                     <div className="relative aspect-video overflow-hidden bg-muted/20 flex items-center justify-center">
-                      <Github className="w-16 h-16 text-muted-foreground/30" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4 gap-2">
-                        {project.githubUrl && (
-                          <Button size="sm" variant="outline" className="gap-1" asChild>
-                            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                              <Github className="w-4 h-4" />
-                              Code
-                            </a>
-                          </Button>
-                        )}
-                        {project.liveUrl && (
-                          <Button size="sm" variant="outline" className="gap-1" asChild>
-                            <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="w-4 h-4" />
-                              Live
-                            </a>
-                          </Button>
-                        )}
+                      <div className="relative aspect-video overflow-hidden">
+                      <img
+                        src={project.thumbnail || `https://images.unsplash.com/photo-${index + 1}?w=800&h=600&fit=crop`}
+                        alt={project.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
                       </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4 gap-2">
+                  {project.liveUrl && (
+                    <Button size="sm" variant="secondary" className="gap-1" asChild>
+                      <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="w-4 h-4" />
+                        Live
+                      </a>
+                    </Button>
+                  )}
+                  {project.githubUrl && (
+                    <Button size="sm" variant="outline" className="gap-1" asChild>
+                      <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                        <Github className="w-4 h-4 text-foreground/70" />
+                        <span className="text-foreground/70">Code</span>
+                      </a>
+                    </Button>
+                  )}
+                </div>
                     </div>
 
                     {/* Content */}
@@ -192,11 +199,11 @@ const Projects = () => {
                       <div className="flex items-center gap-2 mb-3">
                         <span className={`w-3 h-3 rounded-full ${languageColors[project.techStack[0]] || "bg-muted"}`} />
                         <span className="text-xs font-mono text-muted-foreground">
-                          {project.techStack[0] || 'Technology'}
+                          {project.techStack[0] || "Technology"}
                         </span>
                       </div>
 
-                      <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
+                      <h3 className="text-xl font-semibold mb-2 text-foreground/70 group-hover:text-primary transition-colors">
                         {project.title}
                       </h3>
 
@@ -206,19 +213,14 @@ const Projects = () => {
 
                       {/* Tech Stack */}
                       <div className="flex flex-wrap gap-2 mb-4">
-                        {project.techStack.slice(0, 3).map((tech: string, idx: number) => (
+                        {project.techStack.slice(0, 3).map((tech: string) => (
                           <span
-                            key={idx}
-                            className="px-2 py-1 text-xs font-mono bg-muted/50 rounded-md"
+                            key={tech}
+                            className="px-2 py-1 text-xs font-mono bg-muted/50  text-foreground/50 rounded-md"
                           >
                             {tech}
                           </span>
                         ))}
-                        {project.techStack.length > 3 && (
-                          <span className="px-2 py-1 text-xs text-muted-foreground">
-                            +{project.techStack.length - 3}
-                          </span>
-                        )}
                       </div>
 
                       {/* Stats */}
