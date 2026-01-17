@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { Search, Plus, Edit, Trash2, Eye, Save, X, Star, ExternalLink, Github } from 'lucide-react';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 interface Project {
   _id: string;
@@ -47,6 +48,8 @@ const ProjectManager = () => {
   const [screenshotsFiles, setScreenshotsFiles] = useState<FileList | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
   const { token } = useAuth();
 
   // Handle image file selection
@@ -269,13 +272,21 @@ const ProjectManager = () => {
   }, [searchTerm, projects]);
 
   const handleDeleteProject = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this project?')) {
-      try {
-        await projectApi.deleteProject(id, token);
-        setProjects(projects.filter(project => project._id !== id));
-      } catch (error) {
-        console.error('Error deleting project:', error);
-      }
+    setProjectToDelete(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteProject = async () => {
+    if (!projectToDelete || !token) return;
+    
+    try {
+      await projectApi.deleteProject(projectToDelete, token);
+      setProjects(projects.filter(project => project._id !== projectToDelete));
+    } catch (error) {
+      console.error('Error deleting project:', error);
+    } finally {
+      setIsDeleteDialogOpen(false);
+      setProjectToDelete(null);
     }
   };
 
@@ -824,6 +835,21 @@ const ProjectManager = () => {
             </DialogContent>
           </Dialog>
         )}
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => {
+          setIsDeleteDialogOpen(false);
+          setProjectToDelete(null);
+        }}
+        onConfirm={confirmDeleteProject}
+        title="Delete Project"
+        message="Are you sure you want to delete this project? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
+
       </div>
     </div>
   );

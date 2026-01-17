@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { Search, Plus, Edit, Trash2, Eye, Save, X } from 'lucide-react';
 import { articleApi, Article, CreateArticleData, UpdateArticleData } from '@/api/articleApi';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 const ArticleManager = () => {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -28,6 +29,8 @@ const ArticleManager = () => {
   const [featuredImageFile, setFeaturedImageFile] = useState<File | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [articleToDelete, setArticleToDelete] = useState<string | null>(null);
   const { token } = useAuth();
 
   // Handle image file selection
@@ -172,13 +175,21 @@ const ArticleManager = () => {
   }, [searchTerm, articles]);
 
   const handleDeleteArticle = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this article?')) {
-      try {
-        await articleApi.deleteArticle(token, id);
-        setArticles(articles.filter(article => article._id !== id));
-      } catch (error) {
-        console.error('Error deleting article:', error);
-      }
+    setArticleToDelete(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteArticle = async () => {
+    if (!articleToDelete || !token) return;
+    
+    try {
+      await articleApi.deleteArticle(token, articleToDelete);
+      setArticles(articles.filter(article => article._id !== articleToDelete));
+    } catch (error) {
+      console.error('Error deleting article:', error);
+    } finally {
+      setIsDeleteDialogOpen(false);
+      setArticleToDelete(null);
     }
   };
 
@@ -525,6 +536,21 @@ const ArticleManager = () => {
             </DialogContent>
           </Dialog>
         )}
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => {
+          setIsDeleteDialogOpen(false);
+          setArticleToDelete(null);
+        }}
+        onConfirm={confirmDeleteArticle}
+        title="Delete Article"
+        message="Are you sure you want to delete this article? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
+
       </div>
     </div>
   );
