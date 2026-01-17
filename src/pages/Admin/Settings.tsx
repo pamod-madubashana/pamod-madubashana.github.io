@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/contexts/AuthContext';
-import { Settings as SettingsIcon, Save, X } from 'lucide-react';
+import { Settings as SettingsIcon, Save, CheckCircle, XCircle } from 'lucide-react';
 
 interface Settings {
   _id?: string;
@@ -67,23 +67,28 @@ const SettingsPage = () => {
             'Authorization': `Bearer ${token}`
           }
         });
-        const data = await response.json();
         if (response.ok) {
-          // Merge API data with default structure to ensure socialLinks exists
-          setSettings({
-            ...settings,
+          const data = await response.json();
+          // Merge API data with default structure to ensure all fields exist
+          setSettings(prev => ({
+            ...prev,
             ...data,
+            featuredRepos: Array.isArray(data.featuredRepos) ? data.featuredRepos.filter(repo => repo.trim() !== '') : [],
             socialLinks: {
               github: '',
               linkedin: '',
               twitter: '',
               email: '',
+              ...(prev.socialLinks || {}),
               ...(data.socialLinks || {})
             }
-          });
+          }));
+        } else {
+          const errorData = await response.text();
+          console.error('Error fetching settings:', response.status, errorData);
         }
       } catch (error) {
-        console.error('Error fetching settings:', error);
+        console.error('Network error fetching settings:', error);
       } finally {
         setLoading(false);
       }
@@ -146,9 +151,12 @@ const SettingsPage = () => {
       if (response.ok) {
         setSavedSuccessfully(true);
         setTimeout(() => setSavedSuccessfully(false), 3000);
+      } else {
+        const errorData = await response.text();
+        console.error('Error saving settings:', response.status, errorData);
       }
     } catch (error) {
-      console.error('Error saving settings:', error);
+      console.error('Network error saving settings:', error);
     } finally {
       setSaving(false);
     }
@@ -365,8 +373,8 @@ const SettingsPage = () => {
                     <Textarea
                       id="featuredRepos"
                       value={settings.featuredRepos.join('\n')}
-                      onChange={(e) => handleChange('featuredRepos', e.target.value.split('\n'))}
-                      placeholder="repo-name-1&#10;repo-name-2&#10;repo-name-3"
+                      onChange={(e) => handleChange('featuredRepos', e.target.value.split('\n').filter(repo => repo.trim() !== ''))}
+                      placeholder="repo-name-1\nrepo-name-2\nrepo-name-3"
                       rows={4}
                     />
                     <p className="text-xs text-muted-foreground">Enter one repository name per line</p>
@@ -392,7 +400,7 @@ const SettingsPage = () => {
             </Button>
             {savedSuccessfully && (
               <div className="flex items-center gap-2 text-green-500">
-                <X className="w-4 h-4" />
+                <CheckCircle className="w-4 h-4" />
                 Settings saved successfully!
               </div>
             )}
