@@ -122,6 +122,30 @@ export const articleApi = {
     return result;
   },
 
+  createArticleWithImage: async (
+    token: string,
+    formData: FormData
+  ): Promise<{ message: string; article: Article }> => {
+    const response = await fetch(`${API_BASE_URL}/articles/upload`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to create article with image: ${response.status} - ${errorText}`);
+    }
+    
+    const result = await response.json();
+    
+    // Invalidate cache after creating an article
+    apiCache.invalidate('articles:*');
+    
+    return result;
+  },
+
   updateArticle: async (token: string, id: string, articleData: UpdateArticleData): Promise<{ message: string; article: Article }> => {
     const response = await fetch(`${API_BASE_URL}/articles/${id}`, {
       method: 'PUT',
@@ -134,6 +158,32 @@ export const articleApi = {
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`Failed to update article: ${response.status} - ${errorText}`);
+    }
+    
+    const result = await response.json();
+    
+    // Invalidate cache after updating an article
+    apiCache.delete(cacheKeys.articles.byId(id));
+    apiCache.invalidate('articles:*');
+    
+    return result;
+  },
+
+  updateArticleWithImage: async (
+    token: string,
+    id: string,
+    formData: FormData
+  ): Promise<{ message: string; article: Article }> => {
+    const response = await fetch(`${API_BASE_URL}/articles/upload/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to update article with image: ${response.status} - ${errorText}`);
     }
     
     const result = await response.json();

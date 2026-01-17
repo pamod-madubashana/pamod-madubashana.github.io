@@ -43,7 +43,198 @@ const ProjectManager = () => {
     thumbnail: '',
     screenshots: ''
   });
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [screenshotsFiles, setScreenshotsFiles] = useState<FileList | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const { token } = useAuth();
+
+  // Handle image file selection
+  const handleThumbnailFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setThumbnailFile(file);
+    }
+  };
+
+  const handleScreenshotsFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setScreenshotsFiles(e.target.files);
+  };
+
+  // Create project with image upload
+  const handleCreateProject = async () => {
+    if (!token) {
+      console.error('Authentication token is missing');
+      alert('You must be logged in to create a project');
+      return;
+    }
+    
+    // Validate required fields
+    if (!newProject.title.trim()) {
+      console.error('Error: Title is required');
+      alert('Title is required');
+      return;
+    }
+    if (!newProject.description.trim()) {
+      console.error('Error: Description is required');
+      alert('Description is required');
+      return;
+    }
+    
+    const techStackArray = newProject.techStack.split(',').map(tag => tag.trim()).filter(tag => tag);
+    if (techStackArray.length === 0) {
+      console.error('Error: At least one tech stack item is required');
+      alert('At least one tech stack item is required');
+      return;
+    }
+    
+    setIsCreating(true);
+    
+    try {
+      const formData = new FormData();
+      
+      // Add form fields to FormData
+      formData.append('title', newProject.title);
+      formData.append('description', newProject.description);
+      formData.append('techStack', JSON.stringify(techStackArray));
+      formData.append('status', newProject.status);
+      formData.append('featured', newProject.featured.toString());
+      
+      if (newProject.githubUrl.trim()) {
+        formData.append('githubUrl', newProject.githubUrl.trim());
+      }
+      
+      if (newProject.liveUrl.trim()) {
+        formData.append('liveUrl', newProject.liveUrl.trim());
+      }
+      
+      // Add image files to FormData if selected
+      if (thumbnailFile) {
+        formData.append('thumbnail', thumbnailFile);
+      }
+      
+      if (screenshotsFiles) {
+        for (let i = 0; i < screenshotsFiles.length; i++) {
+          formData.append('screenshots', screenshotsFiles[i]);
+        }
+      }
+      
+      console.log('Sending request to create project with data:', {
+        title: newProject.title,
+        description: newProject.description,
+        techStack: techStackArray,
+        hasThumbnail: !!thumbnailFile,
+        screenshotCount: screenshotsFiles?.length || 0
+      });
+      
+      // Use the new API method that handles image upload
+      const result = await projectApi.createProjectWithImage(token, formData);
+      console.log('Project created successfully:', result);
+      
+      setProjects([result.project, ...projects]);
+      setNewProject({
+        title: '',
+        description: '',
+        techStack: '',
+        githubUrl: '',
+        liveUrl: '',
+        featured: false,
+        status: 'draft',
+        thumbnail: '',
+        screenshots: ''
+      });
+      setThumbnailFile(null);
+      setScreenshotsFiles(null);
+      setIsDialogOpen(false);
+    } catch (error) {
+      console.error('Error creating project with image:', error);
+      alert('Failed to create project: ' + (error as Error).message);
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  // Update project with image upload
+  const handleUpdateProject = async () => {
+    if (!editingProject || !token) {
+      if (!token) {
+        console.error('Authentication token is missing');
+        alert('You must be logged in to update a project');
+      }
+      return;
+    }
+
+    // Validate required fields
+    if (!editingProject.title.trim()) {
+      console.error('Error: Title is required');
+      alert('Title is required');
+      return;
+    }
+    if (!editingProject.description.trim()) {
+      console.error('Error: Description is required');
+      alert('Description is required');
+      return;
+    }
+    
+    if (editingProject.techStack.length === 0) {
+      console.error('Error: At least one tech stack item is required');
+      alert('At least one tech stack item is required');
+      return;
+    }
+    
+    setIsUpdating(true);
+    
+    try {
+      const formData = new FormData();
+      
+      // Add form fields to FormData
+      formData.append('title', editingProject.title);
+      formData.append('description', editingProject.description);
+      formData.append('techStack', JSON.stringify(editingProject.techStack));
+      formData.append('featured', editingProject.featured.toString());
+      formData.append('status', editingProject.status);
+      
+      if (editingProject.githubUrl && editingProject.githubUrl.trim()) {
+        formData.append('githubUrl', editingProject.githubUrl.trim());
+      }
+      
+      if (editingProject.liveUrl && editingProject.liveUrl.trim()) {
+        formData.append('liveUrl', editingProject.liveUrl.trim());
+      }
+      
+      // Add image files to FormData if selected
+      if (thumbnailFile) {
+        formData.append('thumbnail', thumbnailFile);
+      }
+      
+      if (screenshotsFiles) {
+        for (let i = 0; i < screenshotsFiles.length; i++) {
+          formData.append('screenshots', screenshotsFiles[i]);
+        }
+      }
+      
+      console.log('Sending request to update project with data:', {
+        id: editingProject._id,
+        title: editingProject.title,
+        hasThumbnail: !!thumbnailFile,
+        screenshotCount: screenshotsFiles?.length || 0
+      });
+      
+      // Use the new API method that handles image upload
+      const result = await projectApi.updateProjectWithImage(editingProject._id, token, formData);
+      console.log('Project updated successfully:', result);
+      
+      setProjects(projects.map(p => p._id === editingProject._id ? result.project : p));
+      setEditingProject(null);
+      setThumbnailFile(null);
+      setScreenshotsFiles(null);
+    } catch (error) {
+      console.error('Error updating project with image:', error);
+      alert('Failed to update project: ' + (error as Error).message);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   // Fetch projects
   useEffect(() => {
@@ -76,110 +267,6 @@ const ProjectManager = () => {
       );
     }
   }, [searchTerm, projects]);
-
-  const handleCreateProject = async () => {
-    // Validate required fields
-    if (!newProject.title.trim()) {
-      console.error('Error: Title is required');
-      return;
-    }
-    if (!newProject.description.trim()) {
-      console.error('Error: Description is required');
-      return;
-    }
-    
-    const techStackArray = newProject.techStack.split(',').map(tag => tag.trim()).filter(tag => tag);
-    if (techStackArray.length === 0) {
-      console.error('Error: At least one tech stack item is required');
-      return;
-    }
-    
-    try {
-      // Prepare project data, excluding empty URL fields to satisfy backend validation
-      const projectData: any = {
-        title: newProject.title,
-        description: newProject.description,
-        techStack: techStackArray,
-        status: newProject.status,
-        featured: newProject.featured,
-        thumbnail: newProject.thumbnail,
-        screenshots: newProject.screenshots ? newProject.screenshots.split(',').map(url => url.trim()).filter(url => url) : []
-      };
-      
-      if (newProject.githubUrl.trim()) {
-        projectData.githubUrl = newProject.githubUrl.trim();
-      }
-      
-      if (newProject.liveUrl.trim()) {
-        projectData.liveUrl = newProject.liveUrl.trim();
-      }
-      
-      const result = await projectApi.createProject(token, projectData);
-      
-      setProjects([result.project, ...projects]);
-      setNewProject({
-        title: '',
-        description: '',
-        techStack: '',
-        githubUrl: '',
-        liveUrl: '',
-        featured: false,
-        status: 'draft',
-        thumbnail: '',
-        screenshots: ''
-      });
-      setIsDialogOpen(false);
-    } catch (error) {
-      console.error('Error creating project:', error);
-    }
-  };
-
-  const handleUpdateProject = async () => {
-    if (!editingProject) return;
-
-    // Validate required fields
-    if (!editingProject.title.trim()) {
-      console.error('Error: Title is required');
-      return;
-    }
-    if (!editingProject.description.trim()) {
-      console.error('Error: Description is required');
-      return;
-    }
-    
-    if (editingProject.techStack.length === 0) {
-      console.error('Error: At least one tech stack item is required');
-      return;
-    }
-    
-    try {
-      // Prepare project data, excluding empty URL fields to satisfy backend validation
-      const projectData: any = {
-        title: editingProject.title,
-        description: editingProject.description,
-        techStack: editingProject.techStack,
-        featured: editingProject.featured,
-        status: editingProject.status,
-        thumbnail: editingProject.thumbnail,
-        screenshots: editingProject.screenshots
-      };
-      
-      if (editingProject.githubUrl && editingProject.githubUrl.trim()) {
-        projectData.githubUrl = editingProject.githubUrl.trim();
-      }
-      
-      if (editingProject.liveUrl && editingProject.liveUrl.trim()) {
-        projectData.liveUrl = editingProject.liveUrl.trim();
-      }
-      
-      const result = await projectApi.updateProject(editingProject._id, token, projectData);
-      
-      setProjects(projects.map(p => p._id === editingProject._id ? result.project : p));
-      setEditingProject(null);
-    } catch (error) {
-      console.error('Error updating project:', error);
-    }
-  };
 
   const handleDeleteProject = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this project?')) {
@@ -355,31 +442,43 @@ const ProjectManager = () => {
                         id="file-upload-project-create"
                         type="file"
                         accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            const reader = new FileReader();
-                            reader.onload = (event) => {
-                              const imageUrl = event.target?.result as string;
-                              setNewProject({...newProject, thumbnail: imageUrl});
-                            };
-                            reader.readAsDataURL(file);
-                          }
-                        }}
+                        onChange={handleThumbnailFileChange}
                         className="hidden"
                       />
                     </div>
                     <p className="text-sm text-muted-foreground">Enter image URL or upload a file (JPG, PNG, GIF)</p>
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="screenshots">Screenshots URLs (comma separated)</Label>
-                    <Input
-                      id="screenshots"
-                      value={newProject.screenshots}
-                      onChange={(e) => setNewProject({...newProject, screenshots: e.target.value})}
-                      placeholder="https://example.com/screenshot1.jpg, https://example.com/screenshot2.jpg"
-                      className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
-                    />
+                    <Label htmlFor="screenshots">Screenshots</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="screenshots"
+                        value={newProject.screenshots}
+                        onChange={(e) => setNewProject({...newProject, screenshots: e.target.value})}
+                        placeholder="Upload screenshots"
+                        className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
+                        readOnly
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => document.getElementById('file-upload-screenshots-create')?.click()}
+                        disabled={false}
+                        className="border-input text-foreground hover:bg-accent hover:text-accent-foreground"
+                      >
+                        Choose Files
+                      </Button>
+                      <Input
+                        id="file-upload-screenshots-create"
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleScreenshotsFileChange}
+                        className="hidden"
+                      />
+                    </div>
+                    <p className="text-sm text-muted-foreground">Select multiple screenshot files (JPG, PNG, GIF)</p>
                   </div>
                   <div className="grid gap-2">
                     <Label>Status</Label>
@@ -421,9 +520,13 @@ const ProjectManager = () => {
                     >
                       Cancel
                     </Button>
-                    <Button onClick={handleCreateProject}>
-                      <Save className="w-4 h-4 mr-2" />
-                      Create Project
+                    <Button onClick={handleCreateProject} disabled={isCreating}>
+                      {isCreating ? 'Creating...' : (
+                        <>
+                          <Save className="w-4 h-4 mr-2" />
+                          Create Project
+                        </>
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -632,31 +735,41 @@ const ProjectManager = () => {
                       id="file-upload-project-edit"
                       type="file"
                       accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          const reader = new FileReader();
-                          reader.onload = (event) => {
-                            const imageUrl = event.target?.result as string;
-                            setEditingProject({...editingProject, thumbnail: imageUrl});
-                          };
-                          reader.readAsDataURL(file);
-                        }
-                      }}
+                      onChange={handleThumbnailFileChange}
                       className="hidden"
                     />
                   </div>
                   <p className="text-sm text-muted-foreground">Enter image URL or upload a file (JPG, PNG, GIF)</p>
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="edit-screenshots">Screenshots URLs (comma separated)</Label>
-                  <Input
-                    id="edit-screenshots"
-                    value={editingProject.screenshots?.join(', ') || ''}
-                    onChange={(e) => setEditingProject({...editingProject, screenshots: e.target.value.split(',').map(url => url.trim())})}
-                    placeholder="https://example.com/screenshot1.jpg, https://example.com/screenshot2.jpg"
-                    className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
-                  />
+                  <Label htmlFor="edit-screenshots">Screenshots</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="edit-screenshots"
+                      value={editingProject.screenshots?.length ? `${editingProject.screenshots.length} files selected` : ''}
+                      placeholder="Upload screenshots"
+                      className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
+                      readOnly
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => document.getElementById('file-upload-screenshots-edit')?.click()}
+                      className="border-input text-foreground hover:bg-accent hover:text-accent-foreground"
+                    >
+                      Choose Files
+                    </Button>
+                    <Input
+                      id="file-upload-screenshots-edit"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleScreenshotsFileChange}
+                      className="hidden"
+                    />
+                  </div>
+                  <p className="text-sm text-muted-foreground">Select multiple screenshot files (JPG, PNG, GIF)</p>
                 </div>
                 <div className="grid gap-2">
                   <Label>Status</Label>
@@ -698,9 +811,13 @@ const ProjectManager = () => {
                   >
                     Cancel
                   </Button>
-                  <Button onClick={handleUpdateProject}>
-                    <Save className="w-4 h-4 mr-2" />
-                    Save Changes
+                  <Button onClick={handleUpdateProject} disabled={isUpdating}>
+                    {isUpdating ? 'Saving...' : (
+                      <>
+                        <Save className="w-4 h-4 mr-2" />
+                        Save Changes
+                      </>
+                    )}
                   </Button>
                 </div>
               </div>

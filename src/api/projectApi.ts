@@ -126,6 +126,31 @@ export const projectApi = {
     return result;
   },
 
+  createProjectWithImage: async (
+    token: string, 
+    formData: FormData
+  ): Promise<{ message: string; project: Project }> => {
+    const response = await fetch(`${API_BASE_URL}/projects/upload`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData,
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Create project with image error details:', errorText);
+      throw new Error(`Failed to create project with image: ${response.status} - ${errorText}`);
+    }
+    
+    const result = await response.json();
+    
+    // Invalidate cache after creating a project
+    apiCache.invalidate('projects:*');
+    
+    return result;
+  },
+
   updateProject: async (id: string, token: string, projectData: Partial<Project>): Promise<{ message: string; project: Project }> => {
     const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
       method: 'PUT',
@@ -139,6 +164,33 @@ export const projectApi = {
       const errorText = await response.text();
       console.error('Update project error details:', errorText);
       throw new Error(`Failed to update project: ${response.status} - ${errorText}`);
+    }
+    
+    const result = await response.json();
+    
+    // Invalidate cache after updating a project
+    apiCache.delete(cacheKeys.projects.byId(id));
+    apiCache.invalidate('projects:*');
+    
+    return result;
+  },
+
+  updateProjectWithImage: async (
+    id: string, 
+    token: string, 
+    formData: FormData
+  ): Promise<{ message: string; project: Project }> => {
+    const response = await fetch(`${API_BASE_URL}/projects/upload/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData,
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Update project with image error details:', errorText);
+      throw new Error(`Failed to update project with image: ${response.status} - ${errorText}`);
     }
     
     const result = await response.json();

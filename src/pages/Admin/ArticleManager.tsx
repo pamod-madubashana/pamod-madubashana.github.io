@@ -25,26 +25,117 @@ const ArticleManager = () => {
     status: 'draft' as 'draft' | 'published',
     tags: '' // Will be converted to array
   });
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
+  const [featuredImageFile, setFeaturedImageFile] = useState<File | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const { token } = useAuth();
 
-  // Handle image file upload
-  const handleImageUpload = async (file: File) => {
-    setIsUploading(true);
+  // Handle image file selection
+  const handleFeaturedImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFeaturedImageFile(file);
+    }
+  };
+
+  // Create article with image upload
+  const handleCreateArticle = async () => {
+    if (!token) {
+      console.error('Authentication token is missing');
+      alert('You must be logged in to create an article');
+      return;
+    }
+    
+    setIsCreating(true);
+    
     try {
-      // For now, we'll simulate image upload by creating a data URL
-      // In production, you'd upload to a service like Cloudinary, AWS S3, etc.
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const imageUrl = e.target?.result as string;
-        setNewArticle({...newArticle, featuredImage: imageUrl});
-        setIsUploading(false);
-      };
-      reader.readAsDataURL(file);
+      const formData = new FormData();
+      
+      // Add form fields to FormData
+      formData.append('title', newArticle.title);
+      formData.append('content', newArticle.content);
+      formData.append('excerpt', newArticle.excerpt);
+      formData.append('status', newArticle.status);
+      formData.append('tags', JSON.stringify(newArticle.tags.split(',').map(tag => tag.trim()).filter(tag => tag)));
+      
+      // Add image file to FormData if selected
+      if (featuredImageFile) {
+        formData.append('featuredImage', featuredImageFile);
+      }
+      
+      console.log('Sending request to create article with data:', {
+        title: newArticle.title,
+        hasFeaturedImage: !!featuredImageFile
+      });
+      
+      // Use the new API method that handles image upload
+      const response = await articleApi.createArticleWithImage(token, formData);
+      console.log('Article created successfully:', response);
+      
+      setArticles([response.article, ...articles]);
+      setNewArticle({
+        title: '',
+        content: '',
+        excerpt: '',
+        featuredImage: '',
+        status: 'draft',
+        tags: ''
+      });
+      setFeaturedImageFile(null);
+      setIsDialogOpen(false);
     } catch (error) {
-      console.error('Error uploading image:', error);
-      setIsUploading(false);
+      console.error('Error creating article with image:', error);
+      alert('Failed to create article: ' + (error as Error).message);
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  // Update article with image upload
+  const handleUpdateArticle = async () => {
+    if (!editingArticle || !token) {
+      if (!token) {
+        console.error('Authentication token is missing');
+        alert('You must be logged in to update an article');
+      }
+      return;
+    }
+
+    setIsUpdating(true);
+    
+    try {
+      const formData = new FormData();
+      
+      // Add form fields to FormData
+      formData.append('title', editingArticle.title);
+      formData.append('content', editingArticle.content);
+      formData.append('excerpt', editingArticle.excerpt);
+      formData.append('status', editingArticle.status);
+      formData.append('tags', JSON.stringify(editingArticle.tags));
+      
+      // Add image file to FormData if selected
+      if (featuredImageFile) {
+        formData.append('featuredImage', featuredImageFile);
+      }
+      
+      console.log('Sending request to update article with data:', {
+        id: editingArticle._id,
+        title: editingArticle.title,
+        hasFeaturedImage: !!featuredImageFile
+      });
+      
+      // Use the new API method that handles image upload
+      const response = await articleApi.updateArticleWithImage(token, editingArticle._id, formData);
+      console.log('Article updated successfully:', response);
+      
+      setArticles(articles.map(a => a._id === editingArticle._id ? response.article : a));
+      setEditingArticle(null);
+      setFeaturedImageFile(null);
+    } catch (error) {
+      console.error('Error updating article with image:', error);
+      alert('Failed to update article: ' + (error as Error).message);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -79,54 +170,6 @@ const ArticleManager = () => {
       );
     }
   }, [searchTerm, articles]);
-
-  const handleCreateArticle = async () => {
-    try {
-      const articleData: CreateArticleData = {
-        title: newArticle.title,
-        content: newArticle.content,
-        excerpt: newArticle.excerpt,
-        featuredImage: newArticle.featuredImage,
-        status: newArticle.status,
-        tags: newArticle.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
-      };
-      
-      const response = await articleApi.createArticle(token, articleData);
-      setArticles([response.article, ...articles]);
-      setNewArticle({
-        title: '',
-        content: '',
-        excerpt: '',
-        featuredImage: '',
-        status: 'draft',
-        tags: ''
-      });
-      setIsDialogOpen(false);
-    } catch (error) {
-      console.error('Error creating article:', error);
-    }
-  };
-
-  const handleUpdateArticle = async () => {
-    if (!editingArticle) return;
-
-    try {
-      const articleData: UpdateArticleData = {
-        title: editingArticle.title,
-        content: editingArticle.content,
-        excerpt: editingArticle.excerpt,
-        featuredImage: editingArticle.featuredImage,
-        status: editingArticle.status,
-        tags: editingArticle.tags
-      };
-      
-      const response = await articleApi.updateArticle(token, editingArticle._id, articleData);
-      setArticles(articles.map(a => a._id === editingArticle._id ? response.article : a));
-      setEditingArticle(null);
-    } catch (error) {
-      console.error('Error updating article:', error);
-    }
-  };
 
   const handleDeleteArticle = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this article?')) {
@@ -204,23 +247,15 @@ const ArticleManager = () => {
                         variant="outline"
                         size="sm"
                         onClick={() => document.getElementById('file-upload-create')?.click()}
-                        disabled={isUploading}
                         className="border-input text-foreground hover:bg-accent hover:text-accent-foreground"
                       >
-                        {isUploading ? 'Uploading...' : 'Choose File'}
+                        Choose File
                       </Button>
                       <Input
                         id="file-upload-create"
                         type="file"
                         accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            setImageFile(file);
-                            handleImageUpload(file);
-                          }
-                        }}
-                        disabled={isUploading}
+                        onChange={handleFeaturedImageFileChange}
                         className="hidden"
                       />
                     </div>
@@ -278,9 +313,13 @@ const ArticleManager = () => {
                     >
                       Cancel
                     </Button>
-                    <Button onClick={handleCreateArticle}>
-                      <Save className="w-4 h-4 mr-2" />
-                      Create Article
+                    <Button onClick={handleCreateArticle} disabled={isCreating}>
+                      {isCreating ? 'Creating...' : (
+                        <>
+                          <Save className="w-4 h-4 mr-2" />
+                          Create Article
+                        </>
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -415,17 +454,7 @@ const ArticleManager = () => {
                       id="file-upload-edit"
                       type="file"
                       accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          const reader = new FileReader();
-                          reader.onload = (event) => {
-                            const imageUrl = event.target?.result as string;
-                            setEditingArticle({...editingArticle, featuredImage: imageUrl});
-                          };
-                          reader.readAsDataURL(file);
-                        }
-                      }}
+                      onChange={handleFeaturedImageFileChange}
                       className="hidden"
                     />
                   </div>
@@ -483,9 +512,13 @@ const ArticleManager = () => {
                   >
                     Cancel
                   </Button>
-                  <Button onClick={handleUpdateArticle}>
-                    <Save className="w-4 h-4 mr-2" />
-                    Save Changes
+                  <Button onClick={handleUpdateArticle} disabled={isUpdating}>
+                    {isUpdating ? 'Saving...' : (
+                      <>
+                        <Save className="w-4 h-4 mr-2" />
+                        Save Changes
+                      </>
+                    )}
                   </Button>
                 </div>
               </div>
