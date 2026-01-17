@@ -25,7 +25,7 @@ const Index = () => {
       <Navbar />
       <main>
         <HeroSection />
-        {settings?.siteSections.showAbout && <AboutSection />}
+        <AboutSection />
         {settings?.siteSections.showProjects && <ProjectsSection />}
         {settings?.siteSections.showContact && <ContactSection />}
       </main>

@@ -13,10 +13,7 @@ import { Settings as SettingsIcon, Save, CheckCircle, XCircle } from 'lucide-rea
 
 interface Settings {
   _id?: string;
-  aboutContent: string;
-  featuredRepos: string[];
   siteSections: {
-    showAbout: boolean;
     showProjects: boolean;
     showArticles: boolean;
     showContact: boolean;
@@ -31,10 +28,7 @@ interface Settings {
 
 const SettingsPage = () => {
   const [settings, setSettings] = useState<Settings>({
-    aboutContent: '',
-    featuredRepos: [],
     siteSections: {
-      showAbout: true,
       showProjects: true,
       showArticles: true,
       showContact: true
@@ -60,7 +54,6 @@ const SettingsPage = () => {
         setSettings(prev => ({
           ...prev,
           ...data,
-          featuredRepos: Array.isArray(data.featuredRepos) ? data.featuredRepos.filter(repo => repo.trim() !== '') : [],
           socialLinks: {
             github: '',
             linkedin: '',
@@ -166,30 +159,9 @@ const SettingsPage = () => {
         </header>
 
         <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column - Site Content */}
-            <div className="lg:col-span-2 space-y-6">
-              <Card className="glass border border-primary/30">
-                <CardHeader>
-                  <CardTitle>About Section</CardTitle>
-                  <CardDescription>Update your bio and professional summary</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="aboutContent">About Content</Label>
-                      <Textarea
-                        id="aboutContent"
-                        value={settings.aboutContent}
-                        onChange={(e) => handleChange('aboutContent', e.target.value)}
-                        placeholder="Tell visitors about yourself..."
-                        rows={6}
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
+          <div className="grid grid-cols-1 gap-6">
+            {/* Main Column - Site Content */}
+            <div className="space-y-6">
               <Card className="glass border border-primary/30">
                 <CardHeader>
                   <CardTitle>Social Links</CardTitle>
@@ -240,10 +212,7 @@ const SettingsPage = () => {
                   </div>
                 </CardContent>
               </Card>
-            </div>
 
-            {/* Right Column - Site Sections */}
-            <div className="space-y-6">
               <Card className="glass border border-primary/30">
                 <CardHeader>
                   <CardTitle>Site Sections</CardTitle>
@@ -251,14 +220,6 @@ const SettingsPage = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="showAbout">Show About Section</Label>
-                      <Switch
-                        id="showAbout"
-                        checked={settings.siteSections.showAbout}
-                        onCheckedChange={(checked) => handleSectionChange('showAbout', checked)}
-                      />
-                    </div>
                     <div className="flex items-center justify-between">
                       <Label htmlFor="showProjects">Show Projects Section</Label>
                       <Switch
@@ -283,26 +244,6 @@ const SettingsPage = () => {
                         onCheckedChange={(checked) => handleSectionChange('showContact', checked)}
                       />
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="glass border border-primary/30">
-                <CardHeader>
-                  <CardTitle>Featured Repositories</CardTitle>
-                  <CardDescription>Specify which GitHub repos to highlight</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <Label htmlFor="featuredRepos">Repository Names (one per line)</Label>
-                    <Textarea
-                      id="featuredRepos"
-                      value={settings.featuredRepos.join('\n')}
-                      onChange={(e) => handleChange('featuredRepos', e.target.value.split('\n').filter(repo => repo.trim() !== ''))}
-                      placeholder="repo-name-1\nrepo-name-2\nrepo-name-3"
-                      rows={4}
-                    />
-                    <p className="text-xs text-muted-foreground">Enter one repository name per line</p>
                   </div>
                 </CardContent>
               </Card>
