@@ -130,7 +130,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                   <Shield className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold">Admin Panel</h1>
+                  <h1 className="text-xl font-bold text-foreground/60">Admin Panel</h1>
                   <p className="text-xs text-muted-foreground">Portfolio Manager</p>
                 </div>
               </motion.div>
@@ -158,7 +158,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 to={item.path}
                 className={`group flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 ${
                   isActive
-                    ? 'bg-gradient-to-r from-primary/20 to-secondary/20 border border-primary/30'
+                    ? 'bg-gradient-to-r from-primary/20 to-secondary/20 border border-primary/30 text-foreground/80'
                     : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}
               >
@@ -196,7 +196,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         {/* User Profile Section */}
         <div className="p-4 border-t border-border">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-accent to-primary flex items-center justify-center text-primary-foreground font-bold">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-accent to-primary flex items-center justify-center font-bold">
               {user?.username?.charAt(0)?.toUpperCase() || 'A'}
             </div>
             <AnimatePresence>
@@ -207,7 +207,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                   exit={{ opacity: 0 }}
                   className="flex-1 min-w-0"
                 >
-                  <p className="text-sm font-medium truncate">
+                  <p className="text-sm font-medium truncate text-muted-foreground">
                     {user?.username || 'Admin'}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
@@ -229,10 +229,10 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 <Button
                   variant="outline"
                   onClick={logout}
-                  className="w-full flex items-center gap-2 border-border hover:bg-muted"
+                  className="w-full flex items-center gap-2 border-border text-foreground/60 hover:bg-muted hover:text-foreground"
                 >
                   <LogOut className="w-4 h-4" />
-                  Logout
+                  <span className="text-foreground/60">Logout</span>
                 </Button>
               </motion.div>
             )}
@@ -254,28 +254,18 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 <Menu className="w-5 h-5" />
               </Button>
               <div>
-                <h1 className="text-2xl font-bold">
+                <h1 className="text-2xl font-bold text-foreground/60">
                   {navItems.find(item => isActiveRoute(item.path))?.title || 'Dashboard'}
                 </h1>
-                <p className="text-sm text-muted-foreground">
-                  Welcome back, {user?.username}
-                </p>
               </div>
             </div>
             
             <div className="flex items-center gap-3">
               <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground bg-muted px-3 py-2 rounded-full">
-                <div className="w-2 h-2 rounded-full bg-success animate-pulse"></div>
+                <div className="w-2 h-2 rounded-full rounded-full bg-[#00cc88] animate-pulse"></div>
                 <span>Online</span>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={logout}
-                className="hover:bg-muted"
-              >
-                <LogOut className="w-5 h-5" />
-              </Button>
+              
             </div>
           </div>
         </header>

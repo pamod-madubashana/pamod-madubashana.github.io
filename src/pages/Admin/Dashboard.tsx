@@ -231,8 +231,8 @@ const Dashboard = () => {
         className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
       >
         <div className="md:col-span-2">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">
-            {getTimeBasedGreeting()}, <span className="gradient-text">
+          <h1 className="text-3xl md:text-4xl font-bold mb-2 text-foreground/60">
+            {getTimeBasedGreeting()}, <span className="text-gradient">
               {user?.username || 'Admin'}
             </span>
           </h1>
@@ -245,10 +245,6 @@ const Dashboard = () => {
             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
               <Clock className="w-4 h-4" />
               <span>Updated just now</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-[#00cc88] animate-pulse"></div>
-              <span className="text-sm text-[#00cc88] font-medium">All systems operational</span>
             </div>
           </div>
         </div>
@@ -326,7 +322,7 @@ const Dashboard = () => {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold flex items-center gap-3">
                 <Clock className="w-6 h-6 text-primary" />
-                Recent Activity
+                <span className="text-foreground/60">Recent Activity</span>
               </h2>
               <Button variant="ghost" className="text-primary hover:text-primary/80">
                 View All
@@ -376,7 +372,7 @@ const Dashboard = () => {
           <div>
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
               <BarChart3 className="w-6 h-6 text-success" />
-              Performance Overview
+              <span className="text-foreground/60">Performance Overview</span>
             </h2>
             <Card className="glass border border-border">
               <CardContent className="p-6 space-y-4">
