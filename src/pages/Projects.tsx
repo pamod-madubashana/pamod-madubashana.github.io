@@ -173,6 +173,16 @@ const Projects = () => {
                     {/* Content - using a placeholder image for now */}
                     
                     <div className="relative aspect-video overflow-hidden bg-muted/20 flex items-center justify-center">
+                      {/* Featured Badge - Top Left */}
+                      {project.featured && (
+                        <div className="absolute top-3 left-3 z-10">
+                          <span className="flex items-center gap-1 px-2 py-1 text-xs font-semibold text-yellow-500 bg-yellow-800/20 backdrop-blur-sm rounded-full border border-yellow-500/30">
+                            <Star className="w-3 h-3" />
+                            Featured
+                          </span>
+                        </div>
+                      )}
+                      
                       <div className="relative aspect-video overflow-hidden">
                       <img
                         src={project.thumbnail || `https://images.unsplash.com/photo-${index + 1}?w=800&h=600&fit=crop`}
@@ -241,15 +251,7 @@ const Projects = () => {
                       
                       
 
-                      {/* Stats */}
-                      {project.featured && (
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <span className="flex items-center gap-1 text-yellow-500">
-                            <Star className="w-4 h-4" />
-                            Featured
-                          </span>
-                        </div>
-                      )}
+
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Star className="w-4 h-4" />
