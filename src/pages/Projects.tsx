@@ -73,6 +73,9 @@ const Projects = () => {
     fetchProjects();
   }, []);
 
+  // Get unique tags from all projects for dynamic filtering
+  const availableTags = ["All", ...new Set(projects.flatMap(project => project.tags))];
+
   const filteredProjects = projects.filter((project) => {
     const matchesLanguage = selectedLanguage === "All" || project.tags.includes(selectedLanguage);
     const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -118,7 +121,7 @@ const Projects = () => {
               className="flex flex-col md:flex-row items-center justify-between gap-6 p-6 rounded-xl glass"
             >
               {/* Search */}
-              <div className="relative w-full md:w-auto md:flex-1 max-w-md">
+              <div className="relative w-full max-w-md">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <input
                   type="text"
@@ -129,20 +132,24 @@ const Projects = () => {
                 />
               </div>
 
-              {/* Language Filter */}
+              {/* Dynamic Tag Filter - Responsive hiding */}
               <div className="flex items-center gap-2 flex-wrap justify-center">
-                <Filter className="w-4 h-4 text-muted-foreground" />
-                {languages.map((lang) => (
+                <Filter className="w-4 h-4 text-muted-foreground hidden md:block" />
+                {availableTags.slice(0, 8).map((tag, index) => (
                   <button
-                    key={lang}
-                    onClick={() => setSelectedLanguage(lang)}
+                    key={tag}
+                    onClick={() => setSelectedLanguage(tag)}
                     className={`px-3 py-1 text-sm rounded-full transition-all duration-200 ${
-                      selectedLanguage === lang
+                      selectedLanguage === tag
                         ? "bg-primary text-primary-foreground"
                         : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                    } ${
+                      // Show more filters on mobile since they're in column layout
+                      index >= 6 ? "hidden sm:inline-block" : // Hide 7th+ on very small screens
+                      index >= 4 ? "hidden md:inline-block" : "" // Hide 5th-6th on mobile
                     }`}
                   >
-                    {lang}
+                    {tag}
                   </button>
                 ))}
               </div>
