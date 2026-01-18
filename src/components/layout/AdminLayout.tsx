@@ -197,7 +197,15 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="p-4 border-t border-border">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-gradient-to-r from-accent to-primary flex items-center justify-center font-bold">
-              {user?.username?.charAt(0)?.toUpperCase() || 'A'}
+              {user?.username === 'pamod' ? (
+                <img 
+                  src="/favicon.ico" 
+                  alt="Profile" 
+                  className="w-full h-full rounded-full object-cover"
+                />
+              ) : (
+                user?.username?.charAt(0)?.toUpperCase() || 'A'
+              )}
             </div>
             <AnimatePresence>
               {sidebarOpen && (
