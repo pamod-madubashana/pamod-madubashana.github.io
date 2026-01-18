@@ -39,30 +39,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('AuthProvider mounting...');
     // Check if user is logged in on component mount and validate token
     const storedToken = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
 
-    console.log('Stored token:', storedToken ? 'exists' : 'none');
-    console.log('Stored user:', storedUser ? 'exists' : 'none');
-
     if (storedToken && storedUser) {
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
-      console.log('Setting user from localStorage');
       
       // Validate token with backend
       validateToken(storedToken);
     } else {
       // No stored credentials, set user to null
-      console.log('No stored credentials, setting user to null');
       setUser(null);
     }
   }, []);
 
   const validateToken = async (token: string) => {
-    console.log('Validating token...');
     try {
       const response = await fetch(`${API_BASE_URL}/auth/profile`, {
         headers: {
@@ -70,20 +63,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
       });
       
-      console.log('Token validation response status:', response.status);
       
       if (!response.ok) {
         // Token is invalid, clear auth state
-        console.log('Token invalid, logging out');
         logout();
-      } else {
-        console.log('Token valid, keeping user authenticated');
       }
       // If response is ok, token is valid and we keep the current state
       // User state is already set from localStorage
     } catch (error) {
-      // Network error or other issues, clear auth state
-      console.error('Token validation failed:', error);
       logout();
     }
   };
