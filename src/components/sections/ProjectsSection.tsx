@@ -4,80 +4,9 @@ import { Star, GitFork, ExternalLink, Github, Code } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { projectApi } from "@/api/projectApi";
+import { languageColors } from "@/lib/languageColors";
 
 
-
-const languageColors: Record<string, string> = {
-  // Frontend Frameworks & Libraries
-  React: "bg-cyan-500",
-  "Next.js": "bg-black",
-  Vue: "bg-green-600",
-  Angular: "bg-red-600",
-  Svelte: "bg-orange-600",
-  HTML: "bg-orange-600",
-  
-  // Backend Technologies
-  "Node.js": "bg-green-500",
-  Express: "bg-gray-800",
-  Django: "bg-green-700",
-  Flask: "bg-gray-600",
-  FastAPI: "bg-teal-500",
-  Spring: "bg-green-500",
-  Laravel: "bg-red-600",
-  ".NET": "bg-blue-600",
-  
-  // Languages
-  TypeScript: "bg-blue-500",
-  JavaScript: "bg-yellow-500",
-  Python: "bg-yellow-600",
-  Java: "bg-red-500",
-  Go: "bg-cyan-600",
-  Rust: "bg-orange-700",
-  PHP: "bg-indigo-600",
-  Ruby: "bg-red-700",
-  Swift: "bg-orange-500",
-  Kotlin: "bg-purple-500",
-  CSharp: "bg-purple-600",
-  CPlusPlus: "bg-blue-800",
-  Pyrogram: "bg-blue-500",
-  
-  // Databases
-  MongoDB: "bg-green-600",
-  PostgreSQL: "bg-blue-700",
-  MySQL: "bg-blue-500",
-  Redis: "bg-red-600",
-  Firebase: "bg-yellow-500",
-  SQLite: "bg-blue-400",
-  DynamoDB: "bg-orange-600",
-  
-  // Styling & UI
-  "Tailwind CSS": "bg-teal-500",
-  Bootstrap: "bg-purple-600",
-  Sass: "bg-pink-500",
-  MaterialUI: "bg-blue-500",
-  ChakraUI: "bg-teal-400",
-  
-  // Mobile & Desktop
-  ReactNative: "bg-cyan-600",
-  Flutter: "bg-blue-400",
-  Electron: "bg-cyan-500",
-  
-  // DevOps & Cloud
-  Docker: "bg-blue-500",
-  Kubernetes: "bg-blue-600",
-  AWS: "bg-orange-500",
-  Azure: "bg-blue-500",
-  GCP: "bg-blue-400",
-  Terraform: "bg-purple-600",
-  
-  // Tools & Others
-  GraphQL: "bg-pink-600",
-  REST: "bg-blue-500",
-  Webpack: "bg-blue-600",
-  Vite: "bg-purple-500",
-  Jest: "bg-red-600",
-  Cypress: "bg-gray-800",
-};
 
 export const ProjectsSection = () => {
   const [projects, setProjects] = useState<{
