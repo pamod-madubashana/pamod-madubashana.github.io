@@ -212,23 +212,6 @@ const Projects = () => {
 
                     {/* Content */}
                     <div className="p-6">
-                      <div className="flex items-center gap-2 mb-3">
-                        {project.languages && project.languages.length > 0 && (
-                          <div className="flex flex-wrap gap-3 mt-2">
-                            {project.languages.slice(0, 3).map((lang: string) => (
-                              <div key={`lang-${lang}`} className="flex items-center gap-1">
-                              <span className={`w-3 h-3 rounded-full ${languageColors[lang] || "bg-muted"}`} />
-                                <span className="text-xs font-mono text-muted-foreground">
-                                  {lang || "Technology"}
-                                </span>
-                              </div>
-                              
-                            ))}
-                          </div>
-                        )}
-                      </div>
-
-                      
                       <h3 className="text-xl font-semibold mb-2 text-foreground/70 group-hover:text-primary transition-colors">
                         {project.title}
                       </h3>
@@ -249,10 +232,21 @@ const Projects = () => {
                         ))}
                       </div>
                       
-                      
+                      {/* Languages - Moved to bottom */}
+                      {project.languages && project.languages.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-border/50">
+                          {project.languages.slice(0, 3).map((lang: string) => (
+                            <div key={`lang-${lang}`} className="flex items-center gap-2">
+                              <span className={`w-2 h-2 rounded-full ${languageColors[lang] || "bg-muted"}`} />
+                              <span className="text-xs font-mono text-muted-foreground">
+                                {lang}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
 
-
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground mt-4">
                         <span className="flex items-center gap-1">
                           <Star className="w-4 h-4" />
                           0
