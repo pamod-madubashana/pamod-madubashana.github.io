@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Github, Linkedin, Mail } from "lucide-react";
+import { Menu, X, Github, Linkedin, Send, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSettings } from "@/contexts/SettingsContext";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -11,16 +12,48 @@ const navLinks = [
   { name: "Articles", path: "/articles" },
 ];
 
-const socialLinks = [
-  { icon: Github, href: "https://github.com/pamod-madubashana", label: "GitHub" },
-  { icon: Linkedin, href: "https://linkedin.com/in/pamod-madubashana", label: "LinkedIn" },
-  { icon: Mail, href: "mailto:hello@pamodmadubashana.com", label: "Email" },
-];
+// Social link icons mapping
+const socialIcons = {
+  github: Github,
+  linkedin: Linkedin,
+  telegram: Send,
+  email: Mail
+};
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const { settings } = useSettings();
+  
+  // Generate social links from settings, fallback to defaults if not loaded
+  const socialLinks = settings?.socialLinks ? [
+    settings.socialLinks.github && { 
+      icon: socialIcons.github, 
+      href: settings.socialLinks.github, 
+      label: "GitHub" 
+    },
+    settings.socialLinks.linkedin && { 
+      icon: socialIcons.linkedin, 
+      href: settings.socialLinks.linkedin, 
+      label: "LinkedIn" 
+    },
+    settings.socialLinks.telegram && { 
+      icon: socialIcons.telegram, 
+      href: settings.socialLinks.telegram, 
+      label: "Telegram" 
+    },
+    settings.socialLinks.email && { 
+      icon: socialIcons.email, 
+      href: `mailto:${settings.socialLinks.email}`, 
+      label: "Email" 
+    }
+  ].filter(Boolean) as Array<{icon: React.FC<any>, href: string, label: string}> : [
+    { icon: socialIcons.github, href: "https://github.com/pamod-madubashana", label: "GitHub" },
+    { icon: socialIcons.linkedin, href: "https://www.linkedin.com/in/pamod-madubashana-886b621a2", label: "LinkedIn" },
+    { icon: socialIcons.telegram, href: "https://t.me/pamod_madubashana", label: "Telegram" },
+    { icon: socialIcons.email, href: "mailto:pamod.main@gmail.com", label: "Email" }
+  ];
 
   useEffect(() => {
     const handleScroll = () => {

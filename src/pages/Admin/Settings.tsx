@@ -21,7 +21,7 @@ interface Settings {
   socialLinks: {
     github?: string;
     linkedin?: string;
-    twitter?: string;
+    telegram?: string;
     email?: string;
   };
 }
@@ -36,7 +36,7 @@ const SettingsPage = () => {
     socialLinks: {
       github: '',
       linkedin: '',
-      twitter: '',
+      telegram: '',
       email: ''
     }
   });
@@ -57,7 +57,7 @@ const SettingsPage = () => {
           socialLinks: {
             github: '',
             linkedin: '',
-            twitter: '',
+            telegram: '',
             email: '',
             ...(prev.socialLinks || {}),
             ...(data.socialLinks || {})
@@ -190,13 +190,13 @@ const SettingsPage = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="twitter">Twitter/X Profile</Label>
+                      <Label htmlFor="telegram">Telegram Profile</Label>
                       <Input
-                        id="twitter"
+                        id="telegram"
                         type="url"
-                        value={settings.socialLinks.twitter || ''}
-                        onChange={(e) => handleSocialChange('twitter', e.target.value)}
-                        placeholder="https://twitter.com/username"
+                        value={settings.socialLinks.telegram || ''}
+                        onChange={(e) => handleSocialChange('telegram', e.target.value)}
+                        placeholder="https://t.me/username"
                       />
                     </div>
                     <div className="space-y-2">

@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import { Github, Linkedin, Twitter, Mail, Heart } from "lucide-react";
+import { Github, Linkedin, Send, Mail, Heart } from "lucide-react";
 
 const socialLinks = [
   { icon: Github, href: "https://github.com", label: "GitHub" },
   { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
-  { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
+  { icon: Send, href: "https://t.me/", label: "Telegram" },
   { icon: Mail, href: "mailto:hello@example.com", label: "Email" },
 ];
 

@@ -18,7 +18,7 @@ interface Settings {
   socialLinks: {
     github?: string;
     linkedin?: string;
-    twitter?: string;
+    telegram?: string;
     email?: string;
   };
 }
@@ -38,10 +38,10 @@ const DEFAULT_SETTINGS: Settings = {
     showContact: true,
   },
   socialLinks: {
-    github: '',
-    linkedin: '',
-    twitter: '',
-    email: '',
+    github: 'https://github.com/pamod-madubashana',
+    linkedin: 'https://www.linkedin.com/in/pamod-madubashana-886b621a2',
+    telegram: 'https://t.me/pamod_madubashana',
+    email: 'pamod.main@gmail.com',
   },
 };
 
@@ -61,6 +61,8 @@ export const useSettings = () => {
   }
   return context;
 };
+
+export { DEFAULT_SETTINGS };
 
 interface SettingsProviderProps {
   children: ReactNode;
