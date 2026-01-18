@@ -2,13 +2,14 @@ import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
 // ScrollToTop Component
-// Automatically scrolls to top when route changes, preserves scroll position on refresh
+// Automatically scrolls to top when route changes, handles hash navigation
 const ScrollToTop = () => {
   const location = useLocation();
   const previousPathname = useRef(location.pathname);
+  const previousHash = useRef(location.hash);
 
   useEffect(() => {
-    // Only scroll to top if the actual pathname changed (not just query params/hash)
+    // Handle pathname changes
     const pathnameChanged = previousPathname.current !== location.pathname;
     
     if (pathnameChanged) {
@@ -22,7 +23,26 @@ const ScrollToTop = () => {
       // Update ref to track the new pathname
       previousPathname.current = location.pathname;
     }
-  }, [location.pathname]);
+    
+    // Handle hash changes (for anchor links like /#contact)
+    const hashChanged = previousHash.current !== location.hash;
+    
+    if (hashChanged && location.hash) {
+      // Wait a bit for DOM to render, then scroll to the element
+      setTimeout(() => {
+        const element = document.getElementById(location.hash.substring(1));
+        if (element) {
+          element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      }, 100);
+      
+      // Update ref to track the new hash
+      previousHash.current = location.hash;
+    }
+  }, [location.pathname, location.hash]);
 
   // This component renders nothing
   return null;

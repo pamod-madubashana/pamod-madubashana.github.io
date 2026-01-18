@@ -145,11 +145,29 @@ export const Navbar = () => {
                 </a>
               ))}
             </div>
-            <Link to="/#contact">
-              <Button variant="default" size="sm" className="neon-glow">
-                Contact
-              </Button>
-            </Link>
+            {/* Only show contact button if contact section is enabled */}
+            {settings?.siteSections.showContact && (
+              <button 
+                onClick={() => {
+                  // First try hash navigation
+                  const contactElement = document.getElementById('contact');
+                  if (contactElement) {
+                    contactElement.scrollIntoView({
+                      behavior: 'smooth',
+                      block: 'start'
+                    });
+                  } else {
+                    // Fallback: navigate to home with hash
+                    window.location.hash = 'contact';
+                  }
+                }}
+                className="neon-glow"
+              >
+                <Button variant="default" size="sm" className="neon-glow">
+                  Contact
+                </Button>
+              </button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -205,15 +223,34 @@ export const Navbar = () => {
                   </Link>
                 </motion.div>
               ))}
-                <Link to="/#contact" onClick={() => {
-                        // Close menu with slight delay for better UX
-                        setTimeout(() => setIsOpen(false), 150);
-                      }}>
-                <Button variant="default" className="mt-4 neon-glow">
-                  Contact
-                </Button>
-                </Link>
-              </div>
+              {/* Only show contact button if contact section is enabled */}
+              {settings?.siteSections.showContact && (
+                <button 
+                  onClick={() => {
+                    // Close menu first
+                    setTimeout(() => setIsOpen(false), 150);
+                    // Then scroll to contact
+                    setTimeout(() => {
+                      const contactElement = document.getElementById('contact');
+                      if (contactElement) {
+                        contactElement.scrollIntoView({
+                          behavior: 'smooth',
+                          block: 'start'
+                        });
+                      } else {
+                        // Fallback
+                        window.location.hash = 'contact';
+                      }
+                    }, 200);
+                  }}
+                  className="w-full"
+                >
+                  <Button variant="default" className="mt-4 neon-glow w-full">
+                    Contact
+                  </Button>
+                </button>
+              )}
+            </div>
             </div>
           </motion.div>
         )}
