@@ -23,6 +23,28 @@ interface Settings {
   };
 }
 
+const DEFAULT_SETTINGS: Settings = {
+  aboutContent: 'Welcome to my portfolio website. I am a passionate developer with expertise in creating modern web applications.',
+  featuredRepos: [],
+  themeOptions: {
+    primaryColor: '#6366f1',
+    secondaryColor: '#8b5cf6',
+    fontFamily: 'Inter, sans-serif',
+  },
+  siteSections: {
+    showAbout: true,
+    showProjects: true,
+    showArticles: true,
+    showContact: true,
+  },
+  socialLinks: {
+    github: '',
+    linkedin: '',
+    twitter: '',
+    email: '',
+  },
+};
+
 interface SettingsContextType {
   settings: Settings | null;
   loading: boolean;
@@ -54,11 +76,30 @@ export const SettingsProvider = ({ children }: SettingsProviderProps) => {
       setLoading(true);
       setError(null);
       
-      const data = await settingsApi.getSettings(forceRefresh);
+      // Set up timeout promise
+      const timeoutPromise = new Promise<Settings>((_, reject) => {
+        setTimeout(() => {
+          reject(new Error('Settings loading timed out after 5 seconds'));
+        }, 5000); // 5 seconds timeout
+      });
+      
+      // Race between API call and timeout
+      const data = await Promise.race([
+        settingsApi.getSettings(forceRefresh),
+        timeoutPromise
+      ]);
+      
       setSettings(data);
     } catch (err: any) {
-      setError(err.message || 'Error fetching settings');
-      console.error('Error fetching settings:', err);
+      if (err.message.includes('timed out')) {
+        // Use default settings on timeout
+        setSettings(DEFAULT_SETTINGS);
+        setError('Settings loading timed out, using default settings');
+        console.warn('Settings loading timed out, using default settings:', err);
+      } else {
+        setError(err.message || 'Error fetching settings');
+        console.error('Error fetching settings:', err);
+      }
     } finally {
       setLoading(false);
     }
