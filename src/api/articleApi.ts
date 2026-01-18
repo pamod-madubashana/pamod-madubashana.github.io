@@ -64,7 +64,7 @@ export const articleApi = {
       return cachedData;
     }
     
-    const response = await fetch(`${API_BASE_URL}/articles`, {
+    const response = await fetch(`${API_BASE_URL}/articles/all`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
