@@ -24,13 +24,41 @@ export const ProjectsSection = () => {
     createdAt: string;
     updatedAt: string;
   }[]>([]);
+  const [githubStats, setGithubStats] = useState<{[key: string]: {stars: number, forks: number}}>({});
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchProjectsAndStats = async () => {
       try {
         const response = await projectApi.getProjects({ limit: 3 });
         setProjects(response.projects);
+        
+        // Fetch GitHub stats for each project with a GitHub URL
+        const stats: {[key: string]: {stars: number, forks: number}} = {};
+        for (const project of response.projects) {
+          if (project.githubUrl) {
+            try {
+              // Extract owner and repo from GitHub URL
+              const urlParts = project.githubUrl.replace('https://github.com/', '').split('/');
+              if (urlParts.length >= 2) {
+                const owner = urlParts[0];
+                const repo = urlParts[1].split('/')[0]; // Get just the repo name, remove any additional path
+                
+                const githubResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
+                if (githubResponse.ok) {
+                  const data = await githubResponse.json();
+                  stats[project._id] = {
+                    stars: data.stargazers_count,
+                    forks: data.forks_count
+                  };
+                }
+              }
+            } catch (err) {
+              console.error(`Failed to fetch GitHub stats for ${project.title}:`, err);
+            }
+          }
+        }
+        setGithubStats(stats);
       } catch (error) {
         console.error("Failed to fetch projects:", error);
         setProjects([]);
@@ -39,7 +67,7 @@ export const ProjectsSection = () => {
       }
     };
     
-    fetchProjects();
+    fetchProjectsAndStats();
   }, []);
   
   if (loading) {
@@ -190,11 +218,11 @@ export const ProjectsSection = () => {
                 <div className="flex items-center gap-4 text-sm text-muted-foreground mt-4">
                   <span className="flex items-center gap-1">
                     <Star className="w-4 h-4" />
-                    0
+                    {githubStats[project._id]?.stars ?? 0}
                   </span>
                   <span className="flex items-center gap-1">
                     <GitFork className="w-4 h-4" />
-                    0
+                    {githubStats[project._id]?.forks ?? 0}
                   </span>
                 </div>
                     

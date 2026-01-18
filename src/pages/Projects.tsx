@@ -42,23 +42,59 @@ interface Project {
   updatedAt: string;
 }
 
+interface GithubStats {
+  [projectId: string]: {
+    stars: number;
+    forks: number;
+  };
+}
+
 const Projects = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [projects, setProjects] = useState<Project[]>([]);
+  const [githubStats, setGithubStats] = useState<GithubStats>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const { settings, loading: settingsLoading } = useSettings();
   
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchProjectsAndStats = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/projects`);
         const data = await response.json();
         
         if (response.ok) {
-          setProjects(data.projects || []);
+          const fetchedProjects = data.projects || [];
+          setProjects(fetchedProjects);
+          
+          // Fetch GitHub stats for each project with a GitHub URL
+          const stats: GithubStats = {};
+          for (const project of fetchedProjects) {
+            if (project.githubUrl) {
+              try {
+                // Extract owner and repo from GitHub URL
+                const urlParts = project.githubUrl.replace('https://github.com/', '').split('/');
+                if (urlParts.length >= 2) {
+                  const owner = urlParts[0];
+                  const repo = urlParts[1].split('/')[0]; // Get just the repo name, remove any additional path
+                  
+                  const githubResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
+                  if (githubResponse.ok) {
+                    const githubData = await githubResponse.json();
+                    stats[project._id] = {
+                      stars: githubData.stargazers_count,
+                      forks: githubData.forks_count
+                    };
+                  }
+                }
+              } catch (err) {
+                console.error(`Failed to fetch GitHub stats for ${project.title}:`, err);
+              }
+            }
+          }
+          setGithubStats(stats);
         } else {
           setError(data.error || 'Failed to fetch projects');
         }
@@ -70,7 +106,7 @@ const Projects = () => {
       }
     };
 
-    fetchProjects();
+    fetchProjectsAndStats();
   }, []);
 
   // Get unique tags from all projects for dynamic filtering
@@ -256,11 +292,11 @@ const Projects = () => {
                       <div className="flex items-center gap-4 text-sm text-muted-foreground mt-4">
                         <span className="flex items-center gap-1">
                           <Star className="w-4 h-4" />
-                          0
+                          {githubStats[project._id]?.stars ?? 0}
                         </span>
                         <span className="flex items-center gap-1">
                           <GitFork className="w-4 h-4" />
-                          0
+                          {githubStats[project._id]?.forks ?? 0}
                         </span>
                       </div>
                     </div>
