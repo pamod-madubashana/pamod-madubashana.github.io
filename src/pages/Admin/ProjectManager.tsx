@@ -15,7 +15,8 @@ interface Project {
   _id: string;
   title: string;
   description: string;
-  techStack: string[];
+  tags: string[];
+  languages: string[];
   githubUrl?: string;
   liveUrl?: string;
   featured: boolean;
@@ -36,7 +37,8 @@ const ProjectManager = () => {
   const [newProject, setNewProject] = useState({
     title: '',
     description: '',
-    techStack: '',
+    tags: '',
+    languages: '',
     githubUrl: '',
     liveUrl: '',
     featured: false,
@@ -84,10 +86,10 @@ const ProjectManager = () => {
       return;
     }
     
-    const techStackArray = newProject.techStack.split(',').map(tag => tag.trim()).filter(tag => tag);
-    if (techStackArray.length === 0) {
-      console.error('Error: At least one tech stack item is required');
-      alert('At least one tech stack item is required');
+    const tagsArray = newProject.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+    if (tagsArray.length === 0) {
+      console.error('Error: At least one tag is required');
+      alert('At least one tag is required');
       return;
     }
     
@@ -99,7 +101,9 @@ const ProjectManager = () => {
       // Add form fields to FormData
       formData.append('title', newProject.title);
       formData.append('description', newProject.description);
-      formData.append('techStack', JSON.stringify(techStackArray));
+      formData.append('tags', JSON.stringify(tagsArray));
+      const languagesArray = newProject.languages.split(',').map(lang => lang.trim()).filter(lang => lang);
+      formData.append('languages', JSON.stringify(languagesArray));
       formData.append('status', newProject.status);
       formData.append('featured', newProject.featured.toString());
       
@@ -125,7 +129,7 @@ const ProjectManager = () => {
       console.log('Sending request to create project with data:', {
         title: newProject.title,
         description: newProject.description,
-        techStack: techStackArray,
+        tags: tagsArray,
         hasThumbnail: !!thumbnailFile,
         screenshotCount: screenshotsFiles?.length || 0
       });
@@ -138,7 +142,8 @@ const ProjectManager = () => {
       setNewProject({
         title: '',
         description: '',
-        techStack: '',
+        tags: '',
+        languages: '',
         githubUrl: '',
         liveUrl: '',
         featured: false,
@@ -179,9 +184,9 @@ const ProjectManager = () => {
       return;
     }
     
-    if (editingProject.techStack.length === 0) {
-      console.error('Error: At least one tech stack item is required');
-      alert('At least one tech stack item is required');
+    if (editingProject.tags.length === 0) {
+      console.error('Error: At least one tag is required');
+      alert('At least one tag is required');
       return;
     }
     
@@ -193,7 +198,8 @@ const ProjectManager = () => {
       // Add form fields to FormData
       formData.append('title', editingProject.title);
       formData.append('description', editingProject.description);
-      formData.append('techStack', JSON.stringify(editingProject.techStack));
+      formData.append('tags', JSON.stringify(editingProject.tags));
+      formData.append('languages', JSON.stringify(editingProject.languages));
       formData.append('featured', editingProject.featured.toString());
       formData.append('status', editingProject.status);
       
@@ -265,7 +271,7 @@ const ProjectManager = () => {
         projects.filter(project => 
           project.title.toLowerCase().includes(term) ||
           project.description.toLowerCase().includes(term) ||
-          project.techStack.some(tech => tech.toLowerCase().includes(term))
+          project.tags.some(tech => tech.toLowerCase().includes(term))
         )
       );
     }
@@ -395,12 +401,22 @@ const ProjectManager = () => {
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="techStack">Tech Stack (comma separated)</Label>
+                    <Label htmlFor="tags">Tags (comma separated)</Label>
                     <Input
-                      id="techStack"
-                      value={newProject.techStack}
-                      onChange={(e) => setNewProject({...newProject, techStack: e.target.value})}
+                      id="tags"
+                      value={newProject.tags}
+                      onChange={(e) => setNewProject({...newProject, tags: e.target.value})}
                       placeholder="React, Node.js, MongoDB, etc."
+                      className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="languages">Languages (comma separated)</Label>
+                    <Input
+                      id="languages"
+                      value={newProject.languages}
+                      onChange={(e) => setNewProject({...newProject, languages: e.target.value})}
+                      placeholder="JavaScript, TypeScript, Python, etc."
                       className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                     />
                   </div>
@@ -596,7 +612,7 @@ const ProjectManager = () => {
                     {project.description}
                   </p>
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {project.techStack.map((tech, index) => (
+                    {project.tags.map((tech, index) => (
                       <Badge key={index} variant="outline">{tech}</Badge>
                     ))}
                   </div>
@@ -689,12 +705,22 @@ const ProjectManager = () => {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="edit-techStack">Tech Stack (comma separated)</Label>
+                  <Label htmlFor="edit-tags">Tags (comma separated)</Label>
                   <Input
-                    id="edit-techStack"
-                    value={editingProject.techStack.join(', ')}
-                    onChange={(e) => setEditingProject({...editingProject, techStack: e.target.value.split(',').map(tag => tag.trim())})}
+                    id="edit-tags"
+                    value={editingProject.tags.join(', ')}
+                    onChange={(e) => setEditingProject({...editingProject, tags: e.target.value.split(',').map(tag => tag.trim())})}
                     placeholder="React, Node.js, MongoDB, etc."
+                    className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="edit-languages">Languages (comma separated)</Label>
+                  <Input
+                    id="edit-languages"
+                    value={editingProject.languages.join(', ')}
+                    onChange={(e) => setEditingProject({...editingProject, languages: e.target.value.split(',').map(lang => lang.trim())})}
+                    placeholder="JavaScript, TypeScript, Python, etc."
                     className="bg-gray-800 border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
                   />
                 </div>

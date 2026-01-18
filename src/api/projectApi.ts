@@ -5,7 +5,8 @@ interface Project {
   _id: string;
   title: string;
   description: string;
-  techStack: string[];
+  tags: string[];
+  languages: string[];
   githubUrl?: string;
   liveUrl?: string;
   featured: boolean;

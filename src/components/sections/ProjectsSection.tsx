@@ -80,7 +80,21 @@ const languageColors: Record<string, string> = {
 };
 
 export const ProjectsSection = () => {
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<{
+    _id: string;
+    title: string;
+    description: string;
+    tags: string[];
+    languages: string[];
+    githubUrl?: string;
+    liveUrl?: string;
+    featured: boolean;
+    status: 'draft' | 'published';
+    thumbnail?: string;
+    screenshots?: string[];
+    createdAt: string;
+    updatedAt: string;
+  }[]>([]);
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
@@ -202,10 +216,19 @@ export const ProjectsSection = () => {
               {/* Content */}
               <div className="p-6">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className={`w-3 h-3 rounded-full ${languageColors[project.techStack[0]] || "bg-muted"}`} />
-                  <span className="text-xs font-mono text-muted-foreground">
-                    {project.techStack[0] || "Technology"}
-                  </span>
+                  {project.languages && project.languages.length > 0 && (
+                    <div className="flex flex-wrap gap-3 mt-2">
+                      {project.languages.slice(0, 3).map((lang: string) => (
+                        <div key={`lang-${lang}`} className="flex items-center gap-1">
+                        <span className={`w-3 h-3 rounded-full ${languageColors[lang] || "bg-muted"}`} />
+                          <span className="text-xs font-mono text-muted-foreground">
+                            {lang || "Technology"}
+                          </span>
+                        </div>
+                        
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <h3 className="text-xl font-semibold mb-2 text-foreground/70 group-hover:text-primary transition-colors">
@@ -216,14 +239,14 @@ export const ProjectsSection = () => {
                   {project.description}
                 </p>
 
-                {/* Topics */}
+                {/* Tech Stack */}
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {project.techStack.slice(0, 3).map((tech: string) => (
+                  {project.tags.slice(0, 3).map((tag: string) => (
                     <span
-                      key={tech}
+                      key={`tag-${tag}`}
                       className="px-2 py-1 text-xs font-mono bg-muted/50  text-foreground/50 rounded-md"
                     >
-                      {tech}
+                      {tag}
                     </span>
                   ))}
                 </div>
