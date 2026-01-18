@@ -80,8 +80,15 @@ const Projects = () => {
                   const owner = urlParts[0];
                   const repo = urlParts[1].split('/')[0]; // Get just the repo name, remove any additional path
                   
-                  const githubResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
-                  if (githubResponse.ok) {
+                  let githubResponse;
+                  try {
+                    githubResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
+                  } catch (fetchErr) {
+                    // If fetch fails (network error), continue to next project
+                    continue;
+                  }
+                  
+                  if (githubResponse && githubResponse.ok) {
                     const githubData = await githubResponse.json();
                     stats[project._id] = {
                       stars: githubData.stargazers_count,
@@ -90,7 +97,7 @@ const Projects = () => {
                   }
                 }
               } catch (err) {
-                console.error(`Failed to fetch GitHub stats for ${project.title}:`, err);
+                // Silently ignore GitHub API errors to avoid console spam
               }
             }
           }
