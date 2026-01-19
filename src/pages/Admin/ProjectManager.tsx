@@ -107,13 +107,11 @@ const ProjectManager = () => {
       formData.append('status', newProject.status);
       formData.append('featured', newProject.featured.toString());
       
-      if (newProject.githubUrl.trim()) {
-        formData.append('githubUrl', newProject.githubUrl.trim());
-      }
+      // Always send githubUrl, even if empty, so backend knows to remove it
+      formData.append('githubUrl', newProject.githubUrl.trim());
       
-      if (newProject.liveUrl.trim()) {
-        formData.append('liveUrl', newProject.liveUrl.trim());
-      }
+      // Always send liveUrl, even if empty, so backend knows to remove it
+      formData.append('liveUrl', newProject.liveUrl.trim());
       
       // Add image files to FormData if selected
       if (thumbnailFile) {
@@ -203,13 +201,11 @@ const ProjectManager = () => {
       formData.append('featured', editingProject.featured.toString());
       formData.append('status', editingProject.status);
       
-      if (editingProject.githubUrl && editingProject.githubUrl.trim()) {
-        formData.append('githubUrl', editingProject.githubUrl.trim());
-      }
+      // Always send githubUrl, even if empty, so backend knows to remove it
+      formData.append('githubUrl', editingProject.githubUrl?.trim() || '');
       
-      if (editingProject.liveUrl && editingProject.liveUrl.trim()) {
-        formData.append('liveUrl', editingProject.liveUrl.trim());
-      }
+      // Always send liveUrl, even if empty, so backend knows to remove it
+      formData.append('liveUrl', editingProject.liveUrl?.trim() || '');
       
       // Add image files to FormData if selected
       if (thumbnailFile) {
@@ -301,19 +297,11 @@ const ProjectManager = () => {
     if (!project) return;
 
     try {
-      // Prepare project data, excluding empty URL fields to satisfy backend validation
+      // Prepare project data
       const projectData: any = {
         ...project,
         featured: !project.featured
       };
-      
-      // Clean up URL fields to avoid validation issues
-      if (projectData.githubUrl && !projectData.githubUrl.trim()) {
-        delete projectData.githubUrl;
-      }
-      if (projectData.liveUrl && !projectData.liveUrl.trim()) {
-        delete projectData.liveUrl;
-      }
       
       const result = await projectApi.updateProject(id, token, projectData);
       
@@ -328,19 +316,11 @@ const ProjectManager = () => {
     if (!project) return;
 
     try {
-      // Prepare project data, excluding empty URL fields to satisfy backend validation
+      // Prepare project data
       const projectData: any = {
         ...project,
         status: project.status === 'published' ? 'draft' : 'published'
       };
-      
-      // Clean up URL fields to avoid validation issues
-      if (projectData.githubUrl && !projectData.githubUrl.trim()) {
-        delete projectData.githubUrl;
-      }
-      if (projectData.liveUrl && !projectData.liveUrl.trim()) {
-        delete projectData.liveUrl;
-      }
       
       const result = await projectApi.updateProject(id, token, projectData);
       
